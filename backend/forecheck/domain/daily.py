@@ -36,3 +36,13 @@ def daily_precipitation(six_hour_totals: Mapping[int, float | None]) -> float | 
     if any(total is None for total in totals):
         return None
     return sum(total for total in totals if total is not None)
+
+
+def daily_total(hourly: Sequence[float | None]) -> float | None:
+    """Sum of 24 hourly totals, or ``None`` unless every hour is present.
+
+    Used for modelled precipitation, where a missing hour could hide rain.
+    """
+    if len(hourly) != HOURS_PER_DAY or any(value is None for value in hourly):
+        return None
+    return sum(value for value in hourly if value is not None)
