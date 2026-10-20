@@ -1,0 +1,46 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "Forecheck: Node.js, Python & PostgreSQL",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:5-24-trixie",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/python:1": { "version": "3.13", "installTools": false }
+	},
+
+	// Next.js on 3000, the API on 8000.
+	"forwardPorts": [3000, 8000],
+
+	"containerEnv": { "TZ": "UTC" },
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+
+	// Use 'postStartCommand' to run commands after the container is started.
+	"postStartCommand": "bash .devcontainer/start.sh",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"anthropic.claude-code",
+				"astral-sh.ruff",
+				"ms-python.python",
+				"ms-python.mypy-type-checker",
+				"dbaeumer.vscode-eslint",
+				"bradlc.vscode-tailwindcss",
+				"mtxr.sqltools",
+				"mtxr.sqltools-driver-pg"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+				"[python]": { "editor.defaultFormatter": "charliermarsh.ruff" }
+			}
+		}
+	},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "root"
+}
