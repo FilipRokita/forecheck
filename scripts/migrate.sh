@@ -7,8 +7,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-# Locally the settings live in .env; on a host they are already in the environment.
-if [ -f .env ]; then set -a; . ./.env; set +a; fi
+# Locally the settings live in .env; on a host they are already in the environment. Variables that
+# are already set win over .env, so an explicit DIRECT_URL always beats the file.
+if [ -f .env ]; then
+  while IFS='=' read -r key value; do
+    case "$key" in '' | '#'*) continue ;; esac
+    if [ -z "${!key+x}" ]; then export "$key=$value"; fi
+  done < .env
+fi
 
 if command -v uv >/dev/null 2>&1; then
   exec uv run --group migrate alembic upgrade head
