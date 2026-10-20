@@ -4,8 +4,9 @@ import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Forecheck",
-  description: "How far can you trust a weather forecast? Open-Meteo models scored against IMGW stations.",
+  title: "Forecheck: how far can you trust a weather forecast?",
+  description:
+    "Weather models ICON, ECMWF and GFS scored against IMGW station measurements in Poland, by station, quantity and days ahead.",
 };
 
 export const viewport: Viewport = { themeColor: "#0b0c0e" };

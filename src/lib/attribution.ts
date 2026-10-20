@@ -5,6 +5,8 @@
  *   mandatory on every work or product that uses the data, and the processing notice is mandatory when the data
  *   was processed, as the scores here are.
  * - Open-Meteo: CC BY 4.0, a link "Weather data by Open-Meteo.com" next to the data (https://open-meteo.com/en/terms).
+ *
+ * The API repeats these in /api/meta and a test keeps the two copies equal.
  */
 export const attribution = {
   openMeteo: { label: "Weather data by Open-Meteo.com", href: "https://open-meteo.com/" },

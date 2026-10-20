@@ -24,6 +24,8 @@ const csp = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // AGENTS.md is written by hand (see it). Without this, `next dev` appends its own block to the file.
+  agentRules: false,
   async headers() {
     return [
       {
