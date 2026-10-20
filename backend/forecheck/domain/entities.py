@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 
+from forecheck.domain.stats import ErrorStats
 from forecheck.domain.types import MAX_LEAD_DAYS, MIN_LEAD_DAYS, ModelId, StationId, Variable
 
 
@@ -61,3 +62,18 @@ class Observation:
     variable: Variable
     day: date
     value: float
+
+
+@dataclass(frozen=True, slots=True)
+class ScoreRecord:
+    """The statistics of one model's forecasts of one variable, for one lead and one valid day.
+
+    This is what is kept once a forecast has met its measurement: the forecast itself is dropped.
+    """
+
+    station_id: StationId
+    model: ModelId
+    variable: Variable
+    lead_days: int
+    valid_date: date
+    stats: ErrorStats
