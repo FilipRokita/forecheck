@@ -19,6 +19,9 @@ from forecheck.domain.types import (
 )
 from forecheck.domain.verdict import Verdict, build_verdict
 
+# The key under which a demo seed marks the data it wrote.
+SAMPLE_DATA_KEY = "sample_data"
+
 
 class UnknownStationError(LookupError):
     """The station id is not in the catalog."""
@@ -72,6 +75,8 @@ class ComparisonView:
 
 @dataclass(frozen=True, slots=True)
 class StatusView:
+    # True while the scores are made-up demo data (scripts/seed_demo.py), never on a real host.
+    sample_data: bool
     latest_scored_day: date | None
     waiting_forecasts: int
     last_runs: dict[str, RunRecord]
@@ -104,6 +109,7 @@ class Reports:
     def status(self) -> StatusView:
         with self._uow_factory() as uow:
             return StatusView(
+                sample_data=uow.state.get(SAMPLE_DATA_KEY) == "1",
                 latest_scored_day=uow.scores.latest_day(),
                 waiting_forecasts=uow.forecasts.count(),
                 last_runs={

@@ -52,7 +52,7 @@ ignore = ["PLR2004", "PLR0913", "PLR0917", "RUF001", "RUF002", "RUF003"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["PLR0915", "T20"]
-"scripts/**" = ["T20", "PLR0915", "PLR0912", "E501", "SLF001"]
+"scripts/**" = ["E402", "T20", "PLR0915", "PLR0912", "E501", "SLF001"]
 "migrations/**" = ["N999"]
 
 [tool.ruff.lint.flake8-tidy-imports]

@@ -25,11 +25,11 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
 
-from forecheck.application.catalog import DEFAULT_CATALOG  # noqa: E402
-from forecheck.application.errors import SourceError  # noqa: E402
-from forecheck.domain.types import Variable  # noqa: E402
-from forecheck.infrastructure import imgw, open_meteo  # noqa: E402
-from forecheck.infrastructure.http import HttpClient  # noqa: E402
+from forecheck.application.catalog import DEFAULT_CATALOG
+from forecheck.application.errors import SourceError
+from forecheck.domain.types import Variable
+from forecheck.infrastructure import imgw, open_meteo
+from forecheck.infrastructure.http import HttpClient
 
 FIXTURES = ROOT / "tests" / "fixtures"
 UA = "forecheck-explore/0.1 (+https://github.com/FilipRokita/forecheck)"
