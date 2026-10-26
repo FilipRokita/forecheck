@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:migrate; fi && next build",
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }],
+  "crons": [{ "path": "/api/cron/collect", "schedule": "23 9 * * *" }],
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{tests/**,node_modules/**,src/**,docs/**,.venv/**,.next/**,scripts/**,migrations/**,e2e/**}"
+    }
+  }
+}

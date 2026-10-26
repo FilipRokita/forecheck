@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Design tokens. Raw colors live here and nowhere else. */
+@theme {
+  --color-bg: #0b0c0e;
+  --color-surface: #121417;
+  --color-surface-raised: #1c2025;
+  --color-border: #24272d;
+  --color-border-strong: #2e323a;
+  --color-fg: #e8eaed;
+  --color-fg-muted: #98a0ab;
+  --color-fg-soft: #c4c9d1;
+  --color-highlight: #15221f;
+  --color-grid: #1a1d22;
+
+  --color-model-icon: #8aa4ff;
+  --color-model-ecmwf: #6ee7c8;
+  --color-model-gfs: #f2b36a;
+
+  --color-warn: #f2b36a;
+  --color-warn-bg: #1d1810;
+  --color-warn-border: #5a4a2e;
+
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+}

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: forecheck
+          POSTGRES_PASSWORD: forecheck
+          POSTGRES_DB: forecheck_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U forecheck" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://forecheck:forecheck@localhost:5432/forecheck_test
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - run: uv sync --all-groups --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: PYTHONPATH=backend uv run lint-imports
+      - run: uv run pytest
+      - name: Host migration requirements are in sync with the lockfile
+        run: |
+          uv export --only-group migrate --no-hashes --no-emit-project -o requirements/migrate.txt
+          git diff --exit-code -- requirements/migrate.txt
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: astral-sh/setup-uv@v7
+      - run: uv sync --all-groups --locked
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: Generated API types are up to date
+        run: npm run api:types:check
+      - run: npm run build

@@ -1,0 +1,1320 @@
+{
+  "components": {
+    "schemas": {
+      "AttributionOut": {
+        "additionalProperties": false,
+        "properties": {
+          "imgw_processed": {
+            "title": "Imgw Processed",
+            "type": "string"
+          },
+          "imgw_source": {
+            "title": "Imgw Source",
+            "type": "string"
+          },
+          "imgw_url": {
+            "title": "Imgw Url",
+            "type": "string"
+          },
+          "open_meteo": {
+            "title": "Open Meteo",
+            "type": "string"
+          },
+          "open_meteo_licence": {
+            "title": "Open Meteo Licence",
+            "type": "string"
+          },
+          "open_meteo_url": {
+            "title": "Open Meteo Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "open_meteo",
+          "open_meteo_url",
+          "open_meteo_licence",
+          "imgw_source",
+          "imgw_processed",
+          "imgw_url"
+        ],
+        "title": "AttributionOut",
+        "type": "object"
+      },
+      "ComparisonOut": {
+        "additionalProperties": false,
+        "properties": {
+          "lead_days": {
+            "title": "Lead Days",
+            "type": "integer"
+          },
+          "metric": {
+            "enum": [
+              "mae",
+              "accuracy"
+            ],
+            "title": "Metric",
+            "type": "string"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ComparisonRowOut"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "variable": {
+            "title": "Variable",
+            "type": "string"
+          },
+          "window": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WindowOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "variable",
+          "period",
+          "lead_days",
+          "window",
+          "metric",
+          "rows"
+        ],
+        "title": "ComparisonOut",
+        "type": "object"
+      },
+      "ComparisonRowOut": {
+        "additionalProperties": false,
+        "properties": {
+          "best_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Model"
+          },
+          "best_model_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Model Label"
+          },
+          "figures": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FigureOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "station": {
+            "$ref": "#/components/schemas/StationOut"
+          }
+        },
+        "required": [
+          "station",
+          "best_model",
+          "best_model_label",
+          "figures"
+        ],
+        "title": "ComparisonRowOut",
+        "type": "object"
+      },
+      "FigureOut": {
+        "additionalProperties": false,
+        "description": "Every figure for one model over some scored days. A figure that does not apply is null.",
+        "properties": {
+          "accuracy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Share of days the wet/dry call was right (precipitation).",
+            "title": "Accuracy"
+          },
+          "bias": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bias"
+          },
+          "brier": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brier"
+          },
+          "false_alarm_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "False Alarm Ratio"
+          },
+          "hit_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit Rate"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "n": {
+            "description": "Scored days.",
+            "title": "N",
+            "type": "integer"
+          },
+          "rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rmse"
+          }
+        },
+        "required": [
+          "n",
+          "mae",
+          "bias",
+          "rmse",
+          "accuracy",
+          "hit_rate",
+          "false_alarm_ratio",
+          "brier"
+        ],
+        "title": "FigureOut",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthOut": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthOut",
+        "type": "object"
+      },
+      "HorizonOut": {
+        "additionalProperties": false,
+        "properties": {
+          "metric": {
+            "enum": [
+              "mae",
+              "accuracy"
+            ],
+            "title": "Metric",
+            "type": "string"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelHorizonOut"
+            },
+            "title": "Models",
+            "type": "array"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "station": {
+            "$ref": "#/components/schemas/StationOut"
+          },
+          "trust_threshold": {
+            "title": "Trust Threshold",
+            "type": "number"
+          },
+          "variable": {
+            "title": "Variable",
+            "type": "string"
+          },
+          "window": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WindowOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "station",
+          "variable",
+          "period",
+          "window",
+          "metric",
+          "trust_threshold",
+          "models"
+        ],
+        "title": "HorizonOut",
+        "type": "object"
+      },
+      "LeadFigureOut": {
+        "additionalProperties": false,
+        "properties": {
+          "accuracy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Share of days the wet/dry call was right (precipitation).",
+            "title": "Accuracy"
+          },
+          "bias": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bias"
+          },
+          "brier": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brier"
+          },
+          "false_alarm_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "False Alarm Ratio"
+          },
+          "hit_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit Rate"
+          },
+          "lead_days": {
+            "title": "Lead Days",
+            "type": "integer"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "n": {
+            "description": "Scored days.",
+            "title": "N",
+            "type": "integer"
+          },
+          "rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rmse"
+          }
+        },
+        "required": [
+          "n",
+          "mae",
+          "bias",
+          "rmse",
+          "accuracy",
+          "hit_rate",
+          "false_alarm_ratio",
+          "brier",
+          "lead_days"
+        ],
+        "title": "LeadFigureOut",
+        "type": "object"
+      },
+      "MetaOut": {
+        "additionalProperties": false,
+        "properties": {
+          "attribution": {
+            "$ref": "#/components/schemas/AttributionOut"
+          },
+          "min_samples": {
+            "title": "Min Samples",
+            "type": "integer"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelOut"
+            },
+            "title": "Models",
+            "type": "array"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/PeriodOut"
+            },
+            "title": "Periods",
+            "type": "array"
+          },
+          "precipitation_threshold_mm": {
+            "title": "Precipitation Threshold Mm",
+            "type": "number"
+          },
+          "ranking_lead_max": {
+            "title": "Ranking Lead Max",
+            "type": "integer"
+          },
+          "stations": {
+            "items": {
+              "$ref": "#/components/schemas/StationOut"
+            },
+            "title": "Stations",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusOut"
+          },
+          "variables": {
+            "items": {
+              "$ref": "#/components/schemas/VariableOut"
+            },
+            "title": "Variables",
+            "type": "array"
+          }
+        },
+        "required": [
+          "stations",
+          "models",
+          "variables",
+          "periods",
+          "min_samples",
+          "precipitation_threshold_mm",
+          "ranking_lead_max",
+          "attribution",
+          "status"
+        ],
+        "title": "MetaOut",
+        "type": "object"
+      },
+      "ModelHorizonOut": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "leads": {
+            "items": {
+              "$ref": "#/components/schemas/LeadFigureOut"
+            },
+            "title": "Leads",
+            "type": "array"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model",
+          "label",
+          "leads"
+        ],
+        "title": "ModelHorizonOut",
+        "type": "object"
+      },
+      "ModelOut": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "ModelOut",
+        "type": "object"
+      },
+      "Period": {
+        "description": "How far back a ranking looks, counted from the latest scored day.",
+        "enum": [
+          "30d",
+          "90d",
+          "12m"
+        ],
+        "title": "Period",
+        "type": "string"
+      },
+      "PeriodOut": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "days"
+        ],
+        "title": "PeriodOut",
+        "type": "object"
+      },
+      "RankedModelOut": {
+        "additionalProperties": false,
+        "properties": {
+          "accuracy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Share of days the wet/dry call was right (precipitation).",
+            "title": "Accuracy"
+          },
+          "bias": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bias"
+          },
+          "brier": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brier"
+          },
+          "false_alarm_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "False Alarm Ratio"
+          },
+          "hit_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit Rate"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "n": {
+            "description": "Scored days.",
+            "title": "N",
+            "type": "integer"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rmse"
+          }
+        },
+        "required": [
+          "n",
+          "mae",
+          "bias",
+          "rmse",
+          "accuracy",
+          "hit_rate",
+          "false_alarm_ratio",
+          "brier",
+          "model",
+          "label",
+          "rank"
+        ],
+        "title": "RankedModelOut",
+        "type": "object"
+      },
+      "RunOut": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "at",
+          "ok",
+          "message"
+        ],
+        "title": "RunOut",
+        "type": "object"
+      },
+      "StationOut": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "latitude",
+          "longitude"
+        ],
+        "title": "StationOut",
+        "type": "object"
+      },
+      "StatusOut": {
+        "additionalProperties": false,
+        "properties": {
+          "last_runs": {
+            "items": {
+              "$ref": "#/components/schemas/RunOut"
+            },
+            "title": "Last Runs",
+            "type": "array"
+          },
+          "latest_scored_day": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Scored Day"
+          },
+          "sample_data": {
+            "description": "True while the scores are made-up demo data.",
+            "title": "Sample Data",
+            "type": "boolean"
+          },
+          "waiting_forecasts": {
+            "title": "Waiting Forecasts",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sample_data",
+          "latest_scored_day",
+          "waiting_forecasts",
+          "last_runs"
+        ],
+        "title": "StatusOut",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "Variable": {
+        "description": "What is forecast and measured. Every value is a daily (UTC day) figure.",
+        "enum": [
+          "temperature",
+          "precipitation",
+          "wind",
+          "pressure"
+        ],
+        "title": "Variable",
+        "type": "string"
+      },
+      "VariableOut": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "metric": {
+            "enum": [
+              "mae",
+              "accuracy"
+            ],
+            "title": "Metric",
+            "type": "string"
+          },
+          "trust_threshold": {
+            "title": "Trust Threshold",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "unit",
+          "metric",
+          "trust_threshold"
+        ],
+        "title": "VariableOut",
+        "type": "object"
+      },
+      "VerdictOut": {
+        "additionalProperties": false,
+        "properties": {
+          "best_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Model"
+          },
+          "best_model_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Model Label"
+          },
+          "lead_from": {
+            "title": "Lead From",
+            "type": "integer"
+          },
+          "lead_to": {
+            "title": "Lead To",
+            "type": "integer"
+          },
+          "next_day": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FigureOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The best model's day-ahead figures."
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "ranking": {
+            "items": {
+              "$ref": "#/components/schemas/RankedModelOut"
+            },
+            "title": "Ranking",
+            "type": "array"
+          },
+          "scored_days": {
+            "title": "Scored Days",
+            "type": "integer"
+          },
+          "station": {
+            "$ref": "#/components/schemas/StationOut"
+          },
+          "trust_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trust Days"
+          },
+          "variable": {
+            "title": "Variable",
+            "type": "string"
+          },
+          "window": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WindowOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "station",
+          "variable",
+          "period",
+          "window",
+          "lead_from",
+          "lead_to",
+          "best_model",
+          "best_model_label",
+          "trust_days",
+          "next_day",
+          "scored_days",
+          "ranking"
+        ],
+        "title": "VerdictOut",
+        "type": "object"
+      },
+      "WindowOut": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "WindowOut",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "\nHow far can you trust a weather forecast? Open-Meteo models (ICON, ECMWF, GFS) are scored against\nIMGW station measurements. Read-only. Data: Open-Meteo.com (CC BY 4.0), IMGW-PIB (processed).\n",
+    "title": "Forecheck API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/comparison": {
+      "get": {
+        "operationId": "comparison",
+        "parameters": [
+          {
+            "description": "What to look at.",
+            "in": "query",
+            "name": "variable",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Variable",
+              "description": "What to look at."
+            }
+          },
+          {
+            "description": "How far back to look, from the latest scored day.",
+            "in": "query",
+            "name": "period",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Period",
+              "description": "How far back to look, from the latest scored day."
+            }
+          },
+          {
+            "description": "Days ahead.",
+            "in": "query",
+            "name": "lead_days",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "description": "Days ahead.",
+              "maximum": 7,
+              "minimum": 1,
+              "title": "Lead Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComparisonOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Comparison",
+        "tags": [
+          "scores"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/api/meta": {
+      "get": {
+        "operationId": "meta",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Meta",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/api/stations/{station_id}/export.csv": {
+      "get": {
+        "operationId": "export_csv",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "What to look at.",
+            "in": "query",
+            "name": "variable",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Variable",
+              "description": "What to look at."
+            }
+          },
+          {
+            "description": "How far back to look, from the latest scored day.",
+            "in": "query",
+            "name": "period",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Period",
+              "description": "How far back to look, from the latest scored day."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {},
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Scores per model and lead."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Csv",
+        "tags": [
+          "scores"
+        ]
+      }
+    },
+    "/api/stations/{station_id}/horizon": {
+      "get": {
+        "operationId": "horizon",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "What to look at.",
+            "in": "query",
+            "name": "variable",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Variable",
+              "description": "What to look at."
+            }
+          },
+          {
+            "description": "How far back to look, from the latest scored day.",
+            "in": "query",
+            "name": "period",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Period",
+              "description": "How far back to look, from the latest scored day."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HorizonOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Horizon",
+        "tags": [
+          "scores"
+        ]
+      }
+    },
+    "/api/stations/{station_id}/verdict": {
+      "get": {
+        "operationId": "verdict",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "What to look at.",
+            "in": "query",
+            "name": "variable",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Variable",
+              "description": "What to look at."
+            }
+          },
+          {
+            "description": "How far back to look, from the latest scored day.",
+            "in": "query",
+            "name": "period",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Period",
+              "description": "How far back to look, from the latest scored day."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verdict",
+        "tags": [
+          "scores"
+        ]
+      }
+    }
+  }
+}
