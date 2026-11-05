@@ -235,6 +235,6 @@ What was checked against the providers, and how, is in [`docs/data-sources.md`](
 | [`docs/repo-layout.md`](docs/repo-layout.md) | What every file and folder in the repository is for |
 | [`AGENTS.md`](AGENTS.md) | Rules for AI coding agents working in this repository |
 
-## License
+## 📄 License
 
 [MIT](LICENSE) for the code. See [Data and licences](#-data-and-licences) for the data.
