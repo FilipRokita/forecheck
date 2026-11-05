@@ -21,7 +21,7 @@ export function StationComparison({ comparison, variable, period, selectedStatio
         {variable.label}, {comparison.lead_days}-day forecasts, last {period.label}. Choose a station to open it.
       </CardSubtitle>
 
-      <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start">
+      <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:items-start">
         <div className="lg:sticky lg:top-24">
           <StationMap rows={comparison.rows} selectedStation={selectedStation} onSelect={onSelect} />
         </div>
@@ -51,19 +51,19 @@ export function StationComparison({ comparison, variable, period, selectedStatio
                         type="button"
                         aria-current={selected ? "true" : undefined}
                         onClick={() => onSelect(row.station.id)}
-                        className="min-h-12 w-full px-3 text-left hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-model-ecmwf"
+                        className="min-h-12 w-full px-3 lg:min-h-10 text-left hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-model-ecmwf"
                       >
                         {row.station.name}
                       </button>
                     </th>
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3 lg:py-2">
                       {row.best_model && row.best_model_label ? (
                         <ModelName id={row.best_model} label={row.best_model_label} />
                       ) : (
                         <span className="text-fg-muted">Too few days</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-right font-mono">{row.figures ? headline(variable, row.figures) : "–"}</td>
+                    <td className="px-3 py-3 text-right font-mono lg:py-2">{row.figures ? headline(variable, row.figures) : "–"}</td>
                   </tr>
                 );
               })}

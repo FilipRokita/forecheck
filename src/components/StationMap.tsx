@@ -23,7 +23,7 @@ export function StationMap({ rows, selectedStation, onSelect }: Props) {
 
   return (
     <div>
-      <svg viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`} aria-hidden="true" className="mx-auto w-full max-w-md">
+      <svg viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`} aria-hidden="true" className="mx-auto w-full max-w-xl">
         <path d={POLAND_OUTLINE} className="fill-surface-raised stroke-border-strong" strokeWidth="1.5" strokeLinejoin="round" />
         {rows.map((row, index) => {
           const { x, y } = project(row.station.latitude, row.station.longitude);
