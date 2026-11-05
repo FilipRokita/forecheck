@@ -134,4 +134,17 @@ describe("Dashboard", () => {
     await screen.findByText("Rain tomorrow");
     expect(await accessibilityViolations(container)).toEqual([]);
   });
+
+  it("still shows the verdict when only the rain request fails", async () => {
+    serve({
+      "/api/stations/12566/verdict": (url) => {
+        if (url.searchParams.get("variable") === "precipitation") throw new Error("boom");
+        return verdict();
+      },
+    });
+    render(<Dashboard />);
+    expect(await screen.findByText("Most accurate model", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByText("Could not load rain scores.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Model ranking" })).toBeInTheDocument();
+  });
 });

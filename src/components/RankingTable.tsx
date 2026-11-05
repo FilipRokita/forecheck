@@ -4,7 +4,8 @@ import { headlineValue } from "@/components/metric";
 import type { RankedModel, Variable, Verdict } from "@/lib/api/types";
 import { formatNumber, formatPercent } from "@/lib/format";
 
-type Props = { variable: Variable; verdict: Verdict; rain: Verdict };
+/** `rain` is the precipitation verdict, or undefined while it is loading or failed: its columns then show a dash. */
+type Props = { variable: Variable; verdict: Verdict; rain: Verdict | undefined };
 
 type Column = { key: string; header: string; cell: (model: RankedModel, rain: RankedModel | undefined) => string };
 
@@ -34,7 +35,7 @@ function formatSigned(value: number | null): string {
 
 export function RankingTable({ variable, verdict, rain }: Props) {
   const cols = columns(variable);
-  const rainBy = new Map(rain.ranking.map((model) => [model.model, model]));
+  const rainBy = new Map((rain?.ranking ?? []).map((model) => [model.model, model]));
   const first = verdict.lead_from;
   const last = verdict.lead_to;
 

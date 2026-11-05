@@ -1,9 +1,13 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { VerdictCards } from "@/components/VerdictCards";
+import type { Verdict } from "@/lib/api/types";
+import type { Loadable } from "@/lib/api/use-api";
 import { PERIOD_30, PRECIPITATION, TEMPERATURE, rainVerdict, ranked, verdict } from "@/test/fixtures";
 
-function show(overrides = {}, rain = rainVerdict()) {
+const ready = (data: Verdict): Loadable<Verdict> => ({ status: "ready", data });
+
+function show(overrides = {}, rain: Loadable<Verdict> = ready(rainVerdict())) {
   render(<VerdictCards variable={TEMPERATURE} period={PERIOD_30} verdict={verdict(overrides)} rain={rain} wetThresholdMm={0.1} />);
 }
 
@@ -43,7 +47,7 @@ describe("VerdictCards", () => {
   });
 
   it("says it is too early when there is no ranking yet", () => {
-    show({ best_model: null, best_model_label: null, trust_days: null, next_day: null, ranking: [ranked("icon", "ICON", null)], scored_days: 0 }, rainVerdict({ next_day: null, ranking: [] }));
+    show({ best_model: null, best_model_label: null, trust_days: null, next_day: null, ranking: [ranked("icon", "ICON", null)], scored_days: 0 }, ready(rainVerdict({ next_day: null, ranking: [] })));
     expect(screen.getByText("Too early")).toBeInTheDocument();
     expect(screen.getByText("Rain tomorrow").parentElement).toHaveTextContent("No scored rain forecasts yet.");
     expect(screen.getByText("How far to trust it").parentElement).toHaveTextContent("Not enough scored days yet to say.");
@@ -55,11 +59,25 @@ describe("VerdictCards", () => {
         variable={PRECIPITATION}
         period={PERIOD_30}
         verdict={rainVerdict({ trust_days: 2, best_model_label: "ECMWF" })}
-        rain={rainVerdict()}
+        rain={ready(rainVerdict())}
         wetThresholdMm={0.1}
       />,
     );
     expect(screen.getByText("How far to trust it").parentElement).toHaveTextContent("At least 80% of rain calls right, for ECMWF.");
     expect(screen.getByText(/Most accurate model/).parentElement).toHaveTextContent("Accuracy 81%");
+  });
+
+  it("keeps the other cards when the rain scores are still loading", () => {
+    show({}, { status: "loading" });
+    expect(screen.getByText("Rain tomorrow").parentElement).toHaveTextContent("Loading rain scores.");
+    expect(screen.getByText("ECMWF", { selector: "div" })).toBeInTheDocument();
+    expect(screen.getByText("How far to trust it").parentElement).toHaveTextContent("3 days");
+  });
+
+  it("keeps the other cards, and offers a retry, when the rain scores failed", () => {
+    show({}, { status: "error", error: new Error("boom"), retry: () => undefined });
+    expect(screen.getByText("Rain tomorrow").parentElement).toHaveTextContent("Could not load rain scores.");
+    expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
+    expect(screen.getByText("ECMWF", { selector: "div" })).toBeInTheDocument();
   });
 });

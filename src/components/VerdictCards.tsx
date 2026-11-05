@@ -1,6 +1,7 @@
 import { Card, Eyebrow } from "@/components/Card";
 import { headline, trustRule } from "@/components/metric";
 import type { Period, Variable, Verdict } from "@/lib/api/types";
+import type { Loadable } from "@/lib/api/use-api";
 import { formatNumber, formatPercent, plural } from "@/lib/format";
 import { modelColor } from "@/lib/models";
 
@@ -8,8 +9,9 @@ type Props = {
   variable: Variable;
   period: Period;
   verdict: Verdict;
-  /** The precipitation verdict for the same station and period: the "rain tomorrow" card is about rain whatever is selected. */
-  rain: Verdict;
+  /** The precipitation verdict for the same station and period: the "rain tomorrow" card is about rain whatever is selected.
+   * It is a separate request, so the other cards do not wait for it and do not fail with it. */
+  rain: Loadable<Verdict>;
   /** A day counts as wet from this much rain, in mm. */
   wetThresholdMm: number;
 };
@@ -72,7 +74,28 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
   );
 }
 
-function RainTomorrow({ rain, wetThresholdMm }: { rain: Verdict; wetThresholdMm: number }) {
+function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>; wetThresholdMm: number }) {
+  if (state.status !== "ready") {
+    return (
+      <Card className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
+        <Eyebrow>Rain tomorrow</Eyebrow>
+        <div className={`my-3 font-mono ${BIG} text-fg-muted`}>–</div>
+        {state.status === "loading" ? (
+          <p role="status" className="text-fg-soft">
+            Loading rain scores.
+          </p>
+        ) : (
+          <div role="alert">
+            <p className="text-fg-soft">Could not load rain scores.</p>
+            <button type="button" onClick={state.retry} className="mt-3 min-h-11 rounded-lg border border-border-strong px-4 hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-model-ecmwf">
+              Try again
+            </button>
+          </div>
+        )}
+      </Card>
+    );
+  }
+  const rain = state.data;
   const best = rain.ranking.find((model) => model.rank === 1);
   const share = rain.next_day?.accuracy ?? null;
   return (

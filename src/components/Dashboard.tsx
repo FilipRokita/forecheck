@@ -92,14 +92,10 @@ function Loaded({ meta }: { meta: Meta }) {
       <main className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-2 sm:gap-4 sm:px-10">
         <Async state={verdict} label="the verdict" skeletonClassName="h-48">
           {(v) => (
-            <Async state={rain} label="the verdict" skeletonClassName="h-48">
-              {(r) => (
-                <>
-                  <FreshnessNote latest={status.latest_scored_day} scoredDays={v.scored_days} windowDays={period.days} />
-                  <VerdictCards variable={variable} period={period} verdict={v} rain={r} wetThresholdMm={meta.precipitation_threshold_mm} />
-                </>
-              )}
-            </Async>
+            <>
+              <FreshnessNote latest={status.latest_scored_day} scoredDays={v.scored_days} windowDays={period.days} />
+              <VerdictCards variable={variable} period={period} verdict={v} rain={rain} wetThresholdMm={meta.precipitation_threshold_mm} />
+            </>
           )}
         </Async>
 
@@ -108,11 +104,7 @@ function Loaded({ meta }: { meta: Meta }) {
             {(h) => <HorizonChart horizon={h} variable={variable} periodLabel={period.label} />}
           </Async>
           <Async state={verdict} label="the ranking" skeletonClassName="h-72 flex-[2_1_22rem]">
-            {(v) => (
-              <Async state={rain} label="the ranking" skeletonClassName="h-72 flex-[2_1_22rem]">
-                {(r) => <RankingTable variable={variable} verdict={v} rain={r} />}
-              </Async>
-            )}
+            {(v) => <RankingTable variable={variable} verdict={v} rain={rain.status === "ready" ? rain.data : undefined} />}
           </Async>
         </div>
 
