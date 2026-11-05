@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Dashboard } from "@/components/Dashboard";
@@ -89,11 +89,12 @@ describe("Dashboard", () => {
     await waitFor(() => expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "false"));
   });
 
-  it("opens another station from the comparison", async () => {
+  it("changes the station from the picker, updates the address and remembers it", async () => {
     serve();
     render(<Dashboard />);
     await screen.findByText("Rain tomorrow");
-    await userEvent.click(within(screen.getByRole("table", { name: /Best model/ })).getByRole("button", { name: "Rzeszów" }));
+    await userEvent.click(screen.getByRole("button", { name: /IMGW station/ }));
+    await userEvent.click(screen.getByRole("option", { name: "Rzeszów" }));
     await waitFor(() => expect(window.location.search).toContain("station=12580"));
     expect(window.localStorage.getItem("forecheck:selection")).toContain("12580");
   });

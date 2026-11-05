@@ -11,17 +11,16 @@ type Props = {
   variable: Variable;
   period: Period;
   selectedStation: string;
-  onSelect: (stationId: string) => void;
 };
 
-export function StationComparison({ comparison, variable, period, selectedStation, onSelect }: Props) {
+export function StationComparison({ comparison, variable, period, selectedStation }: Props) {
   const valueHeader = variable.metric === "accuracy" ? "Accuracy" : `Error (${variable.unit})`;
   return (
     <Card as="section" delay={320}>
       <CardTitle>Station comparison</CardTitle>
       <CardSubtitle>
         <Fade id={`${variable.id}|${period.id}`}>
-          {variable.label}, {comparison.lead_days}-day forecasts, last {period.label}. Choose a station to open it.
+          {variable.label}, {comparison.lead_days}-day forecasts, last {period.label}.
         </Fade>
       </CardSubtitle>
 
@@ -47,20 +46,13 @@ export function StationComparison({ comparison, variable, period, selectedStatio
               {comparison.rows.map((row) => {
                 const selected = row.station.id === selectedStation;
                 return (
-                  // The whole row is the target. The button in the first cell is what the keyboard and screen readers use: its click bubbles up here.
                   <tr
                     key={row.station.id}
-                    onClick={() => onSelect(row.station.id)}
-                    className={`cursor-pointer border-b border-grid last:border-0 ${selected ? "bg-highlight" : "hover:bg-surface-raised"} transition-colors`}
+                    aria-current={selected ? "true" : undefined}
+                    className={`border-b border-grid last:border-0 ${selected ? "bg-highlight" : ""}`}
                   >
-                    <th scope="row" className="p-0 text-left font-normal">
-                      <button
-                        type="button"
-                        aria-current={selected ? "true" : undefined}
-                        className="min-h-12 w-full px-3 lg:min-h-10 text-left hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-model-ecmwf"
-                      >
-                        {row.station.name}
-                      </button>
+                    <th scope="row" className="px-3 py-3 text-left font-normal lg:py-2">
+                      {row.station.name}
                     </th>
                     <td className="px-3 py-3 lg:py-2">
                       {row.best_model && row.best_model_label ? (

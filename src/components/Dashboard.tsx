@@ -141,7 +141,7 @@ function Loaded({ meta }: { meta: Meta }) {
         </div>
 
         <Async state={comparison} label="the station comparison" skeletonClassName="h-80">
-          {(c) => <StationComparison comparison={c} variable={variableOf(c.variable)} period={periodOf(c.period)} selectedStation={stationId} onSelect={(id) => choose({ station: id })} />}
+          {(c) => <StationComparison comparison={c} variable={variableOf(c.variable)} period={periodOf(c.period)} selectedStation={stationId} />}
         </Async>
 
         <Footer />

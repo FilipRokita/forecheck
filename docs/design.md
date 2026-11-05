@@ -36,7 +36,7 @@ the page's content security policy allows only its own origin). Numbers use a de
 | Verdict | A one-sentence summary, then three cards in a row | The same, cards stacked |
 | Horizon chart | Wide bars | The same, narrower bars |
 | Ranking | A table | A card per model |
-| Comparison | A map of Poland, centred beside a table | The map above the same table, rows 48 px tall |
+| Comparison | A map of Poland, centred beside a table | The map above the same table |
 
 Both have the same features. Nothing is hidden on a phone.
 
