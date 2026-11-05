@@ -2,7 +2,7 @@ import { attribution } from "@/lib/attribution";
 import { REPOSITORY } from "@/lib/links";
 
 
-/** The attributions the data licences require, word for word, and a note on how to read the numbers. */
+/** The attributions the data licences require, word for word, and a one-line note on the delay and that this is not an official forecast. */
 export function Footer() {
   return (
     <footer className="mt-2 flex max-w-3xl flex-col gap-3 pb-6 text-xs text-fg-muted">
@@ -24,9 +24,7 @@ export function Footer() {
       </p>
       <p lang="pl">{attribution.imgwProcessed}.</p>
       <p>
-        Each score compares a forecast issued ahead of time with what a station then measured. Figures are more reliable the
-        more days they rest on. Scores run about two weeks behind, because IMGW publishes a month of measurements after it
-        ends. Not an official forecast.{" "}
+        Scores run about two weeks behind. Not an official forecast.{" "}
         <a href={REPOSITORY} className="underline underline-offset-2 hover:text-fg" rel="noreferrer">
           How it works
         </a>
