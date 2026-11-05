@@ -97,21 +97,38 @@ The full method, with its limits, is in [`docs/spec.md`](docs/spec.md).
 
 Python owns the data, the database and every calculation. Next.js only displays what the API returns.
 
+```mermaid
+flowchart LR
+    subgraph PROV ["Data providers"]
+        direction TB
+        OM["<b>Open-Meteo</b><br/>forecasts"]
+        IM["<b>IMGW-PIB</b><br/>measurements"]
+    end
+
+    subgraph PY ["Python backend"]
+        direction TB
+        EP["<b>entrypoints</b><br/>FastAPI, wires the layers"]
+        INF["<b>infrastructure</b><br/>adapters: HTTP, PostgreSQL, clock"]
+        APP["<b>application</b><br/>use cases and ports"]
+        DOM["<b>domain</b><br/>pure rules: scoring, ranking, trust"]
+        EP --> INF --> APP --> DOM
+    end
+
+    DB[("<b>PostgreSQL</b>")]
+
+    subgraph WEB ["Next.js"]
+        direction TB
+        TS["Generated<br/>TypeScript types"]
+        VIEW["<b>View</b><br/>only displays"]
+        TS --> VIEW
+    end
+
+    PROV --> PY
+    PY <--> DB
+    PY -->|OpenAPI| WEB
 ```
-                     Open-Meteo            IMGW-PIB
-                         │                    │
-                         ▼                    ▼
-   ┌──────────────────────────────────────────────────────────┐
-   │ infrastructure   adapters: HTTP, PostgreSQL, clock       │
-   ├──────────────────────────────────────────────────────────┤
-   │ application      use cases and the ports they need       │
-   ├──────────────────────────────────────────────────────────┤
-   │ domain           pure rules: scoring, ranking, trust     │
-   └──────────────────────────────────────────────────────────┘
-         ▲  entrypoints/http (FastAPI) wires the layers together
-         │
-   OpenAPI ──► generated TypeScript types ──► Next.js view
-```
+
+Inside the backend, arrows show the only direction imports may go.
 
 - **Hexagonal.** The domain imports only the standard library. `import-linter` fails CI if a layer reaches the wrong way.
 - **Ports.** `ForecastSource`, `ForecastArchive`, `ObservationSource`, repositories, `Clock`. Swapping a provider means
