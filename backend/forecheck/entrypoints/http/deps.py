@@ -6,9 +6,11 @@ from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request, Response, status
 
-from forecheck.entrypoints.composition import Services, get_services
+from forecheck.entrypoints.composition import Services, get_services, get_settings
+from forecheck.infrastructure.settings import Settings
 
 ServicesDep = Annotated[Services, Depends(get_services)]
+SettingsDep = Annotated[Settings, Depends(get_settings)]
 
 # Data changes once a day. Let the CDN keep a response for an hour and serve a stale one while
 # it fetches a fresh copy, so almost no visit reaches the database.
@@ -39,10 +41,13 @@ def only_query_params(*allowed: str) -> Callable[[Request], None]:
 
 
 def require_cron_secret(
-    services: ServicesDep, authorization: Annotated[str | None, Header()] = None
+    settings: SettingsDep, authorization: Annotated[str | None, Header()] = None
 ) -> None:
-    """Vercel Cron sends ``Authorization: Bearer <CRON_SECRET>``. No secret: the route is off."""
-    secret = services.settings.cron_secret
+    """Vercel Cron sends ``Authorization: Bearer <CRON_SECRET>``. No secret: the route is off.
+
+    Needs only the settings, so a caller without the secret never makes the app build its
+    services or open the database, and a missing ``DATABASE_URL`` does not turn "off" into a 500."""
+    secret = settings.cron_secret
     if not secret:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     expected = f"Bearer {secret}"

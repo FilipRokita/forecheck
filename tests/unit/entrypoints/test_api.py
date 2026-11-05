@@ -4,6 +4,7 @@ from collections.abc import Iterator
 from datetime import date, timedelta
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from forecheck.application import attribution
@@ -17,7 +18,7 @@ from forecheck.domain.entities import ScoreRecord
 from forecheck.domain.rules import Rules
 from forecheck.domain.stats import ErrorStats
 from forecheck.domain.types import ModelId, StationId, Variable
-from forecheck.entrypoints.composition import Services, get_services
+from forecheck.entrypoints.composition import Services, get_services, get_settings
 from forecheck.entrypoints.http.app import create_app
 from forecheck.infrastructure.settings import Settings
 from tests.support.memory import MemoryDatabase
@@ -81,6 +82,11 @@ def make_services(
     )
 
 
+def serve(app: FastAPI, services: Services) -> None:
+    app.dependency_overrides[get_services] = lambda: services
+    app.dependency_overrides[get_settings] = lambda: services.settings
+
+
 @pytest.fixture
 def database() -> MemoryDatabase:
     database = MemoryDatabase()
@@ -91,7 +97,7 @@ def database() -> MemoryDatabase:
 @pytest.fixture
 def client(database: MemoryDatabase) -> Iterator[TestClient]:
     app = create_app()
-    app.dependency_overrides[get_services] = lambda: make_services(database)
+    serve(app, make_services(database))
     with TestClient(app) as test_client:
         yield test_client
 
@@ -197,7 +203,7 @@ def test_the_horizon_has_every_model_with_its_leads_in_order(client: TestClient)
 def test_precipitation_is_reported_as_accuracy(database: MemoryDatabase) -> None:
     seed(database, Variable.PRECIPITATION)
     app = create_app()
-    app.dependency_overrides[get_services] = lambda: make_services(database)
+    serve(app, make_services(database))
     body = (
         TestClient(app)
         .get("/api/stations/12566/verdict", params={"variable": "precipitation", "period": "30d"})
@@ -255,9 +261,20 @@ def test_the_csv_export_of_an_unknown_station_is_a_404(client: TestClient) -> No
 
 def test_the_cron_route_is_off_without_a_secret(database: MemoryDatabase) -> None:
     app = create_app()
-    app.dependency_overrides[get_services] = lambda: make_services(database, cron_secret="")
+    serve(app, make_services(database, cron_secret=""))
     response = TestClient(app).get("/api/cron/collect", headers={"Authorization": "Bearer "})
     assert response.status_code == 404
+
+
+def test_the_cron_route_checks_the_secret_before_building_any_services() -> None:
+    # No get_services override: building them here would raise (no DATABASE_URL) and answer 500.
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(cron_secret="", _env_file=None)
+    response = TestClient(app).get("/api/cron/collect")
+    assert response.status_code == 404
+
+    app.dependency_overrides[get_settings] = lambda: Settings(cron_secret="s3cret", _env_file=None)
+    assert TestClient(app).get("/api/cron/collect").status_code == 401
 
 
 @pytest.mark.parametrize("header", [None, "Bearer wrong", "s3cret", "Basic s3cret"])
@@ -279,7 +296,7 @@ def test_a_cycle_that_hit_a_rate_limit_answers_502_so_the_scheduler_sees_it(
     database: MemoryDatabase,
 ) -> None:
     app = create_app()
-    app.dependency_overrides[get_services] = lambda: make_services(database, rate_limited=True)
+    serve(app, make_services(database, rate_limited=True))
     response = TestClient(app).get("/api/cron/collect", headers={"Authorization": "Bearer s3cret"})
     assert response.status_code == 502
     assert response.json()["ok"] is False

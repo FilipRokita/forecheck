@@ -64,9 +64,16 @@ def build_services(
 
 
 @lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    """Read from the environment once. Cheap, so a route that needs only a setting (the cron
+    secret) can check it before anything else is built."""
+    return Settings()
+
+
+@lru_cache(maxsize=1)
 def get_services() -> Services:
     """Built on first use and kept for the life of the process (a warm serverless instance)."""
-    settings = Settings()
+    settings = get_settings()
     if not settings.database_url:
         raise RuntimeError("DATABASE_URL is not set.")
     return build_services(settings, create_db_engine(settings.database_url))
