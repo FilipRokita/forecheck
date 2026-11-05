@@ -26,11 +26,23 @@ def _sort_key(variable: Variable, stats: ErrorStats) -> tuple[float, float, floa
 
 
 def rank_models(
-    variable: Variable, scores: Mapping[ModelId, ErrorStats], *, min_samples: int
+    variable: Variable,
+    scores: Mapping[ModelId, ErrorStats],
+    *,
+    min_samples: int,
+    scored_days: Mapping[ModelId, int] | None = None,
 ) -> list[RankedModel]:
-    """Rank models best first. Models with too few scored days follow, unranked."""
-    sufficient = {model: stats for model, stats in scores.items() if stats.n >= min_samples}
-    insufficient = {model: stats for model, stats in scores.items() if stats.n < min_samples}
+    """Rank models best first. Models with too few scored days follow, unranked.
+
+    ``scored_days`` is how many days each model's figures rest on. ``ErrorStats.n`` counts
+    forecasts, so stats summed over several leads hold several per day. Without it, ``n`` is used.
+    """
+
+    def days(model: ModelId) -> int:
+        return scores[model].n if scored_days is None else scored_days.get(model, 0)
+
+    sufficient = {model: stats for model, stats in scores.items() if days(model) >= min_samples}
+    insufficient = {model: stats for model, stats in scores.items() if days(model) < min_samples}
 
     ordered = sorted(sufficient.items(), key=lambda item: (_sort_key(variable, item[1]), item[0]))
     ranked = [

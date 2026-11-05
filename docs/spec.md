@@ -80,8 +80,9 @@ Over leads 1 to `ranking_lead_max` (default 3), added together, per station and 
 - precipitation: highest accuracy first, then lowest Brier, then lowest MAE;
 - ties fall to the model name, so the order is stable.
 
-A model with fewer than `min_samples` (default 10) scored days over those leads is listed but not ranked, and it can never
-be the "most accurate model".
+A model with fewer than `min_samples` (default 10) scored days is listed but not ranked, and it can never be the "most
+accurate model". Days are counted at lead 1, not as the forecasts summed over the leads, which would count each day up to
+`ranking_lead_max` times.
 
 ## Trust horizon
 

@@ -39,7 +39,14 @@ def build_verdict(
         model: merge_leads(per_lead, up_to=rules.ranking_lead_max)
         for model, per_lead in stats.items()
     }
-    ranking = rank_models(variable, headline, min_samples=rules.min_samples)
+    # The headline sums several leads, so its ``n`` counts forecasts. Days are counted at lead 1.
+    scored_days = {
+        model: first.n if (first := per_lead.get(MIN_LEAD_DAYS)) else 0
+        for model, per_lead in stats.items()
+    }
+    ranking = rank_models(
+        variable, headline, min_samples=rules.min_samples, scored_days=scored_days
+    )
 
     best = ranking[0].model if ranking and ranking[0].rank == 1 else None
     if best is None:

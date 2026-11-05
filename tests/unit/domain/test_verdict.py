@@ -40,6 +40,17 @@ def test_without_enough_data_there_is_no_best_model() -> None:
     assert [(r.model, r.rank) for r in verdict.ranking] == [(ECMWF, None)]
 
 
+def test_the_threshold_counts_days_not_forecasts_summed_over_leads() -> None:
+    # 4 days at each of leads 1 to 3 is 12 forecasts, but only 4 days of history.
+    four_days = {1: mae(1.0, n=4), 2: mae(1.0, n=4), 3: mae(1.0, n=4)}
+    verdict = build_verdict(Variable.TEMPERATURE, {ECMWF: four_days}, RULES)
+    assert verdict.best is None
+    assert [(r.model, r.rank) for r in verdict.ranking] == [(ECMWF, None)]
+
+    ten_days = {1: mae(1.0, n=10), 2: mae(1.0, n=10), 3: mae(1.0, n=10)}
+    assert build_verdict(Variable.TEMPERATURE, {ECMWF: ten_days}, RULES).best == ECMWF
+
+
 def test_no_models_at_all_is_not_an_error() -> None:
     verdict = build_verdict(Variable.TEMPERATURE, {}, RULES)
     assert verdict.ranking == []
