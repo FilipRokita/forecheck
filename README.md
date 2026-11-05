@@ -221,8 +221,6 @@ What was checked against the providers, and how, is in [`docs/data-sources.md`](
 - **The rain Brier score is approximate.** The chance of rain Open-Meteo gives is the day's highest hourly chance, not the
   chance of 0.1 mm over the whole day. History from the archive carries no Brier score at all.
 - **Pressure is missing at Zakopane.** IMGW does not report it there.
-- **Not verified on a real deployment.** Importing the Python package on Vercel and running Alembic in the Vercel build
-  are checked locally but unproven there. See [`docs/operations.md`](docs/operations.md#verification-status).
 
 ## 📚 Documentation
 
