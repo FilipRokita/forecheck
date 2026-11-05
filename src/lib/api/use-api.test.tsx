@@ -42,6 +42,26 @@ describe("useApi", () => {
     await waitFor(() => expect(result.current).toEqual({ status: "ready", data: "ok" }));
   });
 
+  it("keeps the old answer, marked stale, while keepWhile is unchanged", async () => {
+    let release: (value: string) => void = () => undefined;
+    const { result, rerender } = renderHook(
+      ({ key }) => useApi(key, () => (key === "a" ? Promise.resolve("a") : new Promise<string>((resolve) => (release = resolve))), "same"),
+      { initialProps: { key: "a" } },
+    );
+    await waitFor(() => expect(result.current).toEqual({ status: "ready", data: "a" }));
+    rerender({ key: "b" });
+    expect(result.current).toEqual({ status: "ready", data: "a", stale: true });
+    await act(async () => release("b"));
+    await waitFor(() => expect(result.current).toEqual({ status: "ready", data: "b" }));
+  });
+
+  it("drops the old answer when keepWhile changes too", async () => {
+    const { result, rerender } = renderHook(({ key, group }) => useApi(key, async () => key, group), { initialProps: { key: "a", group: "one" } });
+    await waitFor(() => expect(result.current).toEqual({ status: "ready", data: "a" }));
+    rerender({ key: "b", group: "two" });
+    expect(result.current.status).toBe("loading");
+  });
+
   it("cancels the request it leaves behind and never shows its late answer", async () => {
     let first: AbortSignal | undefined;
     const slow = new Promise<string>((resolve) => setTimeout(() => resolve("slow"), 30));

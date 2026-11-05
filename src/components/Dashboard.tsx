@@ -48,13 +48,15 @@ function Loaded({ meta }: { meta: Meta }) {
   const rainVariable = meta.variables.find((v) => v.metric === "accuracy");
   const key = `${stationId}|${variableId}|${periodId}`;
 
-  const verdict = useApi(`verdict|${key}`, (signal) => api.verdict(stationId, variableId, periodId, signal));
-  const rain = useApi(`rain|${stationId}|${periodId}`, (signal) => api.verdict(stationId, rainVariable?.id ?? "precipitation", periodId, signal));
-  const horizon = useApi(`horizon|${key}`, (signal) => api.horizon(stationId, variableId, periodId, signal));
+  const verdict = useApi(`verdict|${key}`, (signal) => api.verdict(stationId, variableId, periodId, signal), `${variableId}|${periodId}`);
+  const rain = useApi(`rain|${stationId}|${periodId}`, (signal) => api.verdict(stationId, rainVariable?.id ?? "precipitation", periodId, signal), periodId);
+  const horizon = useApi(`horizon|${key}`, (signal) => api.horizon(stationId, variableId, periodId, signal), `${variableId}|${periodId}`);
   const comparison = useApi(`comparison|${variableId}|${periodId}`, (signal) => api.comparison(variableId, periodId, 1, signal));
 
   if (!variable || !period || !rainVariable) return null;
   const { status } = meta;
+  // A new station is loading while the old one's figures, which name it, stay on screen but dimmed.
+  const updating = [verdict, rain, horizon].some((state) => state.status === "ready" && state.stale);
 
   return (
     <>
@@ -89,7 +91,7 @@ function Loaded({ meta }: { meta: Meta }) {
         <SegmentedControl label="Period" options={meta.periods} value={periodId} onChange={(id) => choose({ period: id })} />
       </div>
 
-      <main className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-2 sm:gap-4 sm:px-10">
+      <main aria-busy={updating} className={`mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-2 transition-opacity duration-200 sm:gap-4 sm:px-10 ${updating ? "opacity-50" : ""}`}>
         <Async state={verdict} label="the verdict" skeletonClassName="h-48">
           {(v) => (
             <>

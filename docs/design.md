@@ -48,7 +48,9 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 - Cards rise in one after another. Chart bars grow from zero, and a tooltip names the value of the bar under the pointer.
 - The verdict numbers count up once when they appear.
 - The winning model's card has a faint glow in its colour. The station list slides in over a blurred page.
-- Skeletons shimmer. The header stays on top on larger screens, blurred.
+- Skeletons shimmer. Changing the quantity or the period shows them, because the figures would be read in the wrong unit.
+  Changing the station keeps the old figures on screen, dimmed, until the new ones arrive: they name their station, so they
+  cannot be mistaken for the new one. The header stays on top on larger screens, blurred.
 - Every animation stops when the system asks for reduced motion.
 
 On a phone the header is one row (the export button is an icon) and the quantity and period controls lose their captions,
