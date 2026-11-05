@@ -39,9 +39,14 @@ def build_verdict(
         model: merge_leads(per_lead, up_to=rules.ranking_lead_max)
         for model, per_lead in stats.items()
     }
-    # The headline sums several leads, so its ``n`` counts forecasts. Days are counted at lead 1.
+    # The headline sums several leads, so its ``n`` counts forecasts, not days. A model is judged
+    # on the leads where it has the fewest days, and one that lacks a lead has none: error grows
+    # with lead, so models summed over different leads would not be comparable.
     scored_days = {
-        model: first.n if (first := per_lead.get(MIN_LEAD_DAYS)) else 0
+        model: min(
+            (per_lead[lead].n if lead in per_lead else 0)
+            for lead in range(MIN_LEAD_DAYS, rules.ranking_lead_max + 1)
+        )
         for model, per_lead in stats.items()
     }
     ranking = rank_models(

@@ -81,8 +81,9 @@ Over leads 1 to `ranking_lead_max` (default 3), added together, per station and 
 - ties fall to the model name, so the order is stable.
 
 A model with fewer than `min_samples` (default 10) scored days is listed but not ranked, and it can never be the "most
-accurate model". Days are counted at lead 1, not as the forecasts summed over the leads, which would count each day up to
-`ranking_lead_max` times.
+accurate model". Days are counted at the lead where the model has the fewest, not as the forecasts summed over the leads (which would count
+each day up to `ranking_lead_max` times). A model that lacks one of those leads is unranked, because error grows with lead and
+models summed over different leads cannot be compared.
 
 ## Trust horizon
 

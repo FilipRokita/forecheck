@@ -51,6 +51,17 @@ def test_the_threshold_counts_days_not_forecasts_summed_over_leads() -> None:
     assert build_verdict(Variable.TEMPERATURE, {ECMWF: ten_days}, RULES).best == ECMWF
 
 
+def test_a_model_missing_a_lead_is_not_ranked_against_models_that_have_it() -> None:
+    # Error grows with lead, so a model scored only at lead 1 would look better than it is.
+    stats = {
+        ECMWF: {1: mae(1.5), 2: mae(2.0), 3: mae(2.5)},
+        ICON: {1: mae(0.5)},
+    }
+    verdict = build_verdict(Variable.TEMPERATURE, stats, RULES)
+    assert verdict.best == ECMWF
+    assert {r.model: r.rank for r in verdict.ranking} == {ECMWF: 1, ICON: None}
+
+
 def test_no_models_at_all_is_not_an_error() -> None:
     verdict = build_verdict(Variable.TEMPERATURE, {}, RULES)
     assert verdict.ranking == []
