@@ -158,8 +158,9 @@ function FreshnessNote({ latest, scoredDays, windowDays }: { latest: string | nu
     );
   }
   const limited = scoredDays < windowDays;
+  // The row is as tall as the badge even without it, so the page does not shift when the badge comes and goes.
   return (
-    <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-fg-muted">
+    <p className="flex min-h-[26px] flex-wrap items-center gap-x-3 gap-y-2 text-fg-muted">
       <span>
         Scored through <span className="text-fg">{formatDay(latest)}</span>
       </span>
