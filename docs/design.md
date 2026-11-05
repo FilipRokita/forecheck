@@ -31,7 +31,7 @@ the page's content security policy allows only its own origin). Numbers use a de
 
 | | Desktop | Phone |
 | :--- | :--- | :--- |
-| Station | A button that opens a centred list | The same button, full width. The list is a bottom sheet |
+| Station | A button that opens a dropdown under it, with a search box on top | The same, as wide as the screen |
 | Quantity, period | Two segmented controls in a row | Stacked. Quantity scrolls sideways if it must |
 | Verdict | A one-sentence summary, then three cards in a row | The same, cards stacked |
 | Horizon chart | Wide bars | The same, narrower bars |
@@ -47,7 +47,7 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 
 - Cards rise in one after another. Chart bars grow from zero, and a tooltip names the value of the bar under the pointer.
 - The verdict numbers count up once when they appear.
-- The winning model's card has a faint glow in its colour. The station list slides in over a blurred page.
+- The winning model's card has a faint glow in its colour. The station dropdown eases open under its button.
 - Skeletons shimmer. Changing the quantity or the period shows them, because the figures would be read in the wrong unit.
   Changing the station keeps the old figures on screen, dimmed, until the new ones arrive: they name their station, so they
   cannot be mistaken for the new one. The header stays on top on larger screens, blurred.
@@ -68,10 +68,10 @@ accessible version.
 
 ## Accessibility
 
-- Real `<button>`, `<a>`, `<table>`, `<dialog>`. The station list is a native modal dialog: focus is trapped, Escape closes it,
-  and focus returns to the button that opened it.
+- Real `<button>`, `<a>`, `<table>`. The station picker is a combobox: the search box takes the focus, the arrow keys move through
+  the matches, Enter picks one, and Escape closes the list and returns the focus to the button.
 - Touch targets are at least 44 px on a phone.
-- Selection is exposed (`aria-pressed`, `aria-current`), not only coloured.
+- Selection is exposed (`aria-pressed`, `aria-selected`, `aria-current`), not only coloured.
 - The three models are told apart by name, by position (always ICON, ECMWF, GFS in the same order) and by colour, never by
   colour alone. The legend names them, and the chart has a table with the same numbers.
 - Text contrast is at least 4.5:1. The weakest pairing, `fg-muted` on `highlight`, is 6.2:1, and `fg-muted` on `surface` is 7.0:1. A test computes every text pairing from the real tokens (`tests/unit/test_design_tokens.py`).

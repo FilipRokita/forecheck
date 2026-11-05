@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Station } from "@/lib/api/types";
 
 type Props = {
@@ -9,82 +9,177 @@ type Props = {
   onChange: (id: string) => void;
 };
 
-/** A button that opens a modal list of stations: a bottom sheet on a phone, a centred panel on a desktop. */
+/** Lower case without accents, so "lodz" finds "Łódź". (ł has no decomposition, so it is mapped by hand.) */
+function fold(text: string): string {
+  return text.toLowerCase().replace(/ł/g, "l").normalize("NFD").replace(/\p{M}/gu, "");
+}
+
+/** A dropdown under its button: a search box on top, the matching stations below. Arrow keys and Enter work from the box. */
 export function StationPicker({ stations, value, onChange }: Props) {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
+  const root = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
+  const search = useRef<HTMLInputElement>(null);
+  const prefix = useId();
+  const listId = `${prefix}-list`;
+  const optionId = (id: string) => `${prefix}-${id}`;
+
   const current = stations.find((station) => station.id === value);
+  const needle = fold(query.trim());
+  const shown = stations.filter((station) => fold(station.name).includes(needle));
+
+  const close = (returnFocus: boolean) => {
+    setOpen(false);
+    setQuery("");
+    if (returnFocus) opener.current?.focus();
+  };
+  const choose = (id: string) => {
+    onChange(id);
+    close(true);
+  };
+  const toggle = () => {
+    if (open) return close(false);
+    setActive(Math.max(0, stations.findIndex((station) => station.id === value)));
+    setOpen(true);
+  };
 
   useEffect(() => {
-    const element = dialog.current;
-    if (!element) return;
-    // A click on the backdrop lands on the dialog element itself, not on its content.
-    const closeOnBackdrop = (event: MouseEvent) => {
-      if (event.target === element) element.close();
+    if (!open) return;
+    // A phone's keyboard would cover the list, so only a pointer device gets the cursor in the box at once.
+    if (!window.matchMedia?.("(pointer: coarse)").matches) search.current?.focus();
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) {
+        setOpen(false);
+        setQuery("");
+      }
     };
-    element.addEventListener("click", closeOnBackdrop);
-    return () => element.removeEventListener("click", closeOnBackdrop);
-  }, []);
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, [open]);
+
+  const activeStation = shown[active];
+  useEffect(() => {
+    if (open && activeStation) document.getElementById(optionId(activeStation.id))?.scrollIntoView?.({ block: "nearest" });
+    // optionId only depends on `prefix`, which never changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, activeStation?.id]);
+
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActive((index) => Math.min(index + 1, shown.length - 1));
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActive((index) => Math.max(index - 1, 0));
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      if (activeStation) choose(activeStation.id);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      close(true);
+    }
+  };
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <span id="station-label" className="text-xs text-fg-muted max-sm:sr-only">
+    <div
+      ref={root}
+      className="relative flex flex-col gap-1.5"
+      onBlur={(event) => {
+        // Tabbing out of the dropdown closes it.
+        if (open && !event.currentTarget.contains(event.relatedTarget)) close(false);
+      }}
+    >
+      <span id={`${prefix}-label`} className="text-xs text-fg-muted max-sm:sr-only">
         IMGW station
       </span>
       <button
         ref={opener}
-        aria-labelledby="station-label station-value"
         type="button"
-        aria-haspopup="dialog"
-        onClick={() => dialog.current?.showModal()}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-labelledby={`${prefix}-label ${prefix}-value`}
+        onClick={toggle}
         className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 text-left text-base hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-[46px] sm:w-auto sm:min-w-64 sm:rounded-[10px] sm:text-sm"
       >
-        <span id="station-value" className="font-medium">
+        <span id={`${prefix}-value`} className="font-medium">
           {current?.name ?? "Choose a station"}
         </span>
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="text-fg-muted">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className={`text-fg-muted transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
           <path d="M3.5 5.5L7 9l3.5-3.5" />
         </svg>
       </button>
 
-      <dialog
-        ref={dialog}
-        aria-labelledby="station-dialog-title"
-        className="m-0 mt-auto max-h-[85dvh] w-full max-w-none overflow-hidden rounded-t-2xl border border-border bg-surface p-0 text-fg backdrop:bg-black/70 backdrop:backdrop-blur-sm open:animate-sheet sm:m-auto sm:max-h-[70dvh] sm:max-w-md sm:rounded-2xl"
-      >
-        <div className="flex items-center justify-between border-b border-border px-5 py-3">
-          <h2 id="station-dialog-title" className="text-base font-semibold">
-            Choose a station
-          </h2>
-          <button type="button" onClick={() => dialog.current?.close()} className="min-h-11 rounded-lg px-3 text-fg-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-model-ecmwf">
-            Close
-          </button>
-        </div>
-        <ul className="max-h-[calc(85dvh-4rem)] overflow-y-auto p-2 sm:max-h-[calc(70dvh-4rem)]">
-          {stations.map((station) => {
-            const selected = station.id === value;
-            return (
-              <li key={station.id}>
-                <button
-                  type="button"
-                  aria-current={selected ? "true" : undefined}
-                  onClick={() => {
-                    onChange(station.id);
-                    dialog.current?.close();
-                    opener.current?.focus();
-                  }}
-                  className={`flex min-h-12 w-full items-center justify-between rounded-lg px-4 text-left text-base focus-visible:outline-2 focus-visible:outline-model-ecmwf sm:text-sm ${
-                    selected ? "bg-surface-raised font-medium text-white" : "text-fg hover:bg-surface-raised hover:pl-5"
-                  }`}
-                >
-                  <span>{station.name}</span>
-                  {selected ? <span className="text-xs text-model-ecmwf">Selected</span> : null}
-                </button>
+      {open ? (
+        <div className="absolute left-0 top-full z-30 mt-2 w-full min-w-64 origin-top animate-sheet overflow-hidden rounded-xl border border-border bg-surface shadow-2xl shadow-black/60">
+          <div className="border-b border-border p-2">
+            <input
+              ref={search}
+              type="text"
+              role="combobox"
+              aria-expanded="true"
+              aria-controls={listId}
+              aria-autocomplete="list"
+              aria-activedescendant={activeStation ? optionId(activeStation.id) : undefined}
+              aria-label="Search stations"
+              placeholder="Search stations"
+              autoComplete="off"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setActive(0);
+              }}
+              onKeyDown={onKeyDown}
+              className="h-10 w-full rounded-lg border border-transparent bg-surface-raised px-3 text-base placeholder:text-fg-muted focus-visible:border-model-ecmwf focus-visible:outline-none sm:text-sm"
+            />
+          </div>
+          {/* Keeps the focus in the search box while an option is pressed. */}
+          <ul id={listId} role="listbox" aria-label="Stations" onMouseDown={(event) => event.preventDefault()} className="max-h-72 overflow-y-auto p-1.5">
+            {shown.length === 0 ? (
+              <li role="presentation" className="px-3 py-3 text-fg-muted">
+                No station matches
               </li>
-            );
-          })}
-        </ul>
-      </dialog>
+            ) : (
+              shown.map((station, index) => {
+                const selected = station.id === value;
+                return (
+                  <li
+                    key={station.id}
+                    id={optionId(station.id)}
+                    role="option"
+                    aria-selected={selected}
+                    onClick={() => choose(station.id)}
+                    onMouseEnter={() => setActive(index)}
+                    className={`flex min-h-11 cursor-pointer items-center justify-between rounded-lg px-3 text-base sm:min-h-10 sm:text-sm ${
+                      index === active ? "bg-surface-raised" : ""
+                    } ${selected ? "font-medium text-white" : "text-fg"}`}
+                  >
+                    <span>{station.name}</span>
+                    {selected ? (
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--color-model-ecmwf)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M3 8.5l3.2 3L13 4.5" />
+                      </svg>
+                    ) : null}
+                  </li>
+                );
+              })
+            )}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }
