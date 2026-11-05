@@ -83,6 +83,7 @@ describe("Dashboard", () => {
     serve();
     render(<Dashboard />);
     await screen.findByText("Rain tomorrow");
+    expect(screen.getByRole("link", { name: "Forecheck on GitHub" })).toHaveAttribute("href", "https://github.com/FilipRokita/forecheck");
     expect(screen.getByRole("link", { name: "Export CSV" })).toHaveAttribute("href", "/api/stations/12566/export.csv?variable=temperature&period=30d");
   });
 

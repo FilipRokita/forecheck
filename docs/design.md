@@ -54,7 +54,7 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 - The logo in the header is the one from the README, drawn in the page's own font. Pressing it scrolls smoothly back to the top.
 - Every animation stops when the system asks for reduced motion.
 
-On a phone the header is one row (the export button is an icon) and the quantity and period controls lose their captions,
+The header has a GitHub icon that links to the repository. On a phone the header is one row (the export button is an icon, and the GitHub icon is left out because the footer links the repository) and the quantity and period controls lose their captions,
 so the verdict starts higher.
 
 ## The station map

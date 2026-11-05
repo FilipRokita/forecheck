@@ -1,6 +1,6 @@
 import { attribution } from "@/lib/attribution";
+import { REPOSITORY } from "@/lib/links";
 
-const REPOSITORY = "https://github.com/FilipRokita/forecheck";
 
 /** The attributions the data licences require, word for word, and a note on how to read the numbers. */
 export function Footer() {
