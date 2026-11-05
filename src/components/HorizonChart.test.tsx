@@ -16,7 +16,7 @@ describe("HorizonChart", () => {
     for (const name of ["ICON", "ECMWF", "GFS", "2.0 °C limit"]) expect(within(legend).getByText(name)).toBeInTheDocument();
   });
 
-  it("offers the same numbers as a table", () => {
+  it("carries the same numbers in a table for screen readers", () => {
     render(<HorizonChart horizon={horizon()} variable={TEMPERATURE} periodLabel="30 days" />);
     const table = screen.getByRole("table", { name: /by model and days ahead/ });
     expect(within(table).getAllByRole("row")).toHaveLength(1 + 7);

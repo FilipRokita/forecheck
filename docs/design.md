@@ -76,7 +76,7 @@ The map repeats what the table says, so it is hidden from assistive technology a
 - Touch targets are at least 44 px on a phone.
 - Selection is exposed (`aria-pressed`, `aria-selected`, `aria-current`), not only coloured.
 - The three models are told apart by name, by position (always ICON, ECMWF, GFS in the same order) and by colour, never by
-  colour alone. The legend names them, and the chart has a table with the same numbers.
+  colour alone. The legend names them, and the chart has a table with the same numbers that only screen readers get.
 - Text contrast is at least 4.5:1. The weakest pairing, `fg-muted` on `highlight`, is 6.2:1, and `fg-muted` on `surface` is 7.0:1. A test computes every text pairing from the real tokens (`tests/unit/test_design_tokens.py`).
 - Structural accessibility is checked with axe-core in the dashboard test. Colour contrast is covered by the token test above, because
   axe-core needs a real browser engine for it.

@@ -110,45 +110,33 @@ export function HorizonChart({ horizon, variable, periodLabel }: Props) {
             </div>
           </div>
 
-          <details className="mt-4 text-fg-soft">
-            <summary className="flex min-h-11 cursor-pointer items-center focus-visible:outline-2 focus-visible:outline-model-ecmwf">Show the data as a table</summary>
-            <div className="overflow-x-auto">
-              <table className="mt-2 w-full border-collapse tabular-nums">
-                <caption className="sr-only">
-                  {heading} by model and days ahead
-                </caption>
-                <thead>
-                  <tr className="text-left text-xs text-fg-muted">
-                    <th scope="col" className="px-3 py-2 font-medium">
-                      Days ahead
+          {/* The bars are drawn for the eye only. This table, which only screen readers get, carries the same numbers. */}
+          <div className="sr-only">
+            <table>
+              <caption>{heading} by model and days ahead</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Days ahead</th>
+                  {horizon.models.map((model) => (
+                    <th key={model.model} scope="col">
+                      {model.label}
                     </th>
-                    {horizon.models.map((model) => (
-                      <th key={model.model} scope="col" className="px-3 py-2 text-right font-medium">
-                        {model.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="font-mono">
-                  {LEADS.map((lead) => (
-                    <tr key={lead} className="border-t border-border">
-                      <th scope="row" className="px-3 py-2 text-left font-normal">
-                        {lead}
-                      </th>
-                      {horizon.models.map((model) => {
-                        const figure = leadOf(model, lead);
-                        return (
-                          <td key={model.model} className="px-3 py-2 text-right">
-                            {figure ? (isShare ? formatPercent(figure.accuracy) : headline(variable, figure)) : "–"}
-                          </td>
-                        );
-                      })}
-                    </tr>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
+                </tr>
+              </thead>
+              <tbody>
+                {LEADS.map((lead) => (
+                  <tr key={lead}>
+                    <th scope="row">{lead}</th>
+                    {horizon.models.map((model) => {
+                      const figure = leadOf(model, lead);
+                      return <td key={model.model}>{figure ? (isShare ? formatPercent(figure.accuracy) : headline(variable, figure)) : "–"}</td>;
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       ) : (
         <p className="mt-6 text-fg-muted">No scored forecasts in this window yet.</p>
