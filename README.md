@@ -221,8 +221,6 @@ The live demo at [forecheck.filrok.com](https://forecheck.filrok.com) runs on th
 | **Application** | [Vercel](https://vercel.com) | Next.js and a Python function, deployed from `main`, with a daily collection job |
 | **Database** | [Neon](https://neon.com) | Serverless PostgreSQL (AWS Frankfurt `eu-central-1`) |
 | **Domain name** | [Cloudflare](https://www.cloudflare.com) | DNS for [forecheck.filrok.com](https://forecheck.filrok.com), pointing at the Vercel deployment |
-| **Forecasts** | [Open-Meteo](https://open-meteo.com/) | ICON, ECMWF and GFS, free tier |
-| **Measurements** | [IMGW-PIB](https://danepubliczne.imgw.pl/) | Synoptic station reports, open data |
 | **Source code** | [GitHub](https://github.com) | Repository, version control and CI |
 
 ## 📜 Data and licences
