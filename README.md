@@ -146,26 +146,32 @@ More in [`docs/architecture.md`](docs/architecture.md).
 
 You need Docker and VS Code with the Dev Containers extension.
 
-```bash
-cp .env.example .env          # the defaults work locally
-```
+1. **Create your settings file.** The defaults work locally.
 
-Then **Dev Containers: Reopen in Container**. The container installs Node, Python and PostgreSQL, creates the databases and
-applies the migrations. When it is up:
+   ```bash
+   cp .env.example .env
+   ```
 
-```bash
-npm run dev                   # Next.js on :3000 and the API on :8000
-```
+2. **Open the project in the dev container.** In VS Code run **Dev Containers: Reopen in Container**. It installs Node,
+   Python and PostgreSQL, creates the databases and applies the migrations.
 
-Open http://localhost:3000 (not `127.0.0.1`: the Next.js dev server only allows `localhost`). The database starts empty,
-so for something to look at:
+3. **Add some data.** The database starts empty, so fill it with made-up scores (the page flags them with a "Sample data"
+   badge). In the container's terminal:
 
-```bash
-uv run python scripts/seed_demo.py      # made-up scores, flagged "Sample data" on the page
-```
+   ```bash
+   uv run python scripts/seed_demo.py
+   ```
 
-For real history, see [`docs/operations.md`](docs/operations.md#starting-with-a-history). Everything else is in
-[`docs/dev-environment.md`](docs/dev-environment.md).
+4. **Start the app.** This runs Next.js on port 3000 and the API on port 8000.
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Open it.** Go to http://localhost:3000 (not `127.0.0.1`: the Next.js dev server only allows `localhost`).
+
+For real history instead of demo data, see [`docs/operations.md`](docs/operations.md#starting-with-a-history). Everything
+else is in [`docs/dev-environment.md`](docs/dev-environment.md).
 
 ## ☁️ Run it on a host
 
