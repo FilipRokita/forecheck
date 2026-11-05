@@ -7,23 +7,23 @@ import { formatNumber, formatPercent } from "@/lib/format";
 /** `rain` is the precipitation verdict, or undefined while it is loading or failed: its columns then show a dash. */
 type Props = { variable: Variable; verdict: Verdict; rain: Verdict | undefined };
 
-type Column = { key: string; header: string; cell: (model: RankedModel, rain: RankedModel | undefined) => string };
+type Column = { key: string; header: string; hint: string; cell: (model: RankedModel, rain: RankedModel | undefined) => string };
 
 /** The columns depend on what is being judged: measured quantities get an error and a bias, rain gets its yes/no scores. */
 function columns(variable: Variable): Column[] {
   if (variable.metric === "accuracy") {
     return [
-      { key: "accuracy", header: "Accuracy", cell: (m) => formatPercent(m.accuracy) },
-      { key: "hit", header: "Rain caught", cell: (m) => formatPercent(m.hit_rate) },
-      { key: "false", header: "False alarms", cell: (m) => formatPercent(m.false_alarm_ratio) },
-      { key: "brier", header: "Brier", cell: (m) => formatNumber(m.brier, 2) },
+      { key: "accuracy", header: "Accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", cell: (m) => formatPercent(m.accuracy) },
+      { key: "hit", header: "Rain caught", hint: "Share of rainy days the forecast called. Higher is better.", cell: (m) => formatPercent(m.hit_rate) },
+      { key: "false", header: "False alarms", hint: "Share of rain calls made on days that stayed dry. Lower is better.", cell: (m) => formatPercent(m.false_alarm_ratio) },
+      { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", cell: (m) => formatNumber(m.brier, 2) },
     ];
   }
   return [
-    { key: "error", header: `Error (${variable.unit})`, cell: (m) => headlineValue(variable, m) },
-    { key: "bias", header: `Bias (${variable.unit})`, cell: (m) => formatSigned(m.bias) },
-    { key: "rain", header: "Rain accuracy", cell: (_m, rain) => formatPercent(rain?.accuracy) },
-    { key: "brier", header: "Brier", cell: (_m, rain) => formatNumber(rain?.brier, 2) },
+    { key: "error", header: `Error (${variable.unit})`, hint: "Average gap between forecast and measurement. Lower is better.", cell: (m) => headlineValue(variable, m) },
+    { key: "bias", header: `Bias (${variable.unit})`, hint: "Whether the forecast runs high (+) or low (−) on average. Closer to 0 is better.", cell: (m) => formatSigned(m.bias) },
+    { key: "rain", header: "Rain accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", cell: (_m, rain) => formatPercent(rain?.accuracy) },
+    { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", cell: (_m, rain) => formatNumber(rain?.brier, 2) },
   ];
 }
 
@@ -103,6 +103,18 @@ export function RankingTable({ variable, verdict, rain }: Props) {
               </li>
             ))}
           </ul>
+
+          <details className="mt-4 text-fg-soft">
+            <summary className="flex min-h-11 items-center text-fg-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-model-ecmwf">What do these columns mean?</summary>
+            <dl className="mt-1 flex flex-col gap-2 text-sm">
+              {cols.map((col) => (
+                <div key={col.key}>
+                  <dt className="font-medium text-fg">{col.header}</dt>
+                  <dd className="text-fg-muted">{col.hint}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
         </>
       )}
     </Card>

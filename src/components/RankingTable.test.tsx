@@ -38,6 +38,13 @@ describe("RankingTable", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
+  it("explains every column in plain words", () => {
+    render(<RankingTable variable={TEMPERATURE} verdict={verdict()} rain={rainVerdict()} />);
+    expect(screen.getByText("What do these columns mean?")).toBeInTheDocument();
+    expect(screen.getByText(/Score for rain chances, from 0 \(perfect\) to 1/)).toBeInTheDocument();
+    expect(screen.getByText(/runs high \(\+\) or low/)).toBeInTheDocument();
+  });
+
   it("says so when there is nothing to rank", () => {
     render(<RankingTable variable={TEMPERATURE} verdict={verdict({ ranking: [] })} rain={rainVerdict()} />);
     expect(screen.getByText("No scored forecasts in this window yet.")).toBeInTheDocument();
