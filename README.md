@@ -27,6 +27,16 @@
 ---
 
 <div align="center">
+  <a href="https://forecheck.filrok.com">
+    <img src="https://img.shields.io/badge/LIVE_PREVIEW-Click_Here-green?style=for-the-badge" alt="Live preview">
+  </a>
+  <br>
+  <i>(Note: This is a live preview deployment on free tiers and may be taken down or disabled at any time.)</i>
+</div>
+
+---
+
+<div align="center">
   <img src="docs/images/showcase.png" alt="Forecheck on a desktop and on a phone: verdict cards, error by forecast horizon and model ranking" width="900">
   <p><em>The screenshot uses made-up demo data, which is why the page shows a "Sample data" badge.</em></p>
 </div>
@@ -51,10 +61,11 @@ under 2 °C for 3 days." **No accounts, no ads**, and all of it is open source.
 4. [🔧 How it's built](#-how-its-built)
 5. [🚀 Run it locally (development)](#-run-it-locally-development)
 6. [☁️ Run it on a host](#️-run-it-on-a-host)
-7. [📜 Data and licences](#-data-and-licences)
-8. [⚠️ Known limits](#️-known-limits)
-9. [📚 Documentation](#-documentation)
-10. [📄 License](#-license)
+7. [🌐 Live demo infrastructure](#-live-demo-infrastructure)
+8. [📜 Data and licences](#-data-and-licences)
+9. [⚠️ Known limits](#️-known-limits)
+10. [📚 Documentation](#-documentation)
+11. [📄 License](#-license)
 
 ## ✨ What it does
 
@@ -200,6 +211,19 @@ The only difference between development and production is the environment variab
    ```
 
 Details, limits, the backfill and what to do when a step fails: [`docs/operations.md`](docs/operations.md).
+
+## 🌐 Live demo infrastructure
+
+The live demo at [forecheck.filrok.com](https://forecheck.filrok.com) runs on these services:
+
+| Component | Provider | Details |
+| :--- | :--- | :--- |
+| **Application** | [Vercel](https://vercel.com) | Next.js and a Python function, deployed from `main`, with a daily collection job |
+| **Database** | [Neon](https://neon.com) | Serverless PostgreSQL (AWS Frankfurt `eu-central-1`) |
+| **Domain name** | [Cloudflare](https://www.cloudflare.com) | DNS for [forecheck.filrok.com](https://forecheck.filrok.com), pointing at the Vercel deployment |
+| **Forecasts** | [Open-Meteo](https://open-meteo.com/) | ICON, ECMWF and GFS, free tier |
+| **Measurements** | [IMGW-PIB](https://danepubliczne.imgw.pl/) | Synoptic station reports, open data |
+| **Source code** | [GitHub](https://github.com) | Repository, version control and CI |
 
 ## 📜 Data and licences
 
