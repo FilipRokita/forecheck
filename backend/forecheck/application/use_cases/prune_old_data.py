@@ -1,10 +1,14 @@
 """Drop what the page can no longer show, so the database stops growing."""
 
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import timedelta
 
 from forecheck.application.ports import Clock, UnitOfWorkFactory
-from forecheck.application.use_cases.ingest_observations import FINGERPRINT_PREFIX, fingerprint_key
+from forecheck.application.use_cases.ingest_observations import (
+    FINGERPRINT_PREFIX,
+    fingerprint_key,
+    next_month,
+)
 
 # The page reads at most 365 days (the 12 months period). Two years leaves room for a longer view.
 DEFAULT_RETENTION_DAYS = 730
@@ -53,12 +57,8 @@ class PruneOldData:
                 cutoff = latest_observation - self._retention
                 observations = uow.observations.delete_before(cutoff)
                 # The month of the cutoff day is now only partly there, so it goes too.
-                uow.state.delete_before(FINGERPRINT_PREFIX, fingerprint_key(_next_month(cutoff)))
+                uow.state.delete_before(FINGERPRINT_PREFIX, fingerprint_key(next_month(cutoff)))
 
             runs = uow.runs.delete_before(self._clock.now() - self._retention)
             uow.commit()
         return PruneReport(scores, observations, runs)
-
-
-def _next_month(day: date) -> date:
-    return (day.replace(day=1) + timedelta(days=32)).replace(day=1)

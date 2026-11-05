@@ -27,12 +27,13 @@ def fingerprint_key(month: date) -> str:
     return f"{FINGERPRINT_PREFIX}{month:%Y-%m}"
 
 
-def _next_month(month: date) -> date:
-    return (month + timedelta(days=32)).replace(day=1)
+def next_month(day: date) -> date:
+    """The first day of the month after the one ``day`` is in."""
+    return (day.replace(day=1) + timedelta(days=32)).replace(day=1)
 
 
 def _last_day(month: date) -> date:
-    return _next_month(month) - timedelta(days=1)
+    return next_month(month) - timedelta(days=1)
 
 
 def _covers(stored: str | None, versioned: str, first: date, last: date) -> bool:
@@ -87,7 +88,7 @@ class IngestObservations:
         for month, version in sorted(versions.items()):
             if month > end:
                 continue  # only here for the day-after report of the previous month
-            versioned = f"{version}|{versions.get(_next_month(month), '-')}"
+            versioned = f"{version}|{versions.get(next_month(month), '-')}"
             key = fingerprint_key(month)
             first, last = max(start, month), min(end, _last_day(month))
             with self._uow_factory() as uow:
