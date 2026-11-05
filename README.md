@@ -202,9 +202,11 @@ footer and the CSV export carry it.
 - **Forecasts:** [Open-Meteo](https://open-meteo.com/), CC BY 4.0, free for **non-commercial** use only (no ads, no
   subscriptions). Forecheck makes about 15 calls a day against a limit of 10,000.
 - **Measurements:** IMGW-PIB, under the [regulation](https://danepubliczne.imgw.pl/regulations) of the open data service.
-  The scores are processed data, so both required notices are shown, in the regulation's own words:
-  - Źródłem pochodzenia danych jest Instytut Meteorologii i Gospodarki Wodnej – Państwowy Instytut Badawczy
-  - Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone
+  The scores are processed data, so both required notices are shown, in the regulation's own words (Polish):
+
+  > Źródłem pochodzenia danych jest Instytut Meteorologii i Gospodarki Wodnej – Państwowy Instytut Badawczy
+  >
+  > Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone
 
 What was checked against the providers, and how, is in [`docs/data-sources.md`](docs/data-sources.md).
 
