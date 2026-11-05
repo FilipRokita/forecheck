@@ -59,7 +59,8 @@ export function StationPicker({ stations, value, onChange }: Props) {
     return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
   }, [open]);
 
-  const activeStation = shown[active];
+  const activeIndex = Math.max(0, Math.min(active, shown.length - 1));
+  const activeStation = shown[activeIndex];
   useEffect(() => {
     if (open && activeStation) document.getElementById(optionId(activeStation.id))?.scrollIntoView?.({ block: "nearest" });
     // optionId only depends on `prefix`, which never changes.
@@ -67,12 +68,13 @@ export function StationPicker({ stations, value, onChange }: Props) {
   }, [open, activeStation?.id]);
 
   const onKeyDown = (event: React.KeyboardEvent) => {
+    if (!open) return;
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      setActive((index) => Math.min(index + 1, shown.length - 1));
+      setActive(Math.min(activeIndex + 1, Math.max(shown.length - 1, 0)));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
-      setActive((index) => Math.max(index - 1, 0));
+      setActive(Math.max(activeIndex - 1, 0));
     } else if (event.key === "Enter") {
       event.preventDefault();
       if (activeStation) choose(activeStation.id);
@@ -86,6 +88,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
     <div
       ref={root}
       className="relative flex flex-col gap-1.5"
+      onKeyDown={onKeyDown}
       onBlur={(event) => {
         // Tabbing out of the dropdown closes it.
         if (open && !event.currentTarget.contains(event.relatedTarget)) close(false);
@@ -144,7 +147,6 @@ export function StationPicker({ stations, value, onChange }: Props) {
                 setQuery(event.target.value);
                 setActive(0);
               }}
-              onKeyDown={onKeyDown}
               className="h-10 w-full rounded-lg border border-transparent bg-surface-raised px-3 text-base placeholder:text-fg-muted focus-visible:border-fg-muted focus-visible:outline-none sm:text-sm"
             />
           </div>
@@ -166,7 +168,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
                     onClick={() => choose(station.id)}
                     onMouseEnter={() => setActive(index)}
                     className={`flex min-h-11 cursor-pointer items-center justify-between rounded-lg px-3 text-base sm:min-h-10 sm:text-sm ${
-                      index === active ? "bg-surface-raised" : ""
+                      index === activeIndex ? "bg-surface-raised" : ""
                     } ${selected ? "font-medium text-white" : "text-fg"}`}
                   >
                     <span>{station.name}</span>

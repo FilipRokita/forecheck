@@ -96,4 +96,25 @@ describe("StationPicker", () => {
     await userEvent.click(opener);
     expect(screen.getByRole("combobox")).toHaveValue("");
   });
+
+  it("closes on Escape even when the focus is still on the button, as on a phone where the box is not focused", async () => {
+    vi.stubGlobal("matchMedia", () => ({ matches: true }));
+    const { opener } = setup();
+    await userEvent.click(opener);
+    expect(screen.getByRole("combobox")).not.toHaveFocus();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
+
+  it("keeps a valid highlight when nothing matches and the box is cleared again", async () => {
+    const { onChange, opener } = setup();
+    await userEvent.click(opener);
+    const box = screen.getByRole("combobox");
+    await userEvent.type(box, "zzz{ArrowDown}{ArrowDown}");
+    expect(box).not.toHaveAttribute("aria-activedescendant");
+    await userEvent.clear(box);
+    await userEvent.keyboard("{Enter}");
+    expect(onChange).toHaveBeenCalledWith("12566");
+  });
 });
