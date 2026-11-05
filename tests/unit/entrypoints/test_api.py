@@ -252,6 +252,13 @@ def test_the_csv_export_carries_the_attribution_and_the_figures(client: TestClie
     assert float(rows[0]["mae"]) == pytest.approx(0.5)
 
 
+def test_the_csv_export_is_cacheable_like_the_rest_of_the_read_api(client: TestClient) -> None:
+    response = client.get(
+        "/api/stations/12566/export.csv", params={"variable": "temperature", "period": "30d"}
+    )
+    assert "s-maxage" in response.headers["cache-control"]
+
+
 def test_the_csv_export_of_an_unknown_station_is_a_404(client: TestClient) -> None:
     response = client.get(
         "/api/stations/00000/export.csv", params={"variable": "temperature", "period": "30d"}

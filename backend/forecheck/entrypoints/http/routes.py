@@ -11,7 +11,7 @@ from forecheck.application import attribution
 from forecheck.application.queries import UnknownStationError
 from forecheck.domain.types import MIN_LEAD_DAYS, ModelId, Period, StationId, Variable
 from forecheck.entrypoints.http import presenters, schemas
-from forecheck.entrypoints.http.deps import ServicesDep, cacheable, only_query_params
+from forecheck.entrypoints.http.deps import CACHE_CONTROL, ServicesDep, cacheable, only_query_params
 
 router = APIRouter(prefix="/api", dependencies=[Depends(cacheable)])
 
@@ -224,7 +224,11 @@ def export_csv(
     return Response(
         buffer.getvalue(),
         media_type="text/csv; charset=utf-8",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            # Returning a Response skips the router's ``cacheable`` dependency, so set it here.
+            "Cache-Control": CACHE_CONTROL,
+        },
     )
 
 
