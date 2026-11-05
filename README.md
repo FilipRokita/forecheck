@@ -63,7 +63,6 @@ under 2 °C for 3 days." **No accounts, no ads**, and all of it is open source.
 3. **A ranking.** Mean error and bias for temperature, wind and pressure. Accuracy, hit rate, false alarms and Brier score for rain.
 4. **A station comparison.** The best model at every station, in one list.
 5. **CSV export** of every figure, with the data attributions inside the file.
-6. **No accounts, no ads.** Your last station is remembered in the browser only.
 
 Quantities: temperature, precipitation, wind and pressure. Periods: 30 days, 90 days, 12 months.
 
