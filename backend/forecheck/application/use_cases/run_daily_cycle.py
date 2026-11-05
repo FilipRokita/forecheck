@@ -97,4 +97,7 @@ class RunDailyCycle:
 
     def _evaluate_step(self) -> tuple[bool, str]:
         report = self._evaluate.run()
-        return True, f"scored {report.scored}, expired {report.expired}, waiting {report.waiting}"
+        return True, (
+            f"scored {report.scored}, expired {report.expired}, pruned {report.pruned}, "
+            f"waiting {report.waiting}"
+        )

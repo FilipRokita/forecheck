@@ -55,7 +55,9 @@ def build_services(
         daily_cycle=RunDailyCycle(
             CollectForecasts(open_meteo, uow_factory, clock, catalog, pause=pause),
             ingest,
-            EvaluateForecasts(uow_factory, clock, rules),
+            EvaluateForecasts(
+                uow_factory, clock, rules, score_retention_days=settings.score_retention_days
+            ),
             uow_factory,
             clock,
         ),

@@ -57,7 +57,7 @@ gives the statistics of the two sets together (this is a monoid, and the tests c
 
 - a ranking over 30 days, 90 days or 12 months is one SQL `SUM` over the matching rows;
 - the raw forecast is deleted once scored, and storage grows by about 90 MB a year (measured: 195 bytes a row, 1,260
-  rows a day);
+  rows a day) until scores reach two years of age, when they are dropped, so it levels off near 180 MB;
 - derived figures are computed on read:
 
 | Figure | Formula |
@@ -107,6 +107,7 @@ Environment variables, read in `infrastructure/settings.py`. Defaults are the me
 | :--- | :--- | :--- |
 | `PRECIPITATION_THRESHOLD_MM` | 0.1 | A day is wet from this much rain |
 | `MIN_SAMPLES` | 10 | Scored days needed to rank a model or judge a lead |
+| `SCORE_RETENTION_DAYS` | 730 | How long scores are kept, counted back from the latest scored day. At least 365, the longest period the page shows |
 | `TRUST_TEMPERATURE_MAE_C` | 2.0 | Temperature bar |
 | `TRUST_WIND_MAE_MS` | 1.5 | Wind bar |
 | `TRUST_PRESSURE_MAE_HPA` | 2.0 | Pressure bar |

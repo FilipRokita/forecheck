@@ -185,6 +185,23 @@ def test_inserting_missing_scores_keeps_the_ones_that_exist(
         assert (totals[1].abs_error_sum, totals[2].abs_error_sum) == (2.0, 7.0)
 
 
+def test_old_scores_can_be_deleted_by_day(uow_factory: UnitOfWorkFactory) -> None:
+    with uow_factory() as uow:
+        uow.scores.upsert(
+            [record(date(2026, 9, 1)), record(date(2026, 9, 2)), record(date(2026, 9, 3))]
+        )
+        uow.commit()
+    with uow_factory() as uow:
+        assert uow.scores.delete_valid_before(date(2026, 9, 3)) == 2
+        uow.commit()
+    with uow_factory() as uow:
+        assert uow.scores.latest_day() == date(2026, 9, 3)
+        assert (
+            uow.scores.by_lead(KRAKOW, Variable.TEMPERATURE, date(2026, 9, 1), date(2026, 9, 2))
+            == {}
+        )
+
+
 def test_scores_by_station_at_one_lead(uow_factory: UnitOfWorkFactory) -> None:
     day = date(2026, 9, 1)
     with uow_factory() as uow:

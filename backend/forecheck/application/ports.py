@@ -91,6 +91,10 @@ class ScoreRepository(Protocol):
         day, and leave existing scores alone. Returns how many were inserted."""
         ...
 
+    def delete_valid_before(self, day: date) -> int:
+        """Drop scores for days before ``day``. Returns how many."""
+        ...
+
     def latest_day(self) -> date | None: ...
 
     def by_lead(

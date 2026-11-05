@@ -85,7 +85,7 @@ The archive covers January 2024 onwards for most models, and has no chance of ra
 | Resource | Limit | Use |
 | :--- | :--- | :--- |
 | Open-Meteo calls | under 10,000 a day, 5,000 an hour, 600 a minute (checked in its terms) | about 15 a day, plus 15 per 60 days of backfill |
-| Neon Free storage | 1 GB per project (checked on Neon's pricing page, 2026-10-20) | about 90 MB a year: 1,260 score rows a day at 195 bytes each, measured |
+| Neon Free storage | 1 GB per project (checked on Neon's pricing page, 2026-10-20) | about 90 MB a year (1,260 score rows a day at 195 bytes each, measured), levelling off near 180 MB because scores older than two years are dropped |
 | Neon Free compute | 100 CU-hours a month, scales to zero after 5 minutes idle | a minute or two a day for the job, plus cache misses |
 | Vercel Hobby cron | once a day, hour precision | one job |
 | Vercel function | 300 s, 500 MB bundle | under a minute, about 50 MB |

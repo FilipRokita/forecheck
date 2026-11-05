@@ -96,6 +96,12 @@ class MemoryScores:
                 inserted += 1
         return inserted
 
+    def delete_valid_before(self, day: date) -> int:
+        old = [key for key, r in self._data.scores.items() if r.valid_date < day]
+        for key in old:
+            del self._data.scores[key]
+        return len(old)
+
     def latest_day(self) -> date | None:
         return max((r.valid_date for r in self._data.scores.values()), default=None)
 

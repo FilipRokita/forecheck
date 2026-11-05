@@ -9,8 +9,9 @@ from forecheck.application.ports import UnitOfWorkFactory
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
 from forecheck.application.use_cases.ingest_observations import IngestObservations
-from forecheck.domain.entities import Forecast, Observation, Station
+from forecheck.domain.entities import Forecast, Observation, ScoreRecord, Station
 from forecheck.domain.rules import Rules
+from forecheck.domain.stats import ErrorStats
 from forecheck.domain.types import ModelId, StationId, Variable
 from tests.support.memory import MemoryDatabase
 from tests.unit.application.fakes import (
@@ -343,3 +344,52 @@ def test_with_no_measurements_nothing_happens(database: MemoryDatabase) -> None:
     store(database, [make_forecast(date(2026, 9, 10), 1, 12.0)], [])
     report = evaluate(database, clock_at(2026, 10, 1)).run()
     assert (report.scored, report.waiting) == (0, 1)
+
+
+# --- keeping the scores table from growing without end -----------------------------------
+
+
+def seed_score(database: MemoryDatabase, *days: date) -> None:
+    stats = ErrorStats(n=1, abs_error_sum=1.0)
+    with database.unit_of_work() as uow:
+        uow.scores.upsert(
+            [
+                ScoreRecord(STATIONS[0].id, ModelId("icon"), Variable.TEMPERATURE, 1, day, stats)
+                for day in days
+            ]
+        )
+        uow.commit()
+
+
+def kept_days(database: MemoryDatabase, *days: date) -> set[date]:
+    """Which of ``days`` still have a score."""
+    with database.unit_of_work() as uow:
+        return {
+            day
+            for day in days
+            if uow.scores.by_lead(STATIONS[0].id, Variable.TEMPERATURE, day, day)
+        }
+
+
+def test_scores_older_than_the_retention_are_dropped_counting_back_from_the_latest(
+    database: MemoryDatabase,
+) -> None:
+    # 730 days before 2026-09-30 is 2024-09-30: the day before it goes, the boundary day stays.
+    seed_score(database, date(2024, 9, 29), date(2024, 9, 30), date(2026, 9, 30))
+    report = evaluate(database, clock_at(2026, 10, 20)).run()
+    assert report.pruned == 1
+    days = (date(2024, 9, 29), date(2024, 9, 30), date(2026, 9, 30))
+    assert kept_days(database, *days) == {date(2024, 9, 30), date(2026, 9, 30)}
+
+
+def test_the_retention_is_counted_from_the_latest_score_not_from_today(
+    database: MemoryDatabase,
+) -> None:
+    # Scoring has stalled for years: what the page still shows must not be deleted.
+    seed_score(database, date(2026, 9, 1), date(2026, 9, 30))
+    report = evaluate(database, clock_at(2030, 1, 1)).run()
+    assert report.pruned == 0
+    assert kept_days(database, date(2026, 9, 1), date(2026, 9, 30)) == {
+        date(2026, 9, 1),
+        date(2026, 9, 30),
+    }

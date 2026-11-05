@@ -62,7 +62,7 @@ they cannot drift.
 | :--- | :--- | :--- |
 | `forecasts` | A forecast waiting for its day: station, model, quantity, valid day, lead, `issued_at`, value, chance of rain | Until scored, or 90 days after its day |
 | `observations` | One figure per station, quantity and UTC day | Always (tiny) |
-| `scores` | `ErrorStats` sums per station, quantity, valid day, model and lead | Always, about 90 MB a year |
+| `scores` | `ErrorStats` sums per station, quantity, valid day, model and lead | Two years back from the latest scored day (`SCORE_RETENTION_DAYS`), about 180 MB at most |
 | `source_state` | Which version of each IMGW month was read | Always |
 | `runs` | One row per step of each daily run | Always (tiny) |
 
@@ -78,7 +78,8 @@ they cannot drift.
    month were read, so a later read of earlier days of the same month is not skipped. A month that cannot be read is
    skipped and named in the step's message (the step fails), and the newer months are still read. It is tried again tomorrow.
 3. **Evaluate.** For every waiting forecast whose day has a measurement, compute its `ErrorStats`, upsert the score, and
-   delete the forecast. Forecasts that stay unmatched 90 days after their day are dropped.
+   delete the forecast. Forecasts that stay unmatched 90 days after their day are dropped. Scores older than two years,
+   counted back from the latest scored day, are dropped too: the page shows at most 12 months.
 
 Every step is idempotent. Running the cycle twice changes nothing the second time.
 

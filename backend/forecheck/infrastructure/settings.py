@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     # How forecasts are judged. The defaults are the method's; override to experiment.
     precipitation_threshold_mm: float = Field(default=0.1, gt=0)
     min_samples: int = Field(default=10, ge=1)
+    # How long scores are kept, in days. The longest period the page shows is 365 days.
+    score_retention_days: int = Field(default=730, ge=365)
     trust_temperature_mae_c: float = Field(default=2.0, gt=0)
     trust_wind_mae_ms: float = Field(default=1.5, gt=0)
     trust_pressure_mae_hpa: float = Field(default=2.0, gt=0)

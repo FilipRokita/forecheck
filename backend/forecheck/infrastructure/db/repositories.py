@@ -208,6 +208,12 @@ class PgScoreRepository:
             self._connection, tables.scores, self._rows(records), keys=self._KEYS
         )
 
+    def delete_valid_before(self, day: date) -> int:
+        result = self._connection.execute(
+            delete(tables.scores).where(tables.scores.c.valid_date < day)
+        )
+        return result.rowcount
+
     def latest_day(self) -> date | None:
         return self._connection.execute(select(func.max(tables.scores.c.valid_date))).scalar()
 
