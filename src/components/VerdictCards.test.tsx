@@ -67,6 +67,14 @@ describe("VerdictCards", () => {
     expect(screen.getByText(/Most accurate model/).closest("div")?.parentElement).toHaveTextContent("Accuracy 81%");
   });
 
+  it("does not show another station's or period's rain scores next to this verdict", () => {
+    const elsewhere = { ...rainVerdict().station, id: "12580", name: "Rzeszów" };
+    show({}, ready(rainVerdict({ station: elsewhere })));
+    expect(screen.getByText("Rain tomorrow").parentElement).toHaveTextContent("Loading rain scores.");
+    show({}, ready(rainVerdict({ period: "90d" })));
+    expect(screen.getAllByText("Rain tomorrow")[1]?.parentElement).toHaveTextContent("Loading rain scores.");
+  });
+
   it("keeps the other cards when the rain scores are still loading", () => {
     show({}, { status: "loading" });
     expect(screen.getByText("Rain tomorrow").parentElement).toHaveTextContent("Loading rain scores.");

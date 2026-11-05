@@ -24,7 +24,7 @@ export function VerdictCards({ variable, period, verdict, rain, wetThresholdMm }
   return (
     <section aria-label="Verdict" className="flex flex-wrap gap-3 sm:gap-4">
       <BestModel variable={variable} period={period} verdict={verdict} />
-      <RainTomorrow rain={rain} wetThresholdMm={wetThresholdMm} />
+      <RainTomorrow rain={rain} verdict={verdict} wetThresholdMm={wetThresholdMm} />
       <TrustHorizon variable={variable} verdict={verdict} />
     </section>
   );
@@ -87,7 +87,12 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
   );
 }
 
-function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>; wetThresholdMm: number }) {
+function RainTomorrow({ rain: received, verdict, wetThresholdMm }: { rain: Loadable<Verdict>; verdict: Verdict; wetThresholdMm: number }) {
+  // The rain answer may still be the previous station's or period's. It is shown only once it matches the verdict beside it.
+  const state: Loadable<Verdict> =
+    received.status === "ready" && (received.data.station.id !== verdict.station.id || received.data.period !== verdict.period)
+      ? { status: "loading" }
+      : received;
   if (state.status !== "ready") {
     return (
       <Card delay={70} className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
