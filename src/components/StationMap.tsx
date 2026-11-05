@@ -45,8 +45,8 @@ export function StationMap({ rows, selectedStation }: Props) {
               <circle
                 r={selected ? 8.5 : 6.5}
                 strokeWidth="2"
-                className="stroke-bg transition-[transform,fill,r] duration-500 [transform-box:fill-box] origin-center hover:scale-125"
-                style={{ fill: color }}
+                className="stroke-bg transition-[transform,fill,r] duration-500 [transform-box:fill-box] origin-center"
+                style={{ fill: color, transform: hovered === row.station.id ? "scale(1.25)" : "scale(1)" }}
               />
             </g>
           );
