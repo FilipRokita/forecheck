@@ -62,7 +62,7 @@ class HttpClient:
         for attempt in range(1, self._retry.max_attempts + 1):
             try:
                 response = self._client.get(url, params=params)
-            except httpx.TransportError as error:
+            except httpx.RequestError as error:
                 last_problem = f"{type(error).__name__}: {error}"
                 self._wait(attempt, None)
                 continue

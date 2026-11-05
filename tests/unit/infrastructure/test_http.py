@@ -126,6 +126,13 @@ def test_a_client_error_is_reported_with_the_providers_reason_and_not_retried() 
 
 
 @respx.mock
+def test_a_body_that_cannot_be_decoded_is_a_source_error() -> None:
+    respx.get(URL).mock(side_effect=httpx.DecodingError("bad gzip"))
+    with pytest.raises(SourceUnavailableError, match="DecodingError"):
+        client([]).get_json(URL)
+
+
+@respx.mock
 def test_a_missing_page_is_reported_as_not_found() -> None:
     respx.get(URL).respond(404)
     with pytest.raises(NotFoundError):

@@ -33,6 +33,15 @@ def test_a_daily_forecast_gives_every_model_variable_and_lead() -> None:
 
 
 @respx.mock
+def test_a_malformed_value_is_a_source_error_not_a_crash() -> None:
+    payload = json_fixture("open_meteo_forecast.json")
+    payload["daily"]["temperature_2m_mean_icon_seamless"][1] = "n/a"
+    respx.get(FORECAST_URL).respond(200, json=payload)
+    with pytest.raises(SourceUnavailableError, match="malformed"):
+        adapter().fetch_forecasts(KRAKOW, ISSUED)
+
+
+@respx.mock
 def test_the_request_asks_for_utc_days_in_metres_per_second() -> None:
     route = respx.get(FORECAST_URL).respond(200, json=json_fixture("open_meteo_forecast.json"))
     adapter().fetch_forecasts(KRAKOW, ISSUED)

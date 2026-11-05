@@ -51,6 +51,12 @@ class OpenMeteo:
         self._models = dict(models)
 
     def fetch_forecasts(self, station: Station, issued_at: datetime) -> list[Forecast]:
+        try:
+            return self._fetch_forecasts(station, issued_at)
+        except (ValueError, TypeError) as error:
+            raise SourceUnavailableError(f"Open-Meteo response is malformed: {error}") from error
+
+    def _fetch_forecasts(self, station: Station, issued_at: datetime) -> list[Forecast]:
         params: dict[str, str | int | float] = {
             "latitude": station.latitude,
             "longitude": station.longitude,
@@ -95,7 +101,12 @@ class OpenMeteo:
         chunk_start = start
         while chunk_start <= end:
             chunk_end = min(end, chunk_start + timedelta(days=_ARCHIVE_CHUNK_DAYS - 1))
-            forecasts.extend(self._archive_chunk(station, chunk_start, chunk_end))
+            try:
+                forecasts.extend(self._archive_chunk(station, chunk_start, chunk_end))
+            except (ValueError, TypeError) as error:
+                raise SourceUnavailableError(
+                    f"Open-Meteo response is malformed: {error}"
+                ) from error
             chunk_start = chunk_end + timedelta(days=1)
         return forecasts
 
