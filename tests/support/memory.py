@@ -87,6 +87,15 @@ class MemoryScores:
                 (r.station_id, r.variable.value, r.valid_date, r.model, r.lead_days)
             ] = r
 
+    def insert_missing(self, records: Sequence[ScoreRecord]) -> int:
+        inserted = 0
+        for r in records:
+            key = (r.station_id, r.variable.value, r.valid_date, r.model, r.lead_days)
+            if key not in self._data.scores:
+                self._data.scores[key] = r
+                inserted += 1
+        return inserted
+
     def latest_day(self) -> date | None:
         return max((r.valid_date for r in self._data.scores.values()), default=None)
 

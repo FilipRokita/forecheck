@@ -64,7 +64,7 @@ history instead, run the backfill once from your own machine:
 uv run python scripts/backfill.py --days 60
 ```
 
-It reads IMGW's published months, replays Open-Meteo's archived forecasts for the same days, and writes the scores. It makes one
+It reads IMGW's published months, replays Open-Meteo's archived forecasts for the same days, and writes the scores. A day that already has a score from a live forecast keeps it. It makes one
 Open-Meteo call per station and 31 days (15 calls for 60 days), pauses between stations, and is safe to repeat. If the
 provider's daily limit is hit it stops, keeps what it scored, and can simply be run again later (`--stations` limits it). It
 never runs from the scheduled job.

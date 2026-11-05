@@ -195,6 +195,25 @@ def test_backfill_can_be_repeated_and_limited_to_some_stations() -> None:
         assert totals[ModelId("icon")][1].n == 2  # not 4: the second run replaced the first
 
 
+def test_backfill_does_not_replace_a_score_made_from_a_live_forecast() -> None:
+    database = MemoryDatabase()
+    day = date(2026, 9, 1)
+    live = ErrorStats(n=1, abs_error_sum=4.0, error_sum=4.0, squared_error_sum=16.0)
+    with database.unit_of_work() as uow:
+        uow.scores.upsert(
+            [ScoreRecord(KRAKOW.id, ModelId("icon"), Variable.TEMPERATURE, 1, day, live)]
+        )
+        uow.commit()
+
+    observations = FakeObservationSource({date(2026, 9, 1): "v1"}, value=11.0)
+    backfill(database, FakeArchive(value=10.0), observations).run(day, day, only=[KRAKOW.id])
+
+    with database.unit_of_work() as uow:
+        totals = uow.scores.by_lead(KRAKOW.id, Variable.TEMPERATURE, day, day)
+        assert totals[ModelId("icon")][1] == live
+        assert totals[ModelId("icon")][2].n == 1  # leads that were missing are filled in
+
+
 def test_backfill_skips_forecasts_without_a_measurement() -> None:
     database = MemoryDatabase()
     report = backfill(database, FakeArchive(), FakeObservationSource({})).run(

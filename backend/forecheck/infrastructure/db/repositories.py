@@ -33,6 +33,22 @@ def _upsert(
         )
 
 
+def _insert_missing(
+    connection: Connection, table: Table, rows: Sequence[dict[str, Any]], *, keys: Sequence[str]
+) -> int:
+    """Insert the ``rows`` that do not exist yet and leave the others. Returns how many went in."""
+    inserted = 0
+    for chunk in batched(rows, _CHUNK, strict=False):
+        statement = (
+            insert(table)
+            .values(list(chunk))
+            .on_conflict_do_nothing(index_elements=list(keys))
+            .returning(table.c[keys[0]])
+        )
+        inserted += len(connection.execute(statement).all())
+    return inserted
+
+
 class PgForecastRepository:
     def __init__(self, connection: Connection) -> None:
         self._connection = connection
@@ -168,22 +184,28 @@ class PgScoreRepository:
     def __init__(self, connection: Connection) -> None:
         self._connection = connection
 
+    _KEYS = ("station_id", "variable", "valid_date", "model", "lead_days")
+
+    @staticmethod
+    def _rows(records: Sequence[ScoreRecord]) -> list[dict[str, Any]]:
+        return [
+            {
+                "station_id": r.station_id,
+                "variable": r.variable.value,
+                "valid_date": r.valid_date,
+                "model": r.model,
+                "lead_days": r.lead_days,
+                **{name: getattr(r.stats, name) for name in _STAT_COLUMNS},
+            }
+            for r in records
+        ]
+
     def upsert(self, records: Sequence[ScoreRecord]) -> None:
-        _upsert(
-            self._connection,
-            tables.scores,
-            [
-                {
-                    "station_id": r.station_id,
-                    "variable": r.variable.value,
-                    "valid_date": r.valid_date,
-                    "model": r.model,
-                    "lead_days": r.lead_days,
-                    **{name: getattr(r.stats, name) for name in _STAT_COLUMNS},
-                }
-                for r in records
-            ],
-            keys=("station_id", "variable", "valid_date", "model", "lead_days"),
+        _upsert(self._connection, tables.scores, self._rows(records), keys=self._KEYS)
+
+    def insert_missing(self, records: Sequence[ScoreRecord]) -> int:
+        return _insert_missing(
+            self._connection, tables.scores, self._rows(records), keys=self._KEYS
         )
 
     def latest_day(self) -> date | None:

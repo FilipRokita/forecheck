@@ -167,6 +167,24 @@ def test_scoring_the_same_day_again_replaces_it(uow_factory: UnitOfWorkFactory) 
         )
 
 
+def test_inserting_missing_scores_keeps_the_ones_that_exist(
+    uow_factory: UnitOfWorkFactory,
+) -> None:
+    day = date(2026, 9, 1)
+    with uow_factory() as uow:
+        uow.scores.upsert([record(day, abs_error_sum=2.0)])
+        uow.commit()
+    with uow_factory() as uow:
+        inserted = uow.scores.insert_missing(
+            [record(day, abs_error_sum=5.0), record(day, lead=2, abs_error_sum=7.0)]
+        )
+        uow.commit()
+    assert inserted == 1
+    with uow_factory() as uow:
+        totals = uow.scores.by_lead(KRAKOW, Variable.TEMPERATURE, day, day)[ECMWF]
+        assert (totals[1].abs_error_sum, totals[2].abs_error_sum) == (2.0, 7.0)
+
+
 def test_scores_by_station_at_one_lead(uow_factory: UnitOfWorkFactory) -> None:
     day = date(2026, 9, 1)
     with uow_factory() as uow:

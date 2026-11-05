@@ -86,6 +86,11 @@ class ScoreRepository(Protocol):
         """Insert records, replacing any with the same station, model, variable, lead and day."""
         ...
 
+    def insert_missing(self, records: Sequence[ScoreRecord]) -> int:
+        """Insert the records that have no score yet for their station, model, variable, lead and
+        day, and leave existing scores alone. Returns how many were inserted."""
+        ...
+
     def latest_day(self) -> date | None: ...
 
     def by_lead(

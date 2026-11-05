@@ -8,7 +8,8 @@ scheduled job. It uses the Open-Meteo Previous Runs API, which is free for non-c
 and makes one request per station and 31 days. The default window ends at the newest IMGW month
 already published, because older forecasts cannot be scored without measurements.
 
-Safe to repeat: scores are keyed by station, variable, day, model and lead, and replaced.
+Safe to repeat: scores are keyed by station, variable, day, model and lead, and one that already
+exists (for example from a live forecast) is kept.
 """
 
 import argparse

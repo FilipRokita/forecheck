@@ -84,7 +84,7 @@ Every step is idempotent. Running the cycle twice changes nothing the second tim
 ## History (backfill)
 
 `BackfillScores` skips the waiting: it reads measurements for a past range, fetches the Previous Runs archive (forecasts at a
-fixed lead), scores them in memory, and writes the scores. It is a script run by hand (`scripts/backfill.py`), never part of
+fixed lead), scores them in memory, and writes the scores that are missing (it never replaces a score made from a live forecast). It is a script run by hand (`scripts/backfill.py`), never part of
 the cron job.
 
 ## The API

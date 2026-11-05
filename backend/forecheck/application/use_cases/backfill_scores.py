@@ -25,7 +25,9 @@ class BackfillReport:
 class BackfillScores:
     """Idempotent: a score is keyed by station, variable, day, model and lead, so runs can repeat.
 
-    The archive does not store a chance of rain, so history carries no Brier score.
+    A score that already exists is kept. One made from a forecast fetched on the day is what the
+    method promises, and it has a Brier score, which the archive's reconstruction (stamped at
+    00 UTC, with no chance of rain) cannot match.
     """
 
     def __init__(
@@ -77,8 +79,8 @@ class BackfillScores:
                     )
                 )
             with self._uow_factory() as uow:
-                uow.scores.upsert(records)
+                inserted = uow.scores.insert_missing(records)
                 uow.commit()
-            log.info("Backfilled %s: %d scores", station.name, len(records))
-            total += len(records)
+            log.info("Backfilled %s: %d new scores", station.name, inserted)
+            total += inserted
         return BackfillReport(observations=ingested.observations, scored=total)
