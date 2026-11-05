@@ -192,8 +192,7 @@ The only difference between development and production is the environment variab
 
 4. Deploy. A production build applies the migrations, and a daily cron job then collects, reads and scores.
 
-Hobby plans are for non-commercial use only, which matches the data licences. Details, limits and what to do when a step
-fails: [`docs/operations.md`](docs/operations.md).
+Details, limits and what to do when a step fails: [`docs/operations.md`](docs/operations.md).
 
 ## 📜 Data and licences
 
