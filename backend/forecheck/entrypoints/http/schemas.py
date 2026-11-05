@@ -97,6 +97,12 @@ class FigureOut(Schema):
 
 
 class RankedModelOut(FigureOut):
+    # The ranking adds the leads of the headline range, so here ``n`` counts forecasts: up to
+    # lead_to times the number of scored days.
+    n: int = Field(
+        description="Scored forecasts, summed over leads lead_from to lead_to. "
+        "Up to lead_to times the number of scored days."
+    )
     model: str
     label: str
     # 1 is best. Null when there are too few scored days to rank the model.

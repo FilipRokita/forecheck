@@ -310,7 +310,7 @@ export interface components {
             model: string;
             /**
              * N
-             * @description Scored days.
+             * @description Scored forecasts, summed over leads lead_from to lead_to. Up to lead_to times the number of scored days.
              */
             n: number;
             /** Rank */
