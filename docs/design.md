@@ -40,6 +40,20 @@ the page's content security policy allows only its own origin). Numbers use a de
 
 Both have the same features. Nothing is hidden on a phone.
 
+## Motion and feedback
+
+Everything that can be clicked shows it: a pointer cursor, a hover state and a small press effect. All of it is plain CSS
+(tokens and keyframes in `src/app/globals.css`), with no animation library.
+
+- Cards rise in one after another. Chart bars grow from zero, and a tooltip names the value of the bar under the pointer.
+- The verdict numbers count up once when they appear.
+- The winning model's card has a faint glow in its colour. The station list slides in over a blurred page.
+- Skeletons shimmer. The header stays on top on larger screens, blurred.
+- Every animation stops when the system asks for reduced motion.
+
+On a phone the header is one row (the export button is an icon) and the quantity and period controls lose their captions,
+so the verdict starts higher.
+
 ## Accessibility
 
 - Real `<button>`, `<a>`, `<table>`, `<dialog>`. The station list is a native modal dialog: focus is trapped, Escape closes it,
