@@ -12,7 +12,7 @@ type Props<T> = {
 export function Async<T>({ state, children, skeletonClassName = "h-40", label }: Props<T>) {
   if (state.status === "loading") {
     return (
-      <div role="status" aria-label={`Loading ${label}`} className={`animate-pulse rounded-[14px] border border-border bg-surface ${skeletonClassName}`} />
+      <div role="status" aria-label={`Loading ${label}`} className={`skeleton rounded-[14px] border border-border ${skeletonClassName}`} />
     );
   }
   if (state.status === "error") {

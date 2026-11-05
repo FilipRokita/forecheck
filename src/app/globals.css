@@ -116,3 +116,23 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+.skeleton {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-surface) 30%,
+    var(--color-surface-raised) 50%,
+    var(--color-surface) 70%
+  );
+  background-size: 250% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
