@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Headline } from "@/components/Headline";
 import { HorizonChart } from "@/components/HorizonChart";
 import { Logo } from "@/components/Logo";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { RankingTable } from "@/components/RankingTable";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { StationComparison } from "@/components/StationComparison";
@@ -25,6 +26,8 @@ const KEEP = "keep";
 
 export function Dashboard() {
   const meta = useApi("meta", (signal) => api.meta(signal));
+  // Before the first answer, show the page's own shape instead of one big block.
+  if (meta.status === "loading") return <PageSkeleton />;
   return (
     <div className="min-h-dvh">
       <Async state={meta} label="the app" skeletonClassName="m-4 h-96">

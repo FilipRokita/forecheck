@@ -53,7 +53,8 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 - Cards rise in one after another. Chart bars grow from zero, and a tooltip names the value of the bar under the pointer.
 - The verdict numbers count up once when they appear.
 - The winning model's card has a faint glow in its colour.
-- Skeletons shimmer, but only on the first load. After that, changing the station, quantity or period never blanks the page:
+- Skeletons shimmer, but only on the first load. Before the first answer the page shows its own shape (the header with the
+  logo, the controls and the cards as grey blocks of the same size), not one big block, so nothing moves when it arrives. After that, changing the station, quantity or period never blanks the page:
   the old figures stay until the new ones arrive, a thin line under the header shows that something is loading (only if it
   takes a moment), and then the numbers count from the old value to the new one, the chart bars and the map dots move to
   their new height and colour, and changed words fade in. The highlight in the quantity and period controls slides to the
