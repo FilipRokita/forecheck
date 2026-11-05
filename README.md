@@ -33,20 +33,15 @@
 
 ---
 
-**Forecheck** answers one simple question: *at my station, which weather model has been right lately, and for how many
-days ahead can I rely on it?* Weather apps tell you what the weather will be, but not how often that kind of forecast has
-turned out to be right. Forecheck checks, **in Poland, against real measurements**.
+**Forecheck** answers one question: *at my station, which weather model has been right lately, and for how many days
+ahead can I rely on it?* It checks the forecasts **against real measurements in Poland**.
 
-Every day it saves what **three open weather models** (DWD ICON, ECMWF IFS and NOAA GFS) predicted for the **coming week**
-at **15 IMGW stations**. Once a day has passed and the station's **measurements** are published, each forecast is compared
-with what was actually measured, and the result is added to running totals. Forecasts are judged **as they were issued**,
-never as refreshed just before their day, so the scores reflect what you could really have relied on. IMGW publishes a
-month of data about two weeks after it ends, so the scores run about that far behind.
+Every day it saves what **three open models** (ICON, ECMWF and GFS) predict for the **next 7 days** at **15 IMGW
+stations**, and once a day has been measured, it scores each forecast. Scores run about two weeks behind, because IMGW
+publishes a month of data after it ends.
 
-The page turns those totals into a **clear verdict**, for example: "ECMWF is the most accurate here, and its temperature
-error stays under 2 °C for 3 days." Below it you get the **error for each of the next 7 days**, a **ranking of the
-models**, a **comparison of all stations** and a **CSV export**, for temperature, rain, wind and pressure. There are **no
-accounts and no ads**, and all of it is open source.
+The page gives you a **clear verdict**, for example: "ECMWF is the most accurate here, and its temperature error stays
+under 2 °C for 3 days." **No accounts, no ads**, and all of it is open source.
 
 ## 📖 Table of contents
 
