@@ -31,7 +31,7 @@ export function HorizonChart({ horizon, variable, periodLabel }: Props) {
   const thresholdLabel = isShare ? `${formatNumber(threshold, 0)}% bar` : `${formatNumber(threshold, 1)} ${variable.unit} limit`;
 
   return (
-    <Card as="section" className="flex-[3_1_100%] lg:flex-[3_1_34rem]">
+    <Card as="section" delay={200} className="flex-[3_1_100%] lg:flex-[3_1_34rem]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <div>
           <CardTitle>{heading}</CardTitle>

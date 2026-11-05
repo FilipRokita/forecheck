@@ -40,7 +40,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
   const last = verdict.lead_to;
 
   return (
-    <Card as="section" className="flex-[2_1_100%] lg:flex-[2_1_22rem]">
+    <Card as="section" delay={260} className="flex-[2_1_100%] lg:flex-[2_1_22rem]">
       <CardTitle>Model ranking</CardTitle>
       <CardSubtitle>
         {first}–{last} day forecasts, {verdict.station.name}

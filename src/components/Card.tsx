@@ -1,5 +1,14 @@
-export function Card({ children, className = "", as: Tag = "div" }: { children: React.ReactNode; className?: string; as?: "div" | "section" }) {
-  return <Tag className={`min-w-0 animate-rise rounded-[14px] border border-border bg-surface p-5 transition-colors duration-200 hover:border-border-strong sm:p-6 ${className}`}>{children}</Tag>;
+type CardProps = {
+  children: React.ReactNode;
+  className?: string;
+  as?: "div" | "section";
+  /** Milliseconds before the entrance animation starts, so cards arrive one after another. */
+  delay?: number;
+  style?: React.CSSProperties;
+};
+
+export function Card({ children, className = "", as: Tag = "div", delay = 0, style }: CardProps) {
+  return <Tag style={{ animationDelay: `${delay}ms`, ...style }} className={`min-w-0 animate-rise rounded-[14px] border border-border bg-surface p-5 transition-colors duration-200 hover:border-border-strong sm:p-6 ${className}`}>{children}</Tag>;
 }
 
 export function CardTitle({ children, id }: { children: React.ReactNode; id?: string }) {

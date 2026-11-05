@@ -35,7 +35,10 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
   const noun = variable.metric === "accuracy" ? "Accuracy" : "Mean error";
 
   return (
-    <Card className="flex-[2_1_100%] sm:flex-[2_1_26rem]">
+    <Card
+      className="flex-[2_1_100%] sm:flex-[2_1_26rem]"
+      style={best ? { boxShadow: `0 0 70px -28px ${modelColor(best.model)}` } : undefined}
+    >
       <Eyebrow>
         Most accurate model · {variable.label.toLowerCase()} · {range}
       </Eyebrow>
@@ -77,7 +80,7 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
 function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>; wetThresholdMm: number }) {
   if (state.status !== "ready") {
     return (
-      <Card className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
+      <Card delay={70} className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
         <Eyebrow>Rain tomorrow</Eyebrow>
         <div className={`my-3 font-mono ${BIG} text-fg-muted`}>–</div>
         {state.status === "loading" ? (
@@ -99,7 +102,7 @@ function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>
   const best = rain.ranking.find((model) => model.rank === 1);
   const share = rain.next_day?.accuracy ?? null;
   return (
-    <Card className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
+    <Card delay={70} className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
       <Eyebrow>Rain tomorrow</Eyebrow>
       <div className={`my-3 font-mono ${BIG}`}>{formatPercent(share)}</div>
       <p className="text-fg-soft">
@@ -119,7 +122,7 @@ function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>
 function TrustHorizon({ variable, verdict }: Pick<Props, "variable" | "verdict">) {
   const days = verdict.trust_days;
   return (
-    <Card className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
+    <Card delay={140} className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
       <Eyebrow>How far to trust it</Eyebrow>
       <div className={`my-3 ${BIG}`}>
         {days === null ? (

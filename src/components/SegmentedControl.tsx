@@ -30,7 +30,7 @@ export function SegmentedControl({ label, options, value, onChange, scroll = fal
               onClick={() => onChange(option.id)}
               className={`min-h-11 flex-none rounded-lg border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-9 sm:px-3.5 ${
                 selected
-                  ? "border-border-strong bg-surface-raised font-medium text-white shadow-[0_1px_8px_rgb(110_231_200/0.12)]"
+                  ? "border-border-strong bg-surface-raised font-medium text-white shadow-[0_1px_8px_color-mix(in_srgb,var(--color-model-ecmwf)_14%,transparent)]"
                   : "border-transparent text-fg-muted hover:bg-surface-raised/60 hover:text-fg"
               } ${scroll ? "" : "flex-1 sm:flex-none"}`}
             >

@@ -14,7 +14,7 @@ type Props = {
 export function StationComparison({ comparison, variable, period, selectedStation, onSelect }: Props) {
   const valueHeader = variable.metric === "accuracy" ? "Accuracy" : `Error (${variable.unit})`;
   return (
-    <Card as="section">
+    <Card as="section" delay={320}>
       <CardTitle>Station comparison</CardTitle>
       <CardSubtitle>
         {variable.label}, {comparison.lead_days}-day forecasts, last {period.label}. Choose a station to open it.
