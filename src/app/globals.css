@@ -151,3 +151,25 @@ body {
     }
   }
 }
+
+/* Scrollbars: thin, dark, in the page's own colours, for the page and every scrolling list. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-fg-muted) 35%, transparent) transparent;
+}
+
+/* Browsers without the standard properties. */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-fg-muted) 35%, transparent);
+    border: 2px solid var(--color-bg);
+    border-radius: 999px;
+  }
+}
