@@ -61,7 +61,8 @@ and the connection dropped now and then. This is the risk the terms describe. Wh
 - A "daily" or "hourly" "limit exceeded" answer is not retried: the run stops, reports it, and the next day's run
   continues. A "minutely" one is waited out (60 s) and retried, because it clears with the minute.
 - Forecasts missed on a day are not backfilled later: a missing day is a gap, never an invented value.
-- `CONTACT_EMAIL` goes into the User-Agent so that Open-Meteo can reach the operator.
+- `APP_URL` and `CONTACT_EMAIL` go into the User-Agent so that Open-Meteo can tell the instance apart and reach the
+  operator. Both are optional and empty by default, so a clone sends nothing that points at someone else.
 
 ## IMGW-PIB
 

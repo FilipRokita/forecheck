@@ -32,7 +32,7 @@ from forecheck.infrastructure import imgw, open_meteo
 from forecheck.infrastructure.http import HttpClient
 
 FIXTURES = ROOT / "tests" / "fixtures"
-UA = "forecheck-explore/0.1 (+https://github.com/FilipRokita/forecheck)"
+UA = "forecheck-explore/0.1"
 
 
 def say(line: str = "") -> None:

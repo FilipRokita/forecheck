@@ -25,7 +25,8 @@ commercial licence for the Open-Meteo data.
 | `DATABASE_URL` | Neon pooled connection string | Used by the API. `postgres://` and `postgresql://` are accepted as pasted |
 | `DIRECT_URL` | Neon direct connection string | Used by migrations only. A pooler in transaction mode does not suit DDL |
 | `CRON_SECRET` | a random string of 16+ characters | `openssl rand -base64 32`. Vercel sends it with every cron call. Without it the cron route is off |
-| `CONTACT_EMAIL` | your address | Goes into the User-Agent of every request to Open-Meteo and IMGW. Recommended |
+| `APP_URL` | the address of your deployment | Goes into the User-Agent of every request to Open-Meteo and IMGW, so they can tell your instance apart. Optional |
+| `CONTACT_EMAIL` | your address | Goes into the same User-Agent, so the providers can reach you. Recommended |
 
 Optional: the method's thresholds ([`spec.md`](spec.md#settings)). Leave `NEXT_PUBLIC_API_BASE_URL` empty (the page and the API
 share an origin) and ignore `API_PROXY_TARGET` (development only).

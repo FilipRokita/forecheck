@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     database_url: str = ""
     # Protects the scheduled route. Empty disables the route.
     cron_secret: str = ""
-    # Sent in the User-Agent to the data providers.
+    # Sent in the User-Agent to the data providers, so they can tell this deployment apart and
+    # reach whoever runs it. Both are optional: nothing identifying is sent that is not set here.
+    app_url: str = ""
     contact_email: str = ""
 
     # How forecasts are judged. The defaults are the method's; override to experiment.
@@ -27,8 +29,10 @@ class Settings(BaseSettings):
 
     @property
     def user_agent(self) -> str:
-        contact = f" ({self.contact_email})" if self.contact_email else ""
-        return f"forecheck/0.1 (+https://github.com/FilipRokita/forecheck){contact}"
+        details = [f"+{self.app_url}"] if self.app_url else []
+        if self.contact_email:
+            details.append(self.contact_email)
+        return "forecheck/0.1" + (f" ({'; '.join(details)})" if details else "")
 
     def rules(self) -> Rules:
         return Rules(
