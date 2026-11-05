@@ -51,6 +51,7 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 - Skeletons shimmer. Changing the quantity or the period shows them, because the figures would be read in the wrong unit.
   Changing the station keeps the old figures on screen, dimmed, until the new ones arrive: they name their station, so they
   cannot be mistaken for the new one. The header stays on top on larger screens, blurred.
+- The logo in the header is the one from the README, drawn in the page's own font. Pressing it scrolls smoothly back to the top.
 - Every animation stops when the system asks for reduced motion.
 
 On a phone the header is one row (the export button is an icon) and the quantity and period controls lose their captions,

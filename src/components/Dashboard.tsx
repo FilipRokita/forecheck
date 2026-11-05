@@ -6,6 +6,7 @@ import { Badge } from "@/components/Badge";
 import { Footer } from "@/components/Footer";
 import { Headline } from "@/components/Headline";
 import { HorizonChart } from "@/components/HorizonChart";
+import { Logo } from "@/components/Logo";
 import { RankingTable } from "@/components/RankingTable";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { StationComparison } from "@/components/StationComparison";
@@ -63,16 +64,11 @@ function Loaded({ meta }: { meta: Meta }) {
     <>
       <header className="z-20 border-b border-border bg-bg/80 backdrop-blur-md sm:sticky sm:top-0">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-10 sm:py-2.5">
-        <div className="flex items-center gap-x-2.5">
-          <div aria-hidden="true" className="flex size-7 flex-none items-center justify-center rounded-lg border border-border-strong bg-surface">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-model-ecmwf)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 8.5l3.2 3L13 4.5" />
-            </svg>
-          </div>
-          <div className="flex items-baseline gap-x-3">
-            <h1 className="text-[17px] font-semibold leading-none tracking-tight">Forecheck</h1>
-            <p className="text-sm leading-none text-fg-muted max-sm:hidden">How far can you trust a weather forecast?</p>
-          </div>
+        <div className="flex items-center gap-x-4">
+          <h1>
+            <Logo />
+          </h1>
+          <p className="text-sm text-fg-muted max-sm:hidden">How far can you trust a weather forecast?</p>
         </div>
         <div className="ml-auto flex items-center gap-3">
           {status.sample_data ? <Badge>Sample data</Badge> : null}
