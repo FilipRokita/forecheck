@@ -37,7 +37,7 @@ export function ColumnGuide({ columns, variable, best, bestRain }: Props) {
         type="button"
         aria-haspopup="dialog"
         onClick={() => dialog.current?.showModal()}
-        className="mt-4 flex min-h-11 items-center gap-2 text-fg-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
+        className="mt-2 flex min-h-11 items-center gap-2 text-fg-muted md:min-h-9 hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
       >
         <span aria-hidden="true" className="grid size-4 place-items-center rounded-full border border-current text-[10px] font-semibold leading-none">
           i
