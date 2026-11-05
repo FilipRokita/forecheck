@@ -49,7 +49,7 @@ under 2 °C for 3 days." **No accounts, no ads**, and all of it is open source.
 2. [🧪 How a forecast is judged](#-how-a-forecast-is-judged)
 3. [🧱 Stack](#-stack)
 4. [🔧 How it's built](#-how-its-built)
-5. [🚀 Run it locally](#-run-it-locally)
+5. [🚀 Run it locally (development)](#-run-it-locally-development)
 6. [☁️ Run it on a host](#️-run-it-on-a-host)
 7. [📜 Data and licences](#-data-and-licences)
 8. [⚠️ Known limits](#️-known-limits)
@@ -142,9 +142,10 @@ Inside the backend, arrows show the only direction imports may go.
 
 More in [`docs/architecture.md`](docs/architecture.md).
 
-## 🚀 Run it locally
+## 🚀 Run it locally (development)
 
-You need Docker and VS Code with the Dev Containers extension.
+A **development** setup in a dev container. You need Docker and VS Code with the Dev Containers extension. To deploy it,
+see [Run it on a host](#️-run-it-on-a-host).
 
 1. **Create your settings file.** The defaults work locally.
 
