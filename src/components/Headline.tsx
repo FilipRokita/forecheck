@@ -1,3 +1,4 @@
+import { CountUpInt } from "@/components/CountUp";
 import { plural } from "@/lib/format";
 import type { Variable, Verdict } from "@/lib/api/types";
 import { modelColor } from "@/lib/models";
@@ -9,14 +10,19 @@ export function Headline({ variable, verdict }: { variable: Variable; verdict: V
   const days = verdict.trust_days;
   return (
     <p className="max-w-3xl text-xl font-medium leading-snug tracking-tight sm:text-2xl">
-      At {verdict.station.name}, <span style={{ color: modelColor(best.model) }}>{best.label}</span> is the most accurate model for{" "}
-      {variable.label.toLowerCase()}.{" "}
+      At {verdict.station.name},{" "}
+      <span key={best.model} className="animate-fade" style={{ color: modelColor(best.model) }}>
+        {best.label}
+      </span>{" "}
+      is the most accurate model for {variable.label.toLowerCase()}.{" "}
       <span className="text-fg-muted">
-        {days === null
-          ? ""
-          : days === 0
-            ? "Even tomorrow's forecast misses the bar."
-            : `Rely on it for up to ${days} ${plural(days, "day", "days")} ahead.`}
+        {days === null ? null : days === 0 ? (
+          "Even tomorrow's forecast misses the bar."
+        ) : (
+          <>
+            Rely on it for up to <CountUpInt value={days} /> {plural(days, "day", "days")} ahead.
+          </>
+        )}
       </span>
     </p>
   );

@@ -1,7 +1,7 @@
 import { Card, Eyebrow } from "@/components/Card";
-import { CountUpInt, CountUpPercent } from "@/components/CountUp";
-import { headline, trustRule } from "@/components/metric";
-import type { Period, Variable, Verdict } from "@/lib/api/types";
+import { CountUpInt, CountUpNumber, CountUpPercent } from "@/components/CountUp";
+import { headlineFormat, headlineNumber, trustRule } from "@/components/metric";
+import type { Figure, Period, Variable, Verdict } from "@/lib/api/types";
 import type { Loadable } from "@/lib/api/use-api";
 import { formatNumber, formatPercent, plural } from "@/lib/format";
 import { modelColor } from "@/lib/models";
@@ -45,11 +45,14 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
       </Eyebrow>
       {best ? (
         <>
-          <div className={`my-3 ${BIG}`} style={{ color: modelColor(best.model) }}>
+          <div key={best.model} className={`my-3 animate-fade ${BIG}`} style={{ color: modelColor(best.model) }}>
             {best.label}
           </div>
           <p className="max-w-prose text-fg-soft">
-            {noun} <Mono>{headline(variable, best)}</Mono>
+            {noun}{" "}
+            <Mono>
+              <Value variable={variable} figure={best} />
+            </Mono>
             {others.length ? (
               <>
                 {" "}
@@ -57,7 +60,10 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
                 {others.map((model, index) => (
                   <span key={model.model}>
                     {index > 0 ? (index === others.length - 1 ? " and " : ", ") : ""}
-                    <Mono>{headline(variable, model)}</Mono> ({model.label})
+                    <Mono>
+                      <Value variable={variable} figure={model} />
+                    </Mono>{" "}
+                    ({model.label})
                   </span>
                 ))}
               </>
@@ -148,6 +154,11 @@ function TrustHorizon({ variable, verdict }: Pick<Props, "variable" | "verdict">
       </p>
     </Card>
   );
+}
+
+/** A figure's headline number, counting from the old value to the new one when the selection changes. */
+function Value({ variable, figure }: { variable: Variable; figure: Pick<Figure, "mae" | "accuracy"> }) {
+  return <CountUpNumber value={headlineNumber(variable, figure)} format={headlineFormat(variable)} />;
 }
 
 function Mono({ children }: { children: React.ReactNode }) {

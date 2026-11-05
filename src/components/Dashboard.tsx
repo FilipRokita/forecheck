@@ -19,6 +19,9 @@ import { formatDay } from "@/lib/format";
 import { REPOSITORY } from "@/lib/links";
 import { readSelection, type Selection, writeSelection } from "@/lib/selection";
 
+/** Every answer stays on screen, marked stale, until the next one arrives, so a change of selection never blanks the page. */
+const KEEP = "keep";
+
 export function Dashboard() {
   const meta = useApi("meta", (signal) => api.meta(signal));
   return (
@@ -51,15 +54,18 @@ function Loaded({ meta }: { meta: Meta }) {
   const rainVariable = meta.variables.find((v) => v.metric === "accuracy");
   const key = `${stationId}|${variableId}|${periodId}`;
 
-  const verdict = useApi(`verdict|${key}`, (signal) => api.verdict(stationId, variableId, periodId, signal), `${variableId}|${periodId}`);
-  const rain = useApi(`rain|${stationId}|${periodId}`, (signal) => api.verdict(stationId, rainVariable?.id ?? "precipitation", periodId, signal), periodId);
-  const horizon = useApi(`horizon|${key}`, (signal) => api.horizon(stationId, variableId, periodId, signal), `${variableId}|${periodId}`);
-  const comparison = useApi(`comparison|${variableId}|${periodId}`, (signal) => api.comparison(variableId, periodId, 1, signal));
+  const verdict = useApi(`verdict|${key}`, (signal) => api.verdict(stationId, variableId, periodId, signal), KEEP);
+  const rain = useApi(`rain|${stationId}|${periodId}`, (signal) => api.verdict(stationId, rainVariable?.id ?? "precipitation", periodId, signal), KEEP);
+  const horizon = useApi(`horizon|${key}`, (signal) => api.horizon(stationId, variableId, periodId, signal), KEEP);
+  const comparison = useApi(`comparison|${variableId}|${periodId}`, (signal) => api.comparison(variableId, periodId, 1, signal), KEEP);
 
   if (!variable || !period || !rainVariable) return null;
   const { status } = meta;
-  // A new station is loading while the old one's figures, which name it, stay on screen but dimmed.
-  const updating = [verdict, rain, horizon].some((state) => state.status === "ready" && state.stale);
+  const updating = [verdict, rain, horizon, comparison].some((state) => state.status === "ready" && state.stale);
+  // What is on screen may still belong to the previous selection, so each part is written in the unit and for the period
+  // of its own answer, never of the current choice.
+  const variableOf = (id: string) => meta.variables.find((v) => v.id === id) ?? variable;
+  const periodOf = (id: string) => meta.periods.find((p) => p.id === id) ?? period;
 
   return (
     <>
@@ -93,6 +99,12 @@ function Loaded({ meta }: { meta: Meta }) {
             </a>
           </div>
         </div>
+        {updating ? (
+          // Appears only if the answer takes a moment, so a quick change shows no flicker.
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 animate-fade overflow-hidden" style={{ animationDelay: "250ms" }}>
+            <div className="h-full w-1/3 animate-slide bg-model-ecmwf" />
+          </div>
+        ) : null}
       </header>
 
       <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6 sm:gap-y-3 sm:px-10 sm:py-5">
@@ -101,28 +113,34 @@ function Loaded({ meta }: { meta: Meta }) {
         <SegmentedControl label="Period" options={meta.periods} value={periodId} onChange={(id) => choose({ period: id })} />
       </div>
 
-      <main aria-busy={updating} className={`mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-2 transition-opacity duration-200 sm:gap-4 sm:px-10 ${updating ? "opacity-50" : ""}`}>
+      <main aria-busy={updating} className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-2 sm:gap-4 sm:px-10">
         <Async state={verdict} label="the verdict" skeletonClassName="h-48">
           {(v) => (
             <>
-              <Headline variable={variable} verdict={v} />
-              <FreshnessNote latest={status.latest_scored_day} scoredDays={v.scored_days} windowDays={period.days} />
-              <VerdictCards variable={variable} period={period} verdict={v} rain={rain} wetThresholdMm={meta.precipitation_threshold_mm} />
+              <Headline variable={variableOf(v.variable)} verdict={v} />
+              <FreshnessNote latest={status.latest_scored_day} scoredDays={v.scored_days} windowDays={periodOf(v.period).days} />
+              <VerdictCards variable={variableOf(v.variable)} period={periodOf(v.period)} verdict={v} rain={rain} wetThresholdMm={meta.precipitation_threshold_mm} />
             </>
           )}
         </Async>
 
         <div className="flex flex-wrap gap-3 sm:gap-4">
           <Async state={horizon} label="the chart" skeletonClassName="h-72 flex-[3_1_34rem]">
-            {(h) => <HorizonChart horizon={h} variable={variable} periodLabel={period.label} />}
+            {(h) => <HorizonChart horizon={h} variable={variableOf(h.variable)} periodLabel={periodOf(h.period).label} />}
           </Async>
           <Async state={verdict} label="the ranking" skeletonClassName="h-72 flex-[2_1_22rem]">
-            {(v) => <RankingTable variable={variable} verdict={v} rain={rain.status === "ready" ? rain.data : undefined} />}
+            {(v) => (
+              <RankingTable
+                variable={variableOf(v.variable)}
+                verdict={v}
+                rain={rain.status === "ready" && rain.data.station.id === v.station.id && rain.data.period === v.period ? rain.data : undefined}
+              />
+            )}
           </Async>
         </div>
 
         <Async state={comparison} label="the station comparison" skeletonClassName="h-80">
-          {(c) => <StationComparison comparison={c} variable={variable} period={period} selectedStation={stationId} onSelect={(id) => choose({ station: id })} />}
+          {(c) => <StationComparison comparison={c} variable={variableOf(c.variable)} period={periodOf(c.period)} selectedStation={stationId} onSelect={(id) => choose({ station: id })} />}
         </Async>
 
         <Footer />

@@ -1,7 +1,8 @@
 import { Card, CardSubtitle, CardTitle } from "@/components/Card";
+import { CountUpNumber } from "@/components/CountUp";
 import { ModelName } from "@/components/ModelName";
 import { StationMap } from "@/components/StationMap";
-import { headline } from "@/components/metric";
+import { headlineFormat, headlineNumber } from "@/components/metric";
 import type { Comparison, Period, Variable } from "@/lib/api/types";
 
 type Props = {
@@ -63,7 +64,7 @@ export function StationComparison({ comparison, variable, period, selectedStatio
                         <span className="text-fg-muted">Too few days</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-right font-mono lg:py-2">{row.figures ? headline(variable, row.figures) : "–"}</td>
+                    <td className="px-3 py-3 text-right font-mono lg:py-2">{row.figures ? <CountUpNumber value={headlineNumber(variable, row.figures)} format={headlineFormat(variable)} /> : "–"}</td>
                   </tr>
                 );
               })}

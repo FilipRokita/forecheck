@@ -6,6 +6,16 @@ export function headline(variable: Pick<Variable, "metric" | "unit">, figure: Pi
   return variable.metric === "accuracy" ? formatPercent(figure.accuracy) : formatWithUnit(figure.mae, variable.unit);
 }
 
+/** The number behind `headline`, for views that animate it. */
+export function headlineNumber(variable: Pick<Variable, "metric">, figure: Pick<Figure, "mae" | "accuracy">): number | null {
+  return variable.metric === "accuracy" ? figure.accuracy : figure.mae;
+}
+
+/** Writes a `headlineNumber` the way `headline` does. */
+export function headlineFormat(variable: Pick<Variable, "metric" | "unit">): (value: number) => string {
+  return variable.metric === "accuracy" ? formatPercent : (value) => formatWithUnit(value, variable.unit);
+}
+
 /** The same without the unit, for table cells whose header carries it. */
 export function headlineValue(variable: Pick<Variable, "metric">, figure: Pick<Figure, "mae" | "accuracy">): string {
   return variable.metric === "accuracy" ? formatPercent(figure.accuracy) : formatNumber(figure.mae);

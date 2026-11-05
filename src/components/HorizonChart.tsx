@@ -56,31 +56,39 @@ export function HorizonChart({ horizon, variable, periodLabel }: Props) {
         <>
           <div className="mt-6" aria-hidden="true">
             <div className="relative ml-9 h-44">
-              {ticks.map((tick) => (
-                <div key={tick} className="absolute inset-x-0 border-t border-grid" style={{ bottom: `${(tick / top) * 100}%` }}>
+              {ticks.map((tick, index) => (
+                <div
+                  key={index}
+                  className="absolute inset-x-0 animate-fade border-t border-grid transition-[bottom] duration-700 ease-out-soft"
+                  style={{ bottom: `${(tick / top) * 100}%` }}
+                >
                   <span className="absolute -left-9 -top-2.5 w-7 text-right font-mono text-[11px] text-fg-muted">{formatNumber(tick, tick % 1 === 0 ? 0 : 1)}</span>
                 </div>
               ))}
-              <div className="absolute inset-x-0 border-t border-dashed border-fg-soft" style={{ bottom: `${(Math.min(threshold, top) / top) * 100}%` }} />
+              <div
+                className="absolute inset-x-0 border-t border-dashed border-fg-soft transition-[bottom] duration-700 ease-out-soft"
+                style={{ bottom: `${(Math.min(threshold, top) / top) * 100}%` }}
+              />
               <div className="absolute inset-0 flex items-end">
                 {LEADS.map((lead) => (
                   <div key={lead} className="flex h-full flex-1 items-end justify-center gap-[3px]">
                     {horizon.models.map((model) => {
                       const value = barValue(variable, leadOf(model, lead));
                       const height = value === null ? 0 : Math.max((value / top) * 100, 1);
-                      return value === null ? (
-                        <div key={model.model} className="w-2 sm:w-3.5" />
-                      ) : (
+                      return (
                         <div key={model.model} className="group relative flex h-full items-end">
                           <div
-                            className="w-2 origin-bottom animate-grow rounded-t-[3px] transition-[filter] group-hover:brightness-125 sm:w-3.5"
-                            style={{ height: `${height}%`, background: modelColor(model.model), animationDelay: `${lead * 60}ms` }}
+                            className="w-2 origin-bottom animate-grow rounded-t-[3px] transition-[height,background-color,opacity,filter] duration-700 ease-out-soft group-hover:brightness-125 sm:w-3.5"
+                            style={{ height: `${height}%`, opacity: value === null ? 0 : 1, background: modelColor(model.model), animationDelay: `${lead * 60}ms` }}
                           />
-                          <span
-                            style={{ bottom: `${height}%` }}
-                            className="pointer-events-none absolute left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-border-strong bg-surface-raised px-2 py-1 font-mono text-[11px] text-fg opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                            {model.label} {isShare ? formatPercent(value / 100) : `${formatNumber(value, 1)} ${variable.unit}`}
-                          </span>
+                          {value === null ? null : (
+                            <span
+                              style={{ bottom: `${height}%` }}
+                              className="pointer-events-none absolute left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-border-strong bg-surface-raised px-2 py-1 font-mono text-[11px] text-fg opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
+                            >
+                              {model.label} {isShare ? formatPercent(value / 100) : `${formatNumber(value, 1)} ${variable.unit}`}
+                            </span>
+                          )}
                         </div>
                       );
                     })}

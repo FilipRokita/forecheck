@@ -27,7 +27,7 @@ function serve(overrides: Record<string, Handler> = {}) {
       asked.push(`${url.pathname}${url.search}`);
       const handler = handlers[url.pathname];
       if (!handler) return new Response("not found", { status: 404 });
-      return new Response(JSON.stringify(handler(url)), { status: 200, headers: { "content-type": "application/json" } });
+      return new Response(JSON.stringify(await handler(url)), { status: 200, headers: { "content-type": "application/json" } });
     }),
   );
   return asked;
@@ -68,6 +68,25 @@ describe("Dashboard", () => {
     await waitFor(() => expect(window.location.search).toContain("variable=precipitation"));
     expect(asked).toContain("/api/stations/12566/horizon?variable=precipitation&period=30d");
     expect(screen.getByRole("button", { name: "Precipitation" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("keeps the old figures on screen while the next ones load, and shows that it is working", async () => {
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    serve({
+      "/api/stations/12566/horizon": async (url) => {
+        if (url.searchParams.get("variable") === "precipitation") await gate;
+        return horizon();
+      },
+    });
+    render(<Dashboard />);
+    await screen.findByRole("heading", { name: "Temperature error by forecast horizon" });
+    await userEvent.click(screen.getByRole("button", { name: "Precipitation" }));
+    expect(screen.getByRole("heading", { name: "Temperature error by forecast horizon" })).toBeInTheDocument();
+    expect(screen.queryByRole("status", { name: "Loading the chart" })).not.toBeInTheDocument();
+    expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "true");
+    release();
+    await waitFor(() => expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "false"));
   });
 
   it("opens another station from the comparison", async () => {

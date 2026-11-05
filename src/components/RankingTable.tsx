@@ -1,34 +1,39 @@
 import { Card, CardSubtitle, CardTitle } from "@/components/Card";
+import { CountUpNumber } from "@/components/CountUp";
 import { ModelName } from "@/components/ModelName";
-import { headlineValue } from "@/components/metric";
 import type { RankedModel, Variable, Verdict } from "@/lib/api/types";
 import { formatNumber, formatPercent } from "@/lib/format";
 
 /** `rain` is the precipitation verdict, or undefined while it is loading or failed: its columns then show a dash. */
 type Props = { variable: Variable; verdict: Verdict; rain: Verdict | undefined };
 
-type Column = { key: string; header: string; hint: string; cell: (model: RankedModel, rain: RankedModel | undefined) => string };
+type Column = {
+  key: string;
+  header: string;
+  hint: string;
+  value: (model: RankedModel, rain: RankedModel | undefined) => number | null | undefined;
+  format: (value: number) => string;
+};
 
 /** The columns depend on what is being judged: measured quantities get an error and a bias, rain gets its yes/no scores. */
 function columns(variable: Variable): Column[] {
   if (variable.metric === "accuracy") {
     return [
-      { key: "accuracy", header: "Accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", cell: (m) => formatPercent(m.accuracy) },
-      { key: "hit", header: "Rain caught", hint: "Share of rainy days the forecast called. Higher is better.", cell: (m) => formatPercent(m.hit_rate) },
-      { key: "false", header: "False alarms", hint: "Share of rain calls made on days that stayed dry. Lower is better.", cell: (m) => formatPercent(m.false_alarm_ratio) },
-      { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", cell: (m) => formatNumber(m.brier, 2) },
+      { key: "accuracy", header: "Accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", value: (m) => m.accuracy, format: formatPercent },
+      { key: "hit", header: "Rain caught", hint: "Share of rainy days the forecast called. Higher is better.", value: (m) => m.hit_rate, format: formatPercent },
+      { key: "false", header: "False alarms", hint: "Share of rain calls made on days that stayed dry. Lower is better.", value: (m) => m.false_alarm_ratio, format: formatPercent },
+      { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", value: (m) => m.brier, format: (n) => formatNumber(n, 2) },
     ];
   }
   return [
-    { key: "error", header: `Error (${variable.unit})`, hint: "Average gap between forecast and measurement. Lower is better.", cell: (m) => headlineValue(variable, m) },
-    { key: "bias", header: `Bias (${variable.unit})`, hint: "Whether the forecast runs high (+) or low (−) on average. Closer to 0 is better.", cell: (m) => formatSigned(m.bias) },
-    { key: "rain", header: "Rain accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", cell: (_m, rain) => formatPercent(rain?.accuracy) },
-    { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", cell: (_m, rain) => formatNumber(rain?.brier, 2) },
+    { key: "error", header: `Error (${variable.unit})`, hint: "Average gap between forecast and measurement. Lower is better.", value: (m) => m.mae, format: (n) => formatNumber(n) },
+    { key: "bias", header: `Bias (${variable.unit})`, hint: "Whether the forecast runs high (+) or low (−) on average. Closer to 0 is better.", value: (m) => m.bias, format: formatSigned },
+    { key: "rain", header: "Rain accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", value: (_m, rain) => rain?.accuracy, format: formatPercent },
+    { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", value: (_m, rain) => rain?.brier, format: (n) => formatNumber(n, 2) },
   ];
 }
 
-function formatSigned(value: number | null): string {
-  if (value === null) return "–";
+function formatSigned(value: number): string {
   const text = formatNumber(Math.abs(value), 1);
   return value > 0.05 ? `+${text}` : value < -0.05 ? `−${text}` : text;
 }
@@ -75,7 +80,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
                     </th>
                     {cols.map((col) => (
                       <td key={col.key} className="px-3 py-3 text-right font-mono">
-                        {col.cell(model, rainBy.get(model.model))}
+                        <CountUpNumber value={col.value(model, rainBy.get(model.model)) ?? null} format={col.format} />
                       </td>
                     ))}
                   </tr>
@@ -96,7 +101,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
                   {cols.map((col) => (
                     <div key={col.key} className="flex items-baseline justify-between gap-2">
                       <dt className="text-fg-muted">{col.header}</dt>
-                      <dd className="font-mono">{col.cell(model, rainBy.get(model.model))}</dd>
+                      <dd className="font-mono"><CountUpNumber value={col.value(model, rainBy.get(model.model)) ?? null} format={col.format} /></dd>
                     </div>
                   ))}
                 </dl>

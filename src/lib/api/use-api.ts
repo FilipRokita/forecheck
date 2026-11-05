@@ -13,8 +13,8 @@ export type Loadable<T> =
  * dropped while the next one loads, so the page never shows figures for a different selection than the one chosen.
  *
  * One exception, opt-in: while `keepWhile` stays the same, the previous answer stays on screen marked `stale`. Use it
- * only when the part of the selection that changes is named in the answer itself (a station), never for what the
- * view formats the figures with (a quantity or a period).
+ * only when the answer says which selection it belongs to (a station, a quantity, a period), and the view reads that
+ * from the answer instead of from the current choice, so old figures are never shown as if they were the new ones.
  */
 export function useApi<T>(key: string, load: (signal: AbortSignal) => Promise<T>, keepWhile?: string): Loadable<T> {
   const [state, setState] = useState<{ key: string; keep: string | undefined; result: Loadable<T> }>({ key, keep: keepWhile, result: { status: "loading" } });
