@@ -43,7 +43,7 @@ describe("Dashboard", () => {
   it("shows the verdict, the chart, the ranking and the comparison for the chosen station", async () => {
     serve();
     render(<Dashboard />);
-    expect(await screen.findByText("Most accurate model", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByText(/^Most accurate model/)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Temperature error by forecast horizon" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Model ranking" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Station comparison" })).toBeInTheDocument();
@@ -143,7 +143,7 @@ describe("Dashboard", () => {
       },
     });
     render(<Dashboard />);
-    expect(await screen.findByText("Most accurate model", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByText(/^Most accurate model/)).toBeInTheDocument();
     expect(await screen.findByText("Could not load rain scores.")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Model ranking" })).toBeInTheDocument();
   });

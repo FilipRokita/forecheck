@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Async } from "@/components/Async";
 import { Badge } from "@/components/Badge";
 import { Footer } from "@/components/Footer";
+import { Headline } from "@/components/Headline";
 import { HorizonChart } from "@/components/HorizonChart";
 import { RankingTable } from "@/components/RankingTable";
 import { SegmentedControl } from "@/components/SegmentedControl";
@@ -95,6 +96,7 @@ function Loaded({ meta }: { meta: Meta }) {
         <Async state={verdict} label="the verdict" skeletonClassName="h-48">
           {(v) => (
             <>
+              <Headline variable={variable} verdict={v} />
               <FreshnessNote latest={status.latest_scored_day} scoredDays={v.scored_days} windowDays={period.days} />
               <VerdictCards variable={variable} period={period} verdict={v} rain={rain} wetThresholdMm={meta.precipitation_threshold_mm} />
             </>
