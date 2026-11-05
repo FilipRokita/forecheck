@@ -62,6 +62,11 @@ class ImgwSynopArchive:
         self._listings: dict[int, dict[str, str]] = {}
         self._columns: dict[str, int] | None = None
         self._zips: dict[str, bytes] = {}
+        # Parsed files. A yearly station file serves every month of its year, so it is asked for
+        # again and again within one read.
+        self._parsed: dict[
+            tuple[str, tuple[StationId, ...]], dict[tuple[StationId, date, int], _Hour]
+        ] = {}
 
     # --- ObservationSource -------------------------------------------------------------
 
@@ -72,6 +77,7 @@ class ImgwSynopArchive:
         # what it fetched for an earlier read must not stand in for the directory as it is now.
         self._listings.clear()
         self._zips.clear()
+        self._parsed.clear()
         available: dict[date, str] = {}
         for month in _months(start, end):
             versions = [version for _, version in self._files_for(month, stations)]
@@ -119,6 +125,14 @@ class ImgwSynopArchive:
         return [(f"{month.year}/{name}", listing[name]) for name in per_station if name in listing]
 
     def _read(
+        self, path: str, stations: Sequence[Station]
+    ) -> dict[tuple[StationId, date, int], _Hour]:
+        cache_key = (path, tuple(station.id for station in stations))
+        if cache_key not in self._parsed:
+            self._parsed[cache_key] = self._parse(path, stations)
+        return self._parsed[cache_key]
+
+    def _parse(
         self, path: str, stations: Sequence[Station]
     ) -> dict[tuple[StationId, date, int], _Hour]:
         if path not in self._zips:

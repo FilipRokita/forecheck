@@ -1,4 +1,6 @@
+import zipfile
 from datetime import date
+from typing import Any
 
 import httpx
 import pytest
@@ -116,6 +118,32 @@ def serve_synthetic(rows: list[dict[str, str]]) -> None:
     respx.get(HEADER_URL).respond(200, text=text_fixture("imgw_terminowe_header.csv"))
     respx.get(f"{BASE_URL}/2026/").respond(200, text=text_fixture("imgw_listing_sample.html"))
     respx.get(MONTH_URL).respond(200, content=imgw_archive(rows))
+
+
+@respx.mock
+def test_a_yearly_station_file_is_parsed_once_however_many_months_it_serves(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    rows = day_rows("350190566", "2025-09-05") + day_rows("350190566", "2025-10-05")
+    respx.get(HEADER_URL).respond(200, text=text_fixture("imgw_terminowe_header.csv"))
+    respx.get(f"{BASE_URL}/2025/").respond(
+        200, html='<tr><td><a href="2025_566_s.zip">x</a></td><td>2026-01-16 10:06</td></tr>'
+    )
+    respx.get(f"{BASE_URL}/2025/2025_566_s.zip").respond(200, content=imgw_archive(rows))
+
+    opened = 0
+    real_zipfile = zipfile.ZipFile
+
+    def counting(*args: Any, **kwargs: Any) -> zipfile.ZipFile:
+        nonlocal opened
+        opened += 1
+        return real_zipfile(*args, **kwargs)
+
+    monkeypatch.setattr("forecheck.infrastructure.imgw.zipfile.ZipFile", counting)
+    source = archive()
+    source.fetch_observations([KRAKOW], date(2025, 9, 1), date(2025, 9, 30))
+    source.fetch_observations([KRAKOW], date(2025, 10, 1), date(2025, 10, 31))
+    assert opened == 1
 
 
 @respx.mock
