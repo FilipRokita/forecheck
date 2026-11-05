@@ -4,8 +4,8 @@ for real data. The page shows a "Sample data" badge while they are there.
     uv run python scripts/seed_demo.py            # write demo scores
     uv run python scripts/seed_demo.py --clear    # remove all scores and the demo flag
 
-Never run it against a real deployment: it refuses a database that already holds scores that it did
-not write, unless --force is given.
+Never run it against a real deployment: it refuses to write to, or clear, a database that holds
+scores it did not write, unless --force is given.
 """
 
 import argparse
@@ -95,16 +95,17 @@ def main() -> None:
     with PgUnitOfWork(engine) as uow:
         flagged = uow.state.get(SAMPLE_DATA_KEY) == "1"
         has_scores = uow.scores.latest_day() is not None
+        if has_scores and not flagged and not args.force:
+            action = "clear" if args.clear else "mix demo data into"
+            sys.exit(
+                f"The database holds real scores. Refusing to {action} it (use --force to override)."
+            )
         if args.clear:
             uow._connection.execute(delete(tables.scores))  # type: ignore[attr-defined]
             uow.state.set(SAMPLE_DATA_KEY, "0")
             uow.commit()
             print("Scores removed.")
             return
-        if has_scores and not flagged and not args.force:
-            sys.exit(
-                "The database holds real scores. Refusing to mix demo data in (use --force to override)."
-            )
         uow.scores.upsert(records())
         uow.state.set(SAMPLE_DATA_KEY, "1")
         uow.commit()

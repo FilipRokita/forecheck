@@ -51,7 +51,7 @@ The database starts empty, and the page says so. Two ways to fill it:
 
 | Command | What it does |
 | :--- | :--- |
-| `uv run python scripts/seed_demo.py` | Made-up scores for 15 stations, flagged "Sample data" on the page. `--clear` removes them |
+| `uv run python scripts/seed_demo.py` | Made-up scores for 15 stations, flagged "Sample data" on the page. `--clear` removes them. Both refuse a database that holds real scores unless `--force` is given |
 | `uv run python scripts/backfill.py --days 60` | Real history from the Open-Meteo archive and IMGW. See [operations](operations.md#starting-with-a-history) |
 
 ## Checks
