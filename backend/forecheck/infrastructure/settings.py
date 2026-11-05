@@ -3,6 +3,7 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from forecheck import __version__
 from forecheck.domain.rules import Rules
 from forecheck.domain.types import Variable
 
@@ -32,7 +33,7 @@ class Settings(BaseSettings):
         details = [f"+{self.app_url}"] if self.app_url else []
         if self.contact_email:
             details.append(self.contact_email)
-        return "forecheck/0.1" + (f" ({'; '.join(details)})" if details else "")
+        return f"forecheck/{__version__}" + (f" ({'; '.join(details)})" if details else "")
 
     def rules(self) -> Rules:
         return Rules(

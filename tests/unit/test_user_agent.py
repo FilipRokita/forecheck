@@ -1,18 +1,19 @@
 import pytest
 
+from forecheck import __version__
 from forecheck.infrastructure.settings import Settings
 
 
 @pytest.mark.parametrize(
     ("app_url", "contact_email", "expected"),
     [
-        ("", "", "forecheck/0.1"),
-        ("https://example.org", "", "forecheck/0.1 (+https://example.org)"),
-        ("", "me@example.org", "forecheck/0.1 (me@example.org)"),
+        ("", "", f"forecheck/{__version__}"),
+        ("https://example.org", "", f"forecheck/{__version__} (+https://example.org)"),
+        ("", "me@example.org", f"forecheck/{__version__} (me@example.org)"),
         (
             "https://example.org",
             "me@example.org",
-            "forecheck/0.1 (+https://example.org; me@example.org)",
+            f"forecheck/{__version__} (+https://example.org; me@example.org)",
         ),
     ],
 )
