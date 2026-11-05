@@ -205,7 +205,7 @@ footer and the CSV export carry it.
   The scores are processed data, so both required notices are shown, in the regulation's own words (Polish):
 
   > Źródłem pochodzenia danych jest Instytut Meteorologii i Gospodarki Wodnej – Państwowy Instytut Badawczy
-  >
+
   > Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone
 
 What was checked against the providers, and how, is in [`docs/data-sources.md`](docs/data-sources.md).
