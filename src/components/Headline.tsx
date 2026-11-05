@@ -15,7 +15,7 @@ export function Headline({ variable, verdict }: { variable: Variable; verdict: V
         {best.label}
       </span>{" "}
       is the most accurate model for {variable.label.toLowerCase()}.{" "}
-      <span className="text-fg-muted">
+      <span className="block text-fg-muted">
         {days === null ? null : days === 0 ? (
           "Even tomorrow's forecast misses the bar."
         ) : (
