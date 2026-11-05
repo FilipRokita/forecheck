@@ -42,7 +42,7 @@ describe("VerdictCards", () => {
   it("says so when even tomorrow fails the bar", () => {
     show({ trust_days: 0 });
     const card = screen.getByText("How far to trust it").parentElement as HTMLElement;
-    expect(card).toHaveTextContent("Not even 1 day");
+    expect(card).toHaveTextContent("< 1 day");
     expect(card).toHaveTextContent("misses the bar");
   });
 

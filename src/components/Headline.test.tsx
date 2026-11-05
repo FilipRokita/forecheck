@@ -21,7 +21,7 @@ describe("Headline", () => {
 
   it("says so when even tomorrow misses the bar", () => {
     render(<Headline variable={TEMPERATURE} verdict={verdict({ trust_days: 0 })} />);
-    expect(sentence()).toHaveTextContent("Even tomorrow's forecast misses the bar.");
+    expect(sentence()).toHaveTextContent("But even tomorrow's forecast falls short of the bar.");
   });
 
   it("says nothing about trust when it is not known", () => {

@@ -142,7 +142,7 @@ function TrustHorizon({ variable, verdict }: Pick<Props, "variable" | "verdict">
         {days === null ? (
           "–"
         ) : days === 0 ? (
-          "Not even 1 day"
+          "< 1 day"
         ) : (
           <>
             <span className="font-mono">

@@ -18,7 +18,7 @@ export function Headline({ variable, verdict }: { variable: Variable; verdict: V
       is the most accurate model for <Fade id={variable.id}>{variable.label.toLowerCase()}</Fade>.{" "}
       <span className="block text-fg-muted">
         {days === null ? null : days === 0 ? (
-          "Even tomorrow's forecast misses the bar."
+          "But even tomorrow's forecast falls short of the bar."
         ) : (
           <>
             Rely on it for up to <CountUpInt value={days} /> {plural(days, "day", "days")} ahead.
