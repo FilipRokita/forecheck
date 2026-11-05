@@ -51,7 +51,8 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 - Skeletons shimmer, but only on the first load. After that, changing the station, quantity or period never blanks the page:
   the old figures stay until the new ones arrive, a thin line under the header shows that something is loading (only if it
   takes a moment), and then the numbers count from the old value to the new one, the chart bars and the map dots move to
-  their new height and colour, and a changed model name fades in. Each part is written in the unit and for the period of its
+  their new height and colour, and changed words fade in. The highlight in the quantity and period controls slides to the
+  button you pressed. Each part is written in the unit and for the period of its
   own answer, so figures that are still on screen are never read in the wrong unit.
 - The header stays on top, blurred.
 - Every animation stops when the system asks for reduced motion.
