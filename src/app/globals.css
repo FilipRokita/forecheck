@@ -179,3 +179,16 @@ body {
     border-radius: 999px;
   }
 }
+
+/* A modal window must not let the page behind it scroll. The gutter is kept so the page does not shift when its scrollbar goes. */
+html {
+  scrollbar-gutter: stable;
+}
+
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+dialog {
+  overscroll-behavior: contain;
+}

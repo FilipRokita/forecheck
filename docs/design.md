@@ -85,6 +85,8 @@ or a scale with a middle mark for bias). It closes with the X, Escape, or a pres
 
 - Real `<button>`, `<a>`, `<table>`. The station picker is a combobox: the search box takes the focus, the arrow keys move through
   the matches, Enter picks one, and Escape closes the list and returns the focus to the button.
+- While a drawer or window is open, the page behind it does not scroll, and the scrolling of the drawer's own content does not
+  pass on to the page.
 - Touch targets are at least 44 px on a phone.
 - Selection is exposed (`aria-pressed`, `aria-selected`, `aria-current`), not only coloured.
 - The three models are told apart by name, by position (always ICON, ECMWF, GFS in the same order) and by colour, never by

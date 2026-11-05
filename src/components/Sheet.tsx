@@ -75,7 +75,7 @@ export function Sheet({ title, open, onClose, children }: Props) {
               </svg>
             </button>
           </div>
-          <div className="max-h-[calc(93dvh-5.5rem)] overflow-y-auto px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:max-h-[calc(85dvh-4rem)]">{children}</div>
+          <div className="max-h-[calc(93dvh-5.5rem)] overflow-y-auto overscroll-contain px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:max-h-[calc(85dvh-4rem)]">{children}</div>
         </>
       ) : null}
     </dialog>
