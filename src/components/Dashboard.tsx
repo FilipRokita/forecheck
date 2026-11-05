@@ -64,12 +64,9 @@ function Loaded({ meta }: { meta: Meta }) {
     <>
       <header className="z-20 border-b border-border bg-bg/80 backdrop-blur-md sm:sticky sm:top-0">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-10 sm:py-2.5">
-        <div className="flex items-center gap-x-4">
-          <h1>
-            <Logo />
-          </h1>
-          <p className="text-sm text-fg-muted max-sm:hidden">How far can you trust a weather forecast?</p>
-        </div>
+        <h1>
+          <Logo />
+        </h1>
         <div className="ml-auto flex items-center gap-3">
           {status.sample_data ? <Badge>Sample data</Badge> : null}
           <a

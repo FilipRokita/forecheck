@@ -14,7 +14,6 @@ export function Logo() {
     <Link
       href="/"
       onClick={toTop}
-      title="Back to top"
       className="group flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-model-ecmwf"
     >
       <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true" className="flex-none transition-transform duration-200 group-hover:scale-105">
