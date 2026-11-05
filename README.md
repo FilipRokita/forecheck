@@ -182,13 +182,13 @@ The only difference between development and production is the environment variab
 2. Import the repository into [Vercel](https://vercel.com). Keep the detected Next.js preset.
 3. Set the variables:
 
-| Variable | Value |
-| :--- | :--- |
-| `DATABASE_URL` | Neon pooled connection string |
-| `DIRECT_URL` | Neon direct connection string (used by migrations only) |
-| `CRON_SECRET` | any long random string (`openssl rand -base64 32`) |
-| `APP_URL` | the address of your deployment, sent to the data providers in the User-Agent (optional) |
-| `CONTACT_EMAIL` | your address, sent to the data providers in the User-Agent |
+   | Variable | Value |
+   | :--- | :--- |
+   | `DATABASE_URL` | Neon pooled connection string |
+   | `DIRECT_URL` | Neon direct connection string (used by migrations only) |
+   | `CRON_SECRET` | any long random string (`openssl rand -base64 32`) |
+   | `APP_URL` | the address of your deployment, sent to the data providers in the User-Agent (optional) |
+   | `CONTACT_EMAIL` | your address, sent to the data providers in the User-Agent |
 
 4. Deploy. A production build applies the migrations, and a daily cron job then collects, reads and scores.
 
