@@ -10,7 +10,7 @@ export function Headline({ variable, verdict }: { variable: Variable; verdict: V
   if (!best) return null;
   const days = verdict.trust_days;
   return (
-    <p className="max-w-3xl text-xl font-medium leading-snug tracking-tight sm:text-2xl mb-2">
+    <p className="max-w-3xl text-xl font-medium leading-snug tracking-tight sm:text-2xl mb-1">
       At <Fade id={verdict.station.name}>{verdict.station.name}</Fade>,{" "}
       <span key={best.model} className="animate-fade" style={{ color: modelColor(best.model) }}>
         {best.label}

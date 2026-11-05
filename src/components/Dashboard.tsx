@@ -114,7 +114,7 @@ function Loaded({ meta }: { meta: Meta }) {
         <SegmentedControl label="Period" options={meta.periods} value={periodId} onChange={(id) => choose({ period: id })} />
       </div>
 
-      <main aria-busy={updating} className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-3 sm:gap-4 sm:px-10 sm:pt-4">
+      <main aria-busy={updating} className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 pb-10 pt-3 sm:gap-4 sm:px-10 sm:pt-3">
         <Async state={verdict} label="the verdict" skeletonClassName="h-48">
           {(v) => (
             <>
