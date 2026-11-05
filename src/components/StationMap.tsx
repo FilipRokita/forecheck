@@ -18,7 +18,8 @@ type Props = {
  */
 export function StationMap({ rows, selectedStation }: Props) {
   const [hovered, setHovered] = useState<string | null>(null);
-  const labelled = rows.find((row) => row.station.id === (hovered ?? selectedStation));
+  // The open station always keeps its name. The one under the pointer is named as well, drawn last so it is on top.
+  const labelled = [selectedStation, hovered].filter((id, index, ids): id is string => id !== null && ids.indexOf(id) === index).flatMap((id) => rows.filter((row) => row.station.id === id));
   const models = new Map(rows.flatMap((row) => (row.best_model && row.best_model_label ? [[row.best_model, row.best_model_label] as const] : [])));
 
   return (
@@ -50,16 +51,23 @@ export function StationMap({ rows, selectedStation }: Props) {
             </g>
           );
         })}
-        {labelled
-          ? (() => {
-              const { x, y } = project(labelled.station.latitude, labelled.station.longitude);
-              return (
-                <text x={x} y={y - 14} textAnchor="middle" className="pointer-events-none fill-fg text-[13px] font-medium" stroke="var(--color-bg)" strokeWidth="4" paintOrder="stroke">
-                  {labelled.station.name}
-                </text>
-              );
-            })()
-          : null}
+        {labelled.map((row) => {
+          const { x, y } = project(row.station.latitude, row.station.longitude);
+          return (
+            <text
+              key={row.station.id}
+              x={x}
+              y={y - 14}
+              textAnchor="middle"
+              className="pointer-events-none fill-fg text-[13px] font-medium"
+              stroke="var(--color-bg)"
+              strokeWidth="4"
+              paintOrder="stroke"
+            >
+              {row.station.name}
+            </text>
+          );
+        })}
       </svg>
       <ul className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 text-fg-soft" aria-label="Map legend">
         {[...models].map(([id, label]) => (

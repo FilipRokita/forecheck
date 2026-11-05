@@ -20,10 +20,12 @@ describe("StationMap", () => {
     expect(getByText("ECMWF")).toBeInTheDocument();
   });
 
-  it("names a station the pointer is over", () => {
+  it("names a station the pointer is over and keeps naming the open one", () => {
     const { container } = render(<StationMap rows={rows} selectedStation="12566" />);
     fireEvent.mouseEnter(container.querySelector('[data-station="12580"]') as Element);
-    expect(container.querySelector("text")).toHaveTextContent("Rzeszów");
+    expect([...container.querySelectorAll("text")].map((label) => label.textContent)).toEqual(["Kraków", "Rzeszów"]);
+    fireEvent.mouseLeave(container.querySelector('[data-station="12580"]') as Element);
+    expect([...container.querySelectorAll("text")].map((label) => label.textContent)).toEqual(["Kraków"]);
   });
 
   it("is hidden from assistive technology, because the table says the same", () => {
