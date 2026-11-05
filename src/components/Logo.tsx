@@ -16,7 +16,7 @@ export function Logo() {
       onClick={toTop}
       className="group flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-model-ecmwf"
     >
-      <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true" className="flex-none transition-transform duration-200 group-hover:scale-105">
+      <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true" className="flex-none">
         <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" className="fill-surface stroke-border-strong" />
         <path d="M8 17l5.5 5L24 10" stroke="var(--color-model-ecmwf)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
