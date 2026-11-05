@@ -1,4 +1,5 @@
 import { Card, CardSubtitle, CardTitle } from "@/components/Card";
+import { Fade } from "@/components/Fade";
 import { ModelName } from "@/components/ModelName";
 import { headline } from "@/components/metric";
 import type { Horizon, ModelHorizon, Variable } from "@/lib/api/types";
@@ -34,9 +35,13 @@ export function HorizonChart({ horizon, variable, periodLabel }: Props) {
     <Card as="section" delay={200} className="flex-[3_1_100%] lg:flex-[3_1_34rem]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <div>
-          <CardTitle>{heading}</CardTitle>
+          <CardTitle>
+              <Fade id={heading}>{heading}</Fade>
+            </CardTitle>
           <CardSubtitle>
-            {isShare ? "Share of right wet/dry calls" : "Mean absolute error"} ({axisUnit}), last {periodLabel}
+            <Fade id={`${heading}|${periodLabel}`}>
+              {isShare ? "Share of right wet/dry calls" : "Mean absolute error"} ({axisUnit}), last {periodLabel}
+            </Fade>
           </CardSubtitle>
         </div>
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-fg-soft" aria-label="Legend">
@@ -47,7 +52,7 @@ export function HorizonChart({ horizon, variable, periodLabel }: Props) {
           ))}
           <li className="flex items-center gap-2">
             <span aria-hidden="true" className="inline-block h-0 w-4 border-t border-dashed border-fg-soft" />
-            {thresholdLabel}
+            <Fade id={thresholdLabel}>{thresholdLabel}</Fade>
           </li>
         </ul>
       </div>

@@ -1,5 +1,6 @@
 import { Card, Eyebrow } from "@/components/Card";
 import { CountUpInt, CountUpNumber, CountUpPercent } from "@/components/CountUp";
+import { Fade } from "@/components/Fade";
 import { headlineFormat, headlineNumber, trustRule } from "@/components/metric";
 import type { Figure, Period, Variable, Verdict } from "@/lib/api/types";
 import type { Loadable } from "@/lib/api/use-api";
@@ -41,7 +42,9 @@ function BestModel({ variable, period, verdict }: Pick<Props, "variable" | "peri
       style={best ? { boxShadow: `0 0 70px -28px ${modelColor(best.model)}` } : undefined}
     >
       <Eyebrow>
-        Most accurate model · {variable.label.toLowerCase()} · {range}
+        <Fade id={`${variable.id}|${range}`}>
+          Most accurate model · {variable.label.toLowerCase()} · {range}
+        </Fade>
       </Eyebrow>
       {best ? (
         <>
@@ -145,11 +148,13 @@ function TrustHorizon({ variable, verdict }: Pick<Props, "variable" | "verdict">
         )}
       </div>
       <p className="text-fg-soft">
+        <Fade id={`${variable.id}|${days}|${verdict.best_model}`}>
         {days === null
           ? "Not enough scored days yet to say."
           : days === 0
             ? `Even tomorrow's forecast misses the bar: ${trustRule(variable)}.`
             : `${capitalise(trustRule(variable))}, for ${verdict.best_model_label ?? "the best model"}.`}
+        </Fade>
       </p>
     </Card>
   );

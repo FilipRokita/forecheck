@@ -1,5 +1,6 @@
 import { Card, CardSubtitle, CardTitle } from "@/components/Card";
 import { CountUpNumber } from "@/components/CountUp";
+import { Fade } from "@/components/Fade";
 import { ModelName } from "@/components/ModelName";
 import type { RankedModel, Variable, Verdict } from "@/lib/api/types";
 import { formatNumber, formatPercent } from "@/lib/format";
@@ -48,7 +49,9 @@ export function RankingTable({ variable, verdict, rain }: Props) {
     <Card as="section" delay={260} className="flex-[2_1_100%] lg:flex-[2_1_22rem]">
       <CardTitle>Model ranking</CardTitle>
       <CardSubtitle>
-        {first}–{last} day forecasts, {verdict.station.name}
+        <Fade id={`${first}-${last}|${verdict.station.name}`}>
+          {first}–{last} day forecasts, {verdict.station.name}
+        </Fade>
       </CardSubtitle>
 
       {verdict.ranking.length === 0 ? (
@@ -65,7 +68,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
                   </th>
                   {cols.map((col) => (
                     <th key={col.key} scope="col" className="border-b border-border px-3 py-2 text-right font-medium">
-                      {col.header}
+                      <Fade id={col.header}>{col.header}</Fade>
                     </th>
                   ))}
                 </tr>

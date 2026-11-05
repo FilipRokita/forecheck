@@ -15,7 +15,7 @@ describe("VerdictCards", () => {
   it("names the best model and compares it with the others", () => {
     show();
     expect(screen.getByText("ECMWF", { selector: "div" })).toBeInTheDocument();
-    const card = screen.getByText(/Most accurate model/).parentElement as HTMLElement;
+    const card = screen.getByText(/Most accurate model/).closest("div")?.parentElement as HTMLElement;
     expect(card).toHaveTextContent("Mean error 1.3 °C against 1.4 °C (ICON) and 1.8 °C (GFS) at Kraków over the last 30 days.");
   });
 
@@ -64,7 +64,7 @@ describe("VerdictCards", () => {
       />,
     );
     expect(screen.getByText("How far to trust it").parentElement).toHaveTextContent("At least 80% of rain calls right, for ECMWF.");
-    expect(screen.getByText(/Most accurate model/).parentElement).toHaveTextContent("Accuracy 81%");
+    expect(screen.getByText(/Most accurate model/).closest("div")?.parentElement).toHaveTextContent("Accuracy 81%");
   });
 
   it("keeps the other cards when the rain scores are still loading", () => {

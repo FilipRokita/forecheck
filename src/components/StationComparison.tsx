@@ -1,5 +1,6 @@
 import { Card, CardSubtitle, CardTitle } from "@/components/Card";
 import { CountUpNumber } from "@/components/CountUp";
+import { Fade } from "@/components/Fade";
 import { ModelName } from "@/components/ModelName";
 import { StationMap } from "@/components/StationMap";
 import { headlineFormat, headlineNumber } from "@/components/metric";
@@ -19,7 +20,9 @@ export function StationComparison({ comparison, variable, period, selectedStatio
     <Card as="section" delay={320}>
       <CardTitle>Station comparison</CardTitle>
       <CardSubtitle>
-        {variable.label}, {comparison.lead_days}-day forecasts, last {period.label}. Choose a station to open it.
+        <Fade id={`${variable.id}|${period.id}`}>
+          {variable.label}, {comparison.lead_days}-day forecasts, last {period.label}. Choose a station to open it.
+        </Fade>
       </CardSubtitle>
 
       <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:items-start">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Async } from "@/components/Async";
 import { Badge } from "@/components/Badge";
+import { CountUpInt } from "@/components/CountUp";
 import { Footer } from "@/components/Footer";
 import { Headline } from "@/components/Headline";
 import { HorizonChart } from "@/components/HorizonChart";
@@ -164,7 +165,9 @@ function FreshnessNote({ latest, scoredDays, windowDays }: { latest: string | nu
       <span>
         Scored through <span className="text-fg">{formatDay(latest)}</span>
       </span>
-      {limited ? <Badge>Limited history: {scoredDays} scored days</Badge> : null}
+      {limited ? <Badge>
+          Limited history: <CountUpInt value={scoredDays} /> scored days
+        </Badge> : null}
     </p>
   );
 }

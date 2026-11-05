@@ -1,4 +1,5 @@
 import { CountUpInt } from "@/components/CountUp";
+import { Fade } from "@/components/Fade";
 import { plural } from "@/lib/format";
 import type { Variable, Verdict } from "@/lib/api/types";
 import { modelColor } from "@/lib/models";
@@ -10,11 +11,11 @@ export function Headline({ variable, verdict }: { variable: Variable; verdict: V
   const days = verdict.trust_days;
   return (
     <p className="max-w-3xl text-xl font-medium leading-snug tracking-tight sm:text-2xl">
-      At {verdict.station.name},{" "}
+      At <Fade id={verdict.station.name}>{verdict.station.name}</Fade>,{" "}
       <span key={best.model} className="animate-fade" style={{ color: modelColor(best.model) }}>
         {best.label}
       </span>{" "}
-      is the most accurate model for {variable.label.toLowerCase()}.{" "}
+      is the most accurate model for <Fade id={variable.id}>{variable.label.toLowerCase()}</Fade>.{" "}
       <span className="block text-fg-muted">
         {days === null ? null : days === 0 ? (
           "Even tomorrow's forecast misses the bar."
