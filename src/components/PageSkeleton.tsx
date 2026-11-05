@@ -23,17 +23,20 @@ export function PageSkeleton() {
       </header>
 
       <div aria-hidden="true" className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6 sm:gap-y-3 sm:px-10 sm:py-5">
-        <div className="flex flex-col gap-1.5">
-          <span className="h-4 max-sm:hidden" />
-          <Block className="h-12 w-full rounded-xl sm:h-[46px] sm:w-64" />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="h-4 max-sm:hidden" />
-          <Block className="h-[54px] w-full rounded-xl sm:h-[46px] sm:w-[400px]" />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="h-4 max-sm:hidden" />
-          <Block className="h-[54px] w-full rounded-xl sm:h-[46px] sm:w-[285px]" />
+        <Block className="h-12 w-full rounded-xl sm:hidden" />
+        <div className="hidden sm:contents">
+          <div className="flex flex-col gap-1.5">
+            <span className="h-4" />
+            <Block className="h-[46px] w-64 rounded-xl" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="h-4" />
+            <Block className="h-[46px] w-[400px] rounded-xl" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="h-4" />
+            <Block className="h-[46px] w-[285px] rounded-xl" />
+          </div>
         </div>
       </div>
 

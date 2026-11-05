@@ -36,11 +36,12 @@ never mistaken for ECMWF unless ECMWF is the model. `modelTint` in `src/lib/mode
 
 | | Desktop | Phone |
 | :--- | :--- | :--- |
-| Station | A button that opens a dropdown under it, with a search box on top | The same, as wide as the screen |
-| Quantity, period | Two segmented controls in a row | Stacked. Quantity scrolls sideways if it must |
+| Station | A button that opens a dropdown under it, with a search box on top | One "Configure" button that shows the choice and opens a drawer from the bottom |
+| Quantity, period | Two segmented controls in a row | In the same drawer, with the station: every option is a button, and a choice applies at once |
 | Verdict | A one-sentence summary, then three cards in a row | The same, cards stacked |
 | Horizon chart | Wide bars | The same, narrower bars |
 | Ranking | A table | A card per model |
+| Column guide | A window in the middle | A drawer from the bottom, taller so it rarely needs scrolling |
 | Comparison | A map of Poland, centred beside a table | The map above the same table |
 
 Both have the same features. Nothing is hidden on a phone.
@@ -63,8 +64,7 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 - The header stays on top, blurred.
 - Every animation stops when the system asks for reduced motion.
 
-The header has a GitHub icon that links to the repository. On a phone the header is one row (the export button is an icon, and the GitHub icon is left out because the footer links the repository) and the quantity and period controls lose their captions,
-so the verdict starts higher.
+The header has a GitHub icon that links to the repository, placed before the export button. On a phone the header is one row (the export button is an icon, and the logo is a little smaller on the narrowest phones), so the three controls live in the drawer instead of filling the first screen.
 
 ## The station map
 
