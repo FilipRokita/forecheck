@@ -1,4 +1,5 @@
 import { Card, Eyebrow } from "@/components/Card";
+import { CountUpInt, CountUpPercent } from "@/components/CountUp";
 import { headline, trustRule } from "@/components/metric";
 import type { Period, Variable, Verdict } from "@/lib/api/types";
 import type { Loadable } from "@/lib/api/use-api";
@@ -104,7 +105,7 @@ function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>
   return (
     <Card delay={70} className="flex-[1_1_100%] sm:flex-[1_1_16rem]">
       <Eyebrow>Rain tomorrow</Eyebrow>
-      <div className={`my-3 font-mono ${BIG}`}>{formatPercent(share)}</div>
+      <div className={`my-3 font-mono ${BIG}`}>{share === null ? formatPercent(share) : <CountUpPercent share={share} />}</div>
       <p className="text-fg-soft">
         {best && share !== null ? (
           <>
@@ -131,7 +132,10 @@ function TrustHorizon({ variable, verdict }: Pick<Props, "variable" | "verdict">
           "Not even 1 day"
         ) : (
           <>
-            <span className="font-mono">{days}</span> {plural(days, "day", "days")}
+            <span className="font-mono">
+              <CountUpInt value={days} />
+            </span>{" "}
+            {plural(days, "day", "days")}
           </>
         )}
       </div>
