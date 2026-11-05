@@ -24,12 +24,25 @@ def _last_day(month: date) -> date:
     return _next_month(month) - timedelta(days=1)
 
 
+def _covers(stored: str | None, versioned: str, first: date, last: date) -> bool:
+    """Whether a stored fingerprint is for the same versions and for days including first..last."""
+    if stored is None:
+        return False
+    parts = stored.rsplit("|", 2)
+    if len(parts) != 3 or parts[0] != versioned:  # also true of a fingerprint without days
+        return False
+    return date.fromisoformat(parts[1]) <= first and last <= date.fromisoformat(parts[2])
+
+
 class IngestObservations:
     """Fetches only months the provider has republished since the last read.
 
     A UTC day's precipitation needs the 00 UTC report of the day after, so the last day of
     a month is only complete once the next month's file exists. A month is therefore
     fingerprinted by its own version and the next month's, and read again when either changes.
+
+    A read may cover only part of a month (a range starting mid-month). The days it covered are
+    kept with the fingerprint, so a later read of other days of the same month is not skipped.
     """
 
     def __init__(
@@ -62,17 +75,16 @@ class IngestObservations:
         for month, version in sorted(versions.items()):
             if month > end:
                 continue  # only here for the day-after report of the previous month
-            fingerprint = f"{version}|{versions.get(_next_month(month), '-')}"
+            versioned = f"{version}|{versions.get(_next_month(month), '-')}"
             key = f"observations:{month:%Y-%m}"
+            first, last = max(start, month), min(end, _last_day(month))
             with self._uow_factory() as uow:
-                if uow.state.get(key) == fingerprint:
+                if _covers(uow.state.get(key), versioned, first, last):
                     continue
-            observations = self._source.fetch_observations(
-                stations, max(start, month), min(end, _last_day(month))
-            )
+            observations = self._source.fetch_observations(stations, first, last)
             with self._uow_factory() as uow:
                 uow.observations.upsert(observations)
-                uow.state.set(key, fingerprint)
+                uow.state.set(key, f"{versioned}|{first.isoformat()}|{last.isoformat()}")
                 uow.commit()
             log.info("Read %s: %d observations", month, len(observations))
             months_read += 1

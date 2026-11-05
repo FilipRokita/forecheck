@@ -163,6 +163,21 @@ def test_a_month_that_has_not_been_republished_is_not_read_again(database: Memor
     assert len(source.fetches) == 1
 
 
+def test_a_month_read_only_in_part_is_read_again_for_the_days_it_missed(
+    database: MemoryDatabase,
+) -> None:
+    source = FakeObservationSource({date(2026, 7, 1): "v1"})
+    use_case = ingest(database, source, clock_at(2026, 10, 20))
+    use_case.read_range(date(2026, 7, 15), date(2026, 7, 31))
+    assert use_case.read_range(date(2026, 7, 1), date(2026, 7, 31)).months_read == 1
+    assert source.fetches == [
+        (date(2026, 7, 15), date(2026, 7, 31)),
+        (date(2026, 7, 1), date(2026, 7, 31)),
+    ]
+    # Days already covered are not fetched again.
+    assert use_case.read_range(date(2026, 7, 10), date(2026, 7, 20)).months_read == 0
+
+
 def test_a_republished_month_is_read_again(database: MemoryDatabase) -> None:
     seed_forecast(database, date(2026, 9, 5))
     source = FakeObservationSource({date(2026, 9, 1): "v1"})
