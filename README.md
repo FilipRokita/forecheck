@@ -1,6 +1,9 @@
 <div align="center">
   <h1>Forecheck: how far can you trust a weather forecast?</h1>
-  <p><strong>Weather models scored against real station measurements in Poland, by station, quantity and days ahead.</strong></p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/banner-dark.svg">
+    <img src="docs/brand/banner-light.svg" alt="Forecheck" width="400">
+  </picture>
 </div>
 
 <br>

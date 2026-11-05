@@ -9,7 +9,7 @@ What every entry in the repository root is for.
 | [`README.md`](../README.md) | Project overview: what Forecheck does, the stack, how to run it locally and on a host. |
 | [`AGENTS.md`](../AGENTS.md) | Instructions and rules for AI agents working in this repository. |
 | [`LICENSE`](../LICENSE) | MIT, for the code. The data keeps its own terms. |
-| [`docs/`](.) | Everything that is not in the README. |
+| [`docs/`](.) | Everything that is not in the README: the guides, the README's screenshots (`images/`) and its logo (`brand/`, the app icon with the wordmark, in a light and a dark version). |
 | [`.devcontainer/`](../.devcontainer/) | Dev container configuration and setup scripts. See [Dev environment](dev-environment.md). |
 | [`.github/workflows/`](../.github/workflows/) | CI only. The scheduled job runs on Vercel Cron, not here. |
 | [`.env.example`](../.env.example) | Template for the application's `.env`. Copy it before the first run. |
@@ -34,7 +34,7 @@ These are gitignored, so you create each one from its committed template.
 
 | Path | Created from | What it holds |
 | :--- | :--- | :--- |
-| `.env` | [`.env.example`](../.env.example) | The database URL, the cron secret and the contact address. |
+| `.env` | [`.env.example`](../.env.example) | The database URL, the cron secret, the contact address and the app URL. |
 | `.mcp.json` | [`.mcp.example.json`](../.mcp.example.json) | MCP server configuration, with an optional Context7 key. |
 
 ## Project structure

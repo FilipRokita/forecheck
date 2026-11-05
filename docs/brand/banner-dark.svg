@@ -1,0 +1,8 @@
+<svg width="208" height="56" viewBox="0 0 208 56" role="img" aria-label="Forecheck" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mark: the app icon (src/app/icon.svg), drawn at 38px -->
+  <g transform="translate(4 9) scale(1.1875)">
+    <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="#121417" stroke="#2E323A"/>
+    <path d="M8 17l5.5 5L24 10" stroke="#6EE7C8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="52" y="37" fill="#E8EAED" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="28" letter-spacing="-0.03em">Fore<tspan fill="#98A0AB" font-weight="500">check</tspan></text>
+</svg>
