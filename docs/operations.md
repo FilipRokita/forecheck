@@ -34,8 +34,9 @@ share an origin) and ignore `API_PROXY_TARGET` (development only).
 4. **Deploy.** The production build runs `npm run db:migrate` before `next build`. If the migration fails, the build fails and
    nothing is deployed. The tables are created on the first deploy.
 
-Preview deployments do not migrate, and they use whatever `DATABASE_URL` is set for Preview. If a branch changes the schema,
-give Preview its own Neon branch and database, or its pages will fail against the old schema.
+Only `main` is deployed: `vercel.json` turns off deployments for every other branch (`git.deploymentEnabled`), so there are
+no preview deployments. To get them back, remove that setting. Previews do not migrate, and they use whatever `DATABASE_URL`
+is set for Preview, so give Preview its own Neon branch and database first, or its pages will fail against the old schema.
 
 ## The daily job
 

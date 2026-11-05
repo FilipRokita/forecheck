@@ -4,6 +4,12 @@
   "buildCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:migrate; fi && next build",
   "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }],
   "crons": [{ "path": "/api/cron/collect", "schedule": "23 9 * * *" }],
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "**": false
+    }
+  },
   "functions": {
     "api/index.py": {
       "maxDuration": 300,

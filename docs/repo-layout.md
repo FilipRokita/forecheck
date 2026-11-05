@@ -25,7 +25,7 @@ What every entry in the repository root is for.
 | [`tests/`](../tests/) | pytest: `unit/` (domain with hypothesis, adapters on recorded responses, use cases, API), `contract/` (repositories, run against memory and PostgreSQL), `integration/` (PostgreSQL), `fixtures/` (real recorded provider responses). |
 | [`scripts/`](../scripts/) | `migrate.sh`, `explore_sources.py`, `backfill.py`, `seed_demo.py`, `export_openapi.py`. |
 | [`openapi.json`](../openapi.json) | The API's OpenAPI document, generated. CI checks it is current. |
-| [`vercel.json`](../vercel.json) | The host's build command (migrate on production builds), the API rewrite, the daily cron and the function limits. |
+| [`vercel.json`](../vercel.json) | The host's build command (migrate on production builds), the API rewrite, the daily cron, the function limits and which branches deploy (only `main`). |
 | [`next.config.ts`](../next.config.ts), [`tsconfig.json`](../tsconfig.json), [`eslint.config.mjs`](../eslint.config.mjs), [`postcss.config.mjs`](../postcss.config.mjs), [`vitest.config.ts`](../vitest.config.ts) | Tool configuration. |
 
 ## Files you create yourself
