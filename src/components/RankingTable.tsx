@@ -4,6 +4,7 @@ import { CountUpNumber } from "@/components/CountUp";
 import { Fade } from "@/components/Fade";
 import { ModelName } from "@/components/ModelName";
 import type { RankedModel, Variable, Verdict } from "@/lib/api/types";
+import { modelTint } from "@/lib/models";
 import { formatNumber, formatPercent } from "@/lib/format";
 
 /** `rain` is the precipitation verdict, or undefined while it is loading or failed: its columns then show a dash. */
@@ -78,9 +79,11 @@ export function RankingTable({ variable, verdict, rain }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {verdict.ranking.map((model) => (
-                  <tr key={model.model} className={`transition-colors hover:bg-surface-raised ${model.rank === 1 ? "bg-highlight" : ""}`}>
-                    <th scope="row" className="whitespace-nowrap px-3 py-3 text-left font-medium">
+                {verdict.ranking.map((model) => {
+                  const tint = model.rank === 1 ? modelTint(model.model) : undefined;
+                  return (
+                  <tr key={model.model} className="transition-colors hover:bg-surface-raised" style={tint ? { background: tint.background } : undefined}>
+                    <th scope="row" className="whitespace-nowrap px-3 py-3 text-left font-medium" style={tint ? { boxShadow: tint.edge } : undefined}>
                       <span className="mr-2 font-mono text-fg-muted">{model.rank ?? "–"}</span>
                       <ModelName id={model.model} label={model.label} />
                       {model.rank === null ? <span className="ml-2 text-xs font-normal text-fg-muted">too few days</span> : null}
@@ -91,14 +94,19 @@ export function RankingTable({ variable, verdict, rain }: Props) {
                       </td>
                     ))}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
           <ul className="mt-4 flex flex-col gap-2 md:hidden">
             {verdict.ranking.map((model) => (
-              <li key={model.model} className={`rounded-[10px] p-3 ${model.rank === 1 ? "bg-highlight" : "bg-surface-raised"}`}>
+              <li
+                key={model.model}
+                className={`rounded-[10px] p-3 ${model.rank === 1 ? "" : "bg-surface-raised"}`}
+                style={model.rank === 1 ? { background: modelTint(model.model).background, boxShadow: modelTint(model.model).edge } : undefined}
+              >
                 <div className="font-medium">
                   <span className="mr-2 font-mono text-fg-muted">{model.rank ?? "–"}</span>
                   <ModelName id={model.model} label={model.label} />

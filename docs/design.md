@@ -18,7 +18,6 @@ component holds a raw colour.
 | `fg` | `#e8eaed` | Text |
 | `fg-soft` | `#c4c9d1` | Body copy in cards |
 | `fg-muted` | `#98a0ab` | Secondary text, axes |
-| `highlight` | `#15221f` | The winning row |
 | `model-icon` | `#8aa4ff` | ICON |
 | `model-ecmwf` | `#6ee7c8` | ECMWF, and the focus ring |
 | `model-gfs` | `#f2b36a` | GFS |
@@ -26,6 +25,12 @@ component holds a raw colour.
 
 Type: Inter for text and JetBrains Mono for numbers, both bundled with `@fontsource-variable` (no request to a font service, so
 the page's content security policy allows only its own origin). Numbers use a decimal point and no thousands separator.
+
+## Highlighted rows
+
+The best model's row in the ranking, and the open station's row in the comparison, are washed in that model's colour (a 10%
+tint over `surface`, with a 3 px bar of the colour on the left edge). The colour is never a fixed green, so a highlight is
+never mistaken for ECMWF unless ECMWF is the model. `modelTint` in `src/lib/models.ts` makes the tint.
 
 ## Layout
 
@@ -83,7 +88,7 @@ or a scale with a middle mark for bias). It closes with the X, Escape, or a pres
 - Selection is exposed (`aria-pressed`, `aria-selected`, `aria-current`), not only coloured.
 - The three models are told apart by name, by position (always ICON, ECMWF, GFS in the same order) and by colour, never by
   colour alone. The legend names them, and the chart has a table with the same numbers that only screen readers get.
-- Text contrast is at least 4.5:1. The weakest pairing, `fg-muted` on `highlight`, is 6.2:1, and `fg-muted` on `surface` is 7.0:1. A test computes every text pairing from the real tokens (`tests/unit/test_design_tokens.py`).
+- Text contrast is at least 4.5:1. The weakest pairing, `fg-muted` on a row washed in ECMWF's colour, is 5.7:1, and `fg-muted` on `surface-raised` is 6.2:1. A test computes every text pairing from the real tokens (`tests/unit/test_design_tokens.py`).
 - Structural accessibility is checked with axe-core in the dashboard test. Colour contrast is covered by the token test above, because
   axe-core needs a real browser engine for it.
 - The Polish legal notices carry `lang="pl"`.

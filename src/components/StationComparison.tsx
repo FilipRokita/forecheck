@@ -5,6 +5,7 @@ import { ModelName } from "@/components/ModelName";
 import { StationMap } from "@/components/StationMap";
 import { headlineFormat, headlineNumber } from "@/components/metric";
 import type { Comparison, Period, Variable } from "@/lib/api/types";
+import { modelTint } from "@/lib/models";
 
 type Props = {
   comparison: Comparison;
@@ -45,13 +46,16 @@ export function StationComparison({ comparison, variable, period, selectedStatio
             <tbody>
               {comparison.rows.map((row) => {
                 const selected = row.station.id === selectedStation;
+                // The open station is washed in the colour of its best model, the same colour as its dot on the map.
+                const tint = selected ? modelTint(row.best_model ?? "") : undefined;
                 return (
                   <tr
                     key={row.station.id}
                     aria-current={selected ? "true" : undefined}
-                    className={`border-b border-grid last:border-0 ${selected ? "bg-highlight" : ""}`}
+                    className="border-b border-grid last:border-0"
+                    style={tint ? { background: tint.background } : undefined}
                   >
-                    <th scope="row" className="px-3 py-3 text-left font-normal lg:py-2">
+                    <th scope="row" className="px-3 py-3 text-left font-normal lg:py-2" style={tint ? { boxShadow: tint.edge } : undefined}>
                       {row.station.name}
                     </th>
                     <td className="px-3 py-3 lg:py-2">
