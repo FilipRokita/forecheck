@@ -23,4 +23,20 @@ describe("StationComparison", () => {
     await userEvent.click(screen.getByRole("button", { name: "Rzeszów" }));
     expect(onSelect).toHaveBeenCalledWith("12580");
   });
+
+  it("opens a station when anywhere in its row is pressed, once", async () => {
+    const onSelect = vi.fn();
+    render(<StationComparison comparison={comparison()} variable={TEMPERATURE} period={PERIOD_30} selectedStation="12566" onSelect={onSelect} />);
+    await userEvent.click(screen.getByText("Too few days"));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith("12580");
+  });
+
+  it("opens a station from the keyboard", async () => {
+    const onSelect = vi.fn();
+    render(<StationComparison comparison={comparison()} variable={TEMPERATURE} period={PERIOD_30} selectedStation="12566" onSelect={onSelect} />);
+    screen.getByRole("button", { name: "Rzeszów" }).focus();
+    await userEvent.keyboard("{Enter}");
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
 });

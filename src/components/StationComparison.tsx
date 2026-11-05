@@ -49,12 +49,16 @@ export function StationComparison({ comparison, variable, period, selectedStatio
               {comparison.rows.map((row) => {
                 const selected = row.station.id === selectedStation;
                 return (
-                  <tr key={row.station.id} className={`border-b border-grid last:border-0 ${selected ? "bg-highlight" : "hover:bg-surface-raised"} transition-colors`}>
+                  // The whole row is the target. The button in the first cell is what the keyboard and screen readers use: its click bubbles up here.
+                  <tr
+                    key={row.station.id}
+                    onClick={() => onSelect(row.station.id)}
+                    className={`cursor-pointer border-b border-grid last:border-0 ${selected ? "bg-highlight" : "hover:bg-surface-raised"} transition-colors`}
+                  >
                     <th scope="row" className="p-0 text-left font-normal">
                       <button
                         type="button"
                         aria-current={selected ? "true" : undefined}
-                        onClick={() => onSelect(row.station.id)}
                         className="min-h-12 w-full px-3 lg:min-h-10 text-left hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-model-ecmwf"
                       >
                         {row.station.name}
