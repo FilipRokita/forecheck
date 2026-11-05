@@ -12,6 +12,7 @@ from forecheck.application.use_cases.backfill_scores import BackfillScores
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
 from forecheck.application.use_cases.ingest_observations import IngestObservations
+from forecheck.application.use_cases.prune_old_data import PruneOldData
 from forecheck.application.use_cases.run_daily_cycle import RunDailyCycle
 from forecheck.infrastructure.clock import SystemClock
 from forecheck.infrastructure.db.engine import create_db_engine
@@ -55,9 +56,8 @@ def build_services(
         daily_cycle=RunDailyCycle(
             CollectForecasts(open_meteo, uow_factory, clock, catalog, pause=pause),
             ingest,
-            EvaluateForecasts(
-                uow_factory, clock, rules, score_retention_days=settings.score_retention_days
-            ),
+            EvaluateForecasts(uow_factory, clock, rules),
+            PruneOldData(uow_factory, clock, settings.data_retention_days),
             uow_factory,
             clock,
         ),

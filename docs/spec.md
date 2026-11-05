@@ -107,7 +107,7 @@ Environment variables, read in `infrastructure/settings.py`. Defaults are the me
 | :--- | :--- | :--- |
 | `PRECIPITATION_THRESHOLD_MM` | 0.1 | A day is wet from this much rain |
 | `MIN_SAMPLES` | 10 | Scored days needed to rank a model or judge a lead |
-| `SCORE_RETENTION_DAYS` | 730 | How long scores are kept, counted back from the latest scored day. At least 365, the longest period the page shows |
+| `DATA_RETENTION_DAYS` | 730 | How long scores, measurements and the run log are kept. At least 365, the longest period the page shows |
 | `TRUST_TEMPERATURE_MAE_C` | 2.0 | Temperature bar |
 | `TRUST_WIND_MAE_MS` | 1.5 | Wind bar |
 | `TRUST_PRESSURE_MAE_HPA` | 2.0 | Pressure bar |

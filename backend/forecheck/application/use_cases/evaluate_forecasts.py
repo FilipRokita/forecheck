@@ -13,17 +13,11 @@ from forecheck.domain.types import StationId, Variable
 # incomplete. It is dropped so waiting forecasts cannot pile up.
 DEFAULT_MAX_PENDING_DAYS = 90
 
-# Scores older than this, counted back from the latest scored day, are dropped. The page reads at
-# most 365 days (the 12 months period), so the rest is never shown. Two years leaves room for a
-# longer view and stops the table from growing without end (about 90 MB a year).
-DEFAULT_SCORE_RETENTION_DAYS = 730
-
 
 @dataclass(frozen=True, slots=True)
 class EvaluationReport:
     scored: int
     expired: int
-    pruned: int
     waiting: int
 
 
@@ -34,13 +28,11 @@ class EvaluateForecasts:
         clock: Clock,
         rules: Rules,
         max_pending_days: int = DEFAULT_MAX_PENDING_DAYS,
-        score_retention_days: int = DEFAULT_SCORE_RETENTION_DAYS,
     ) -> None:
         self._uow_factory = uow_factory
         self._clock = clock
         self._rules = rules
         self._max_pending_days = max_pending_days
-        self._score_retention_days = score_retention_days
 
     def run(self) -> EvaluationReport:
         with self._uow_factory() as uow:
@@ -79,14 +71,6 @@ class EvaluateForecasts:
             expired = uow.forecasts.delete_valid_before(
                 self._clock.now().date() - timedelta(days=self._max_pending_days)
             )
-            latest_scored = uow.scores.latest_day()
-            pruned = (
-                uow.scores.delete_valid_before(
-                    latest_scored - timedelta(days=self._score_retention_days)
-                )
-                if latest_scored
-                else 0
-            )
             waiting = uow.forecasts.count()
             uow.commit()
-        return EvaluationReport(scored=len(scored), expired=expired, pruned=pruned, waiting=waiting)
+        return EvaluationReport(scored=len(scored), expired=expired, waiting=waiting)

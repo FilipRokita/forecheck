@@ -202,6 +202,56 @@ def test_old_scores_can_be_deleted_by_day(uow_factory: UnitOfWorkFactory) -> Non
         )
 
 
+def test_old_observations_can_be_deleted_by_day(uow_factory: UnitOfWorkFactory) -> None:
+    def observation(day: int) -> Observation:
+        return Observation(KRAKOW, Variable.WIND, date(2026, 9, day), 2.0)
+
+    with uow_factory() as uow:
+        uow.observations.upsert([observation(1), observation(2), observation(3)])
+        uow.commit()
+    with uow_factory() as uow:
+        assert uow.observations.delete_before(date(2026, 9, 3)) == 2
+        uow.commit()
+    with uow_factory() as uow:
+        found = uow.observations.between(date(2026, 9, 1), date(2026, 9, 30))
+        assert [o.day.day for o in found] == [3]
+
+
+def test_state_keys_can_be_deleted_by_prefix_and_bound(uow_factory: UnitOfWorkFactory) -> None:
+    with uow_factory() as uow:
+        for key in (
+            "observations:2026-07",
+            "observations:2026-08",
+            "observations:2026-09",
+            "other:2026-07",
+        ):
+            uow.state.set(key, "v")
+        uow.commit()
+    with uow_factory() as uow:
+        assert uow.state.delete_before("observations:", "observations:2026-09") == 2
+        uow.commit()
+    with uow_factory() as uow:
+        assert uow.state.get("observations:2026-08") is None
+        assert uow.state.get("observations:2026-09") == "v"
+        assert uow.state.get("other:2026-07") == "v"
+
+
+def test_old_runs_can_be_deleted_by_time(uow_factory: UnitOfWorkFactory) -> None:
+    old = RunRecord("collect", datetime(2026, 9, 1, 9, 0, tzinfo=UTC), True, "old")
+    new = RunRecord("collect", datetime(2026, 9, 3, 9, 0, tzinfo=UTC), True, "new")
+    with uow_factory() as uow:
+        uow.runs.record(old)
+        uow.runs.record(new)
+        uow.commit()
+    with uow_factory() as uow:
+        assert uow.runs.delete_before(datetime(2026, 9, 2, tzinfo=UTC)) == 1
+        uow.commit()
+    with uow_factory() as uow:
+        latest = uow.runs.latest("collect")
+        assert latest is not None
+        assert latest.message == "new"
+
+
 def test_scores_by_station_at_one_lead(uow_factory: UnitOfWorkFactory) -> None:
     day = date(2026, 9, 1)
     with uow_factory() as uow:

@@ -10,6 +10,7 @@ from forecheck.application.ports import UnitOfWorkFactory
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
 from forecheck.application.use_cases.ingest_observations import IngestObservations
+from forecheck.application.use_cases.prune_old_data import PruneOldData
 from forecheck.application.use_cases.run_daily_cycle import RunDailyCycle
 from forecheck.domain.rules import Rules
 from forecheck.domain.types import ModelId, Variable
@@ -32,6 +33,7 @@ def test_the_daily_cycle_runs_end_to_end_on_postgres(pg_uow_factory: UnitOfWorkF
         CollectForecasts(forecasts, pg_uow_factory, clock, CATALOG),
         IngestObservations(observations, pg_uow_factory, clock, CATALOG),
         EvaluateForecasts(pg_uow_factory, clock, Rules(min_samples=2)),
+        PruneOldData(pg_uow_factory, clock),
         pg_uow_factory,
         clock,
     )

@@ -73,6 +73,12 @@ class MemoryObservations:
     def between(self, start: date, end: date) -> list[Observation]:
         return [o for o in self._data.observations.values() if start <= o.day <= end]
 
+    def delete_before(self, day: date) -> int:
+        old = [key for key, o in self._data.observations.items() if o.day < day]
+        for key in old:
+            del self._data.observations[key]
+        return len(old)
+
     def latest_day(self) -> date | None:
         return max((o.day for o in self._data.observations.values()), default=None)
 
@@ -140,6 +146,12 @@ class MemoryState:
     def set(self, key: str, value: str) -> None:
         self._data.state[key] = value
 
+    def delete_before(self, prefix: str, bound: str) -> int:
+        old = [key for key in self._data.state if key.startswith(prefix) and key < bound]
+        for key in old:
+            del self._data.state[key]
+        return len(old)
+
 
 class MemoryRuns:
     def __init__(self, data: State) -> None:
@@ -151,6 +163,12 @@ class MemoryRuns:
     def latest(self, kind: str) -> RunRecord | None:
         matching = [r for r in self._data.runs if r.kind == kind]
         return max(matching, key=lambda r: r.at, default=None)
+
+    def delete_before(self, at: datetime) -> int:
+        kept = [r for r in self._data.runs if r.at >= at]
+        removed = len(self._data.runs) - len(kept)
+        self._data.runs[:] = kept
+        return removed
 
 
 class MemoryDatabase:

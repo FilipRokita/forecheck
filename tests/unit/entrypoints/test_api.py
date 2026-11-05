@@ -13,6 +13,7 @@ from forecheck.application.use_cases.backfill_scores import BackfillScores
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
 from forecheck.application.use_cases.ingest_observations import IngestObservations
+from forecheck.application.use_cases.prune_old_data import PruneOldData
 from forecheck.application.use_cases.run_daily_cycle import RunDailyCycle
 from forecheck.domain.entities import ScoreRecord
 from forecheck.domain.rules import Rules
@@ -75,6 +76,7 @@ def make_services(
             CollectForecasts(source, database.unit_of_work, clock, CATALOG),
             ingest,
             EvaluateForecasts(database.unit_of_work, clock, RULES),
+            PruneOldData(database.unit_of_work, clock),
             database.unit_of_work,
             clock,
         ),
@@ -295,7 +297,7 @@ def test_the_cron_route_runs_the_cycle(client: TestClient) -> None:
     body = response.json()
     assert response.status_code == 200
     assert body["ok"] is True
-    assert [s["name"] for s in body["steps"]] == ["collect", "ingest", "evaluate"]
+    assert [s["name"] for s in body["steps"]] == ["collect", "ingest", "evaluate", "prune"]
     assert "cache-control" not in response.headers
 
 

@@ -5,10 +5,14 @@ import pytest
 
 from forecheck.application.catalog import Catalog
 from forecheck.application.errors import SourceUnavailableError
-from forecheck.application.ports import UnitOfWorkFactory
+from forecheck.application.ports import RunRecord, UnitOfWorkFactory
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
-from forecheck.application.use_cases.ingest_observations import IngestObservations
+from forecheck.application.use_cases.ingest_observations import (
+    IngestObservations,
+    fingerprint_key,
+)
+from forecheck.application.use_cases.prune_old_data import PruneOldData
 from forecheck.domain.entities import Forecast, Observation, ScoreRecord, Station
 from forecheck.domain.rules import Rules
 from forecheck.domain.stats import ErrorStats
@@ -346,7 +350,11 @@ def test_with_no_measurements_nothing_happens(database: MemoryDatabase) -> None:
     assert (report.scored, report.waiting) == (0, 1)
 
 
-# --- keeping the scores table from growing without end -----------------------------------
+# --- pruning ---------------------------------------------------------------------------------
+
+
+def prune(database: MemoryDatabase, clock: FakeClock, retention_days: int = 730) -> PruneOldData:
+    return PruneOldData(database.unit_of_work, clock, retention_days)
 
 
 def seed_score(database: MemoryDatabase, *days: date) -> None:
@@ -361,7 +369,7 @@ def seed_score(database: MemoryDatabase, *days: date) -> None:
         uow.commit()
 
 
-def kept_days(database: MemoryDatabase, *days: date) -> set[date]:
+def scored_days(database: MemoryDatabase, *days: date) -> set[date]:
     """Which of ``days`` still have a score."""
     with database.unit_of_work() as uow:
         return {
@@ -375,11 +383,11 @@ def test_scores_older_than_the_retention_are_dropped_counting_back_from_the_late
     database: MemoryDatabase,
 ) -> None:
     # 730 days before 2026-09-30 is 2024-09-30: the day before it goes, the boundary day stays.
-    seed_score(database, date(2024, 9, 29), date(2024, 9, 30), date(2026, 9, 30))
-    report = evaluate(database, clock_at(2026, 10, 20)).run()
-    assert report.pruned == 1
     days = (date(2024, 9, 29), date(2024, 9, 30), date(2026, 9, 30))
-    assert kept_days(database, *days) == {date(2024, 9, 30), date(2026, 9, 30)}
+    seed_score(database, *days)
+    report = prune(database, clock_at(2026, 10, 20)).run()
+    assert report.scores == 1
+    assert scored_days(database, *days) == {date(2024, 9, 30), date(2026, 9, 30)}
 
 
 def test_the_retention_is_counted_from_the_latest_score_not_from_today(
@@ -387,9 +395,72 @@ def test_the_retention_is_counted_from_the_latest_score_not_from_today(
 ) -> None:
     # Scoring has stalled for years: what the page still shows must not be deleted.
     seed_score(database, date(2026, 9, 1), date(2026, 9, 30))
-    report = evaluate(database, clock_at(2030, 1, 1)).run()
-    assert report.pruned == 0
-    assert kept_days(database, date(2026, 9, 1), date(2026, 9, 30)) == {
+    report = prune(database, clock_at(2030, 1, 1)).run()
+    assert report.scores == 0
+    assert scored_days(database, date(2026, 9, 1), date(2026, 9, 30)) == {
         date(2026, 9, 1),
         date(2026, 9, 30),
     }
+
+
+def test_old_observations_go_with_what_was_remembered_about_reading_their_months(
+    database: MemoryDatabase,
+) -> None:
+    with database.unit_of_work() as uow:
+        uow.observations.upsert(
+            [
+                Observation(STATIONS[0].id, Variable.TEMPERATURE, day, 10.0)
+                for day in (date(2024, 9, 10), date(2024, 10, 10), date(2026, 9, 30))
+            ]
+        )
+        for month in (date(2024, 8, 1), date(2024, 9, 1), date(2024, 10, 1), date(2026, 9, 1)):
+            uow.state.set(fingerprint_key(month), "v1")
+        uow.state.set("sample_data", "1")
+        uow.commit()
+
+    report = prune(database, clock_at(2026, 10, 20)).run()
+
+    # The cutoff is 2024-09-30. September 2024 is cut through the middle, so it is forgotten too.
+    assert report.observations == 1
+    with database.unit_of_work() as uow:
+        assert [o.day for o in uow.observations.between(date(2024, 1, 1), date(2025, 1, 1))] == [
+            date(2024, 10, 10)
+        ]
+        assert uow.state.get(fingerprint_key(date(2024, 8, 1))) is None
+        assert uow.state.get(fingerprint_key(date(2024, 9, 1))) is None
+        assert uow.state.get(fingerprint_key(date(2024, 10, 1))) == "v1"
+        assert uow.state.get(fingerprint_key(date(2026, 9, 1))) == "v1"
+        assert uow.state.get("sample_data") == "1"  # other keys are not touched
+
+
+def test_an_old_month_is_read_again_after_it_was_pruned(database: MemoryDatabase) -> None:
+    source = FakeObservationSource({date(2024, 8, 1): "v1"})
+    use_case = ingest(database, source, clock_at(2026, 10, 20))
+    use_case.read_range(date(2024, 8, 1), date(2024, 8, 31))
+    with database.unit_of_work() as uow:  # something recent, so August 2024 is far behind it
+        uow.observations.upsert(
+            [Observation(STATIONS[0].id, Variable.TEMPERATURE, date(2026, 9, 30), 1.0)]
+        )
+        uow.commit()
+
+    prune(database, clock_at(2026, 10, 20)).run()
+
+    assert use_case.read_range(date(2024, 8, 1), date(2024, 8, 31)).months_read == 1
+
+
+def test_old_log_entries_are_dropped_counting_back_from_now(database: MemoryDatabase) -> None:
+    clock = clock_at(2026, 10, 20)
+    with database.unit_of_work() as uow:
+        uow.runs.record(RunRecord("collect", datetime(2024, 10, 1, tzinfo=UTC), True, "old"))
+        uow.runs.record(RunRecord("collect", datetime(2026, 10, 19, tzinfo=UTC), True, "new"))
+        uow.commit()
+    assert prune(database, clock).run().runs == 1
+    with database.unit_of_work() as uow:
+        latest = uow.runs.latest("collect")
+        assert latest is not None
+        assert latest.message == "new"
+
+
+def test_pruning_an_empty_database_does_nothing(database: MemoryDatabase) -> None:
+    report = prune(database, clock_at(2026, 10, 20)).run()
+    assert (report.scores, report.observations, report.runs) == (0, 0, 0)

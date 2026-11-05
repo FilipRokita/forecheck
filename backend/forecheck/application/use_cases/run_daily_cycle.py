@@ -8,6 +8,7 @@ from forecheck.application.ports import Clock, RunRecord, UnitOfWorkFactory
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
 from forecheck.application.use_cases.ingest_observations import IngestObservations
+from forecheck.application.use_cases.prune_old_data import PruneOldData
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ class CycleReport:
 
 
 class RunDailyCycle:
-    """Runs the three steps in order. A failing step does not stop the others: collecting today's
+    """Runs the four steps in order. A failing step does not stop the others: collecting today's
     forecasts does not depend on reading old measurements, and scoring works on what is stored.
     Neither does a failure to log a step's result."""
 
@@ -38,12 +39,14 @@ class RunDailyCycle:
         collect: CollectForecasts,
         ingest: IngestObservations,
         evaluate: EvaluateForecasts,
+        prune: PruneOldData,
         uow_factory: UnitOfWorkFactory,
         clock: Clock,
     ) -> None:
         self._collect = collect
         self._ingest = ingest
         self._evaluate = evaluate
+        self._prune = prune
         self._uow_factory = uow_factory
         self._clock = clock
 
@@ -52,6 +55,7 @@ class RunDailyCycle:
             ("collect", self._collect_step),
             ("ingest", self._ingest_step),
             ("evaluate", self._evaluate_step),
+            ("prune", self._prune_step),
         )
         results: list[StepResult] = []
         for name, step in steps:
@@ -97,7 +101,11 @@ class RunDailyCycle:
 
     def _evaluate_step(self) -> tuple[bool, str]:
         report = self._evaluate.run()
+        return True, f"scored {report.scored}, expired {report.expired}, waiting {report.waiting}"
+
+    def _prune_step(self) -> tuple[bool, str]:
+        report = self._prune.run()
         return True, (
-            f"scored {report.scored}, expired {report.expired}, pruned {report.pruned}, "
-            f"waiting {report.waiting}"
+            f"dropped {report.scores} scores, {report.observations} observations, "
+            f"{report.runs} log entries"
         )

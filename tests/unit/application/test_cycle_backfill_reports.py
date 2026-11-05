@@ -10,6 +10,7 @@ from forecheck.application.use_cases.backfill_scores import BackfillScores
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
 from forecheck.application.use_cases.ingest_observations import IngestObservations
+from forecheck.application.use_cases.prune_old_data import PruneOldData
 from forecheck.application.use_cases.run_daily_cycle import RunDailyCycle
 from forecheck.domain.entities import Forecast, Observation, ScoreRecord, Station
 from forecheck.domain.rules import Rules
@@ -46,6 +47,7 @@ def cycle(
         CollectForecasts(forecasts, database.unit_of_work, clock, CATALOG),
         IngestObservations(observations, database.unit_of_work, clock, CATALOG),
         EvaluateForecasts(database.unit_of_work, clock, RULES),
+        PruneOldData(database.unit_of_work, clock),
         database.unit_of_work,
         clock,
     )
@@ -117,6 +119,7 @@ def test_a_failing_step_is_reported_and_the_others_still_run() -> None:
         CollectForecasts(FakeForecastSource(), database.unit_of_work, clock, CATALOG),
         IngestObservations(Broken(), database.unit_of_work, clock, CATALOG),
         EvaluateForecasts(database.unit_of_work, clock, RULES),
+        PruneOldData(database.unit_of_work, clock),
         database.unit_of_work,
         clock,
     )
@@ -127,6 +130,7 @@ def test_a_failing_step_is_reported_and_the_others_still_run() -> None:
         ("collect", True),
         ("ingest", False),
         ("evaluate", True),
+        ("prune", True),
     ]
     assert "IMGW is down" in report.steps[1].message
     with database.unit_of_work() as uow:
@@ -156,8 +160,9 @@ def test_a_failure_to_log_a_step_does_not_stop_the_next_steps(
         ("collect", True),
         ("ingest", True),
         ("evaluate", True),
+        ("prune", True),
     ]
-    assert calls == ["collect", "ingest", "evaluate"]
+    assert calls == ["collect", "ingest", "evaluate", "prune"]
 
 
 def test_a_month_that_could_not_be_read_makes_the_ingest_step_fail_and_names_it() -> None:

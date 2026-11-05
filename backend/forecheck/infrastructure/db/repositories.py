@@ -152,6 +152,12 @@ class PgObservationRepository:
             Observation(StationId(r.station_id), Variable(r.variable), r.day, r.value) for r in rows
         ]
 
+    def delete_before(self, day: date) -> int:
+        result = self._connection.execute(
+            delete(tables.observations).where(tables.observations.c.day < day)
+        )
+        return result.rowcount
+
     def latest_day(self) -> date | None:
         return self._connection.execute(select(func.max(tables.observations.c.day))).scalar()
 
@@ -269,6 +275,15 @@ class PgStateRepository:
             keys=("key",),
         )
 
+    def delete_before(self, prefix: str, bound: str) -> int:
+        column = tables.source_state.c.key
+        result = self._connection.execute(
+            delete(tables.source_state).where(
+                column.startswith(prefix, autoescape=True), column < bound
+            )
+        )
+        return result.rowcount
+
 
 class PgRunLogRepository:
     def __init__(self, connection: Connection) -> None:
@@ -287,3 +302,7 @@ class PgRunLogRepository:
             .limit(1)
         ).first()
         return None if row is None else RunRecord(row.kind, row.at, row.ok, row.message)
+
+    def delete_before(self, at: datetime) -> int:
+        result = self._connection.execute(delete(tables.runs).where(tables.runs.c.at < at))
+        return result.rowcount

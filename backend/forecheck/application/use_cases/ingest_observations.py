@@ -19,6 +19,14 @@ class IngestReport:
     failed: tuple[date, ...] = ()
 
 
+FINGERPRINT_PREFIX = "observations:"
+
+
+def fingerprint_key(month: date) -> str:
+    """The key under which what was read of ``month`` is remembered. Sorts by month."""
+    return f"{FINGERPRINT_PREFIX}{month:%Y-%m}"
+
+
 def _next_month(month: date) -> date:
     return (month + timedelta(days=32)).replace(day=1)
 
@@ -80,7 +88,7 @@ class IngestObservations:
             if month > end:
                 continue  # only here for the day-after report of the previous month
             versioned = f"{version}|{versions.get(_next_month(month), '-')}"
-            key = f"observations:{month:%Y-%m}"
+            key = fingerprint_key(month)
             first, last = max(start, month), min(end, _last_day(month))
             with self._uow_factory() as uow:
                 if _covers(uow.state.get(key), versioned, first, last):

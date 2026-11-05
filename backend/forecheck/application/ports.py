@@ -78,6 +78,10 @@ class ObservationRepository(Protocol):
         """Observations for the days ``start`` to ``end`` (inclusive)."""
         ...
 
+    def delete_before(self, day: date) -> int:
+        """Drop observations for days before ``day``. Returns how many."""
+        ...
+
     def latest_day(self) -> date | None: ...
 
 
@@ -117,6 +121,10 @@ class StateRepository(Protocol):
 
     def set(self, key: str, value: str) -> None: ...
 
+    def delete_before(self, prefix: str, bound: str) -> int:
+        """Drop the keys that start with ``prefix`` and sort before ``bound``. Returns how many."""
+        ...
+
 
 @dataclass(frozen=True, slots=True)
 class RunRecord:
@@ -130,6 +138,10 @@ class RunLogRepository(Protocol):
     def record(self, run: RunRecord) -> None: ...
 
     def latest(self, kind: str) -> RunRecord | None: ...
+
+    def delete_before(self, at: datetime) -> int:
+        """Drop runs recorded before ``at``. Returns how many."""
+        ...
 
 
 class UnitOfWork(Protocol):
