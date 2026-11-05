@@ -33,13 +33,20 @@
 
 ---
 
-**Forecheck** answers one question: *at my station, which weather model has been right lately, and for how many
-days ahead can I rely on it?*
+**Forecheck** answers one simple question: *at my station, which weather model has been right lately, and for how many
+days ahead can I rely on it?* Weather apps tell you what the weather will be, but not how often that kind of forecast has
+turned out to be right. Forecheck checks, **in Poland, against real measurements**.
 
-Every day it saves what three open models (DWD ICON, ECMWF IFS, NOAA GFS) predicted for the coming week at 15 IMGW
-stations. Once the day has passed and the station's measurements are published, it scores each forecast and keeps
-running totals. The page then shows a verdict, for example "ECMWF is the most accurate here, and its temperature
-error stays under 2 °C for 3 days".
+Every day it saves what **three open weather models** (DWD ICON, ECMWF IFS and NOAA GFS) predicted for the **coming week**
+at **15 IMGW stations**. Once a day has passed and the station's **measurements** are published, each forecast is compared
+with what was actually measured, and the result is added to running totals. Forecasts are judged **as they were issued**,
+never as refreshed just before their day, so the scores reflect what you could really have relied on. IMGW publishes a
+month of data about two weeks after it ends, so the scores run about that far behind.
+
+The page turns those totals into a **clear verdict**, for example: "ECMWF is the most accurate here, and its temperature
+error stays under 2 °C for 3 days." Below it you get the **error for each of the next 7 days**, a **ranking of the
+models**, a **comparison of all stations** and a **CSV export**, for temperature, rain, wind and pressure. There are **no
+accounts and no ads**, and all of it is open source.
 
 ## 📖 Table of contents
 
