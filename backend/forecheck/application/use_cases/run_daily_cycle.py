@@ -30,7 +30,8 @@ class CycleReport:
 
 class RunDailyCycle:
     """Runs the three steps in order. A failing step does not stop the others: collecting today's
-    forecasts does not depend on reading old measurements, and scoring works on what is stored."""
+    forecasts does not depend on reading old measurements, and scoring works on what is stored.
+    Neither does a failure to log a step's result."""
 
     def __init__(
         self,
@@ -56,10 +57,17 @@ class RunDailyCycle:
         for name, step in steps:
             result = self._guarded(name, step)
             results.append(result)
+            self._log(name, result)
+        return CycleReport(tuple(results))
+
+    def _log(self, name: str, result: StepResult) -> None:
+        """Keep the run log. Failing to write it must not stop the steps that come after."""
+        try:
             with self._uow_factory() as uow:
                 uow.runs.record(RunRecord(name, self._clock.now(), result.ok, result.message))
                 uow.commit()
-        return CycleReport(tuple(results))
+        except Exception:  # a job must report, not crash, whatever went wrong
+            log.exception("Could not record the result of step %s", name)
 
     @staticmethod
     def _guarded(name: str, step: Callable[[], tuple[bool, str]]) -> StepResult:

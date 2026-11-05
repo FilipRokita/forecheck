@@ -4,6 +4,7 @@ import pytest
 
 from forecheck.application.catalog import Catalog, ModelSpec
 from forecheck.application.errors import SourceUnavailableError
+from forecheck.application.ports import RunRecord
 from forecheck.application.queries import Reports, UnknownStationError
 from forecheck.application.use_cases.backfill_scores import BackfillScores
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
@@ -14,7 +15,7 @@ from forecheck.domain.entities import Forecast, Observation, ScoreRecord, Statio
 from forecheck.domain.rules import Rules
 from forecheck.domain.stats import ErrorStats
 from forecheck.domain.types import ModelId, Period, StationId, Variable
-from tests.support.memory import MemoryDatabase
+from tests.support.memory import MemoryDatabase, MemoryRuns
 from tests.unit.application.fakes import (
     FakeArchive,
     FakeClock,
@@ -132,6 +133,31 @@ def test_a_failing_step_is_reported_and_the_others_still_run() -> None:
         latest = uow.runs.latest("ingest")
         assert latest is not None
         assert not latest.ok
+
+
+def test_a_failure_to_log_a_step_does_not_stop_the_next_steps(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    database = MemoryDatabase()
+    clock = clock_at(2026, 9, 1)
+    real_record = MemoryRuns.record
+    calls: list[str] = []
+
+    def flaky(self: MemoryRuns, run: RunRecord) -> None:
+        calls.append(run.kind)
+        if run.kind == "collect":
+            raise OSError("connection reset")
+        real_record(self, run)
+
+    monkeypatch.setattr(MemoryRuns, "record", flaky)
+    report = cycle(database, clock, FakeForecastSource(), FakeObservationSource({})).run()
+
+    assert [(s.name, s.ok) for s in report.steps] == [
+        ("collect", True),
+        ("ingest", True),
+        ("evaluate", True),
+    ]
+    assert calls == ["collect", "ingest", "evaluate"]
 
 
 def test_a_rate_limited_collection_makes_the_cycle_not_ok_but_says_why() -> None:
