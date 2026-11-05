@@ -2,7 +2,10 @@
   <!-- Mark: the app icon (src/app/icon.svg), drawn at 38px -->
   <g transform="translate(4 9) scale(1.1875)">
     <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="#121417" stroke="#2E323A"/>
-    <path d="M8 17l5.5 5L24 10" stroke="#6EE7C8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(0 .5)" stroke="#E8EAED" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 23.5a5 5 0 0 1-.5-9.97 7 7 0 0 1 13.3-1.5A5.5 5.5 0 0 1 22.5 23.5H10z"/>
+      <path d="M12.9 17.3l2.4 2.4 4.2-4.6"/>
+    </g>
   </g>
   <text x="52" y="37" fill="#18181B" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="28" letter-spacing="-0.03em">Fore<tspan fill="#71717A" font-weight="500">check</tspan></text>
 </svg>
