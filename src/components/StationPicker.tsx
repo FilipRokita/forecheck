@@ -102,7 +102,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
         aria-controls={open ? listId : undefined}
         aria-labelledby={`${prefix}-label ${prefix}-value`}
         onClick={toggle}
-        className={`flex min-h-12 w-full items-center justify-between gap-3 border px-4 text-left text-base hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-[46px] sm:w-auto sm:min-w-64 sm:text-sm ${
+        className={`flex min-h-12 w-full active:transform-none items-center justify-between gap-3 border px-4 text-left text-base hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-[46px] sm:w-auto sm:min-w-64 sm:text-sm ${
           open ? "rounded-t-xl rounded-b-none border-border-strong bg-surface-raised sm:rounded-t-[10px]" : "rounded-xl border-border bg-surface sm:rounded-[10px]"
         }`}
       >
@@ -126,7 +126,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
       </button>
 
       {open ? (
-        <div className="absolute left-0 top-full z-30 w-full min-w-64 origin-top animate-sheet overflow-hidden rounded-b-xl border border-t-0 border-border-strong bg-surface shadow-2xl shadow-black/60 sm:rounded-b-[10px]">
+        <div className="absolute left-0 top-full z-30 w-full min-w-64 overflow-hidden rounded-b-xl border border-t-0 border-border-strong bg-surface shadow-2xl shadow-black/60 sm:rounded-b-[10px]">
           <div className="border-b border-border p-2">
             <input
               ref={search}

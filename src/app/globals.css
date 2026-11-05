@@ -46,7 +46,6 @@ body {
   --animate-rise: rise 0.5s var(--ease-out-soft) both;
   --animate-fade: fade 0.4s ease-out both;
   --animate-grow: grow 0.7s var(--ease-out-soft) both;
-  --animate-sheet: sheet 0.28s var(--ease-out-soft) both;
 
   @keyframes rise {
     from {
@@ -72,16 +71,6 @@ body {
     }
     to {
       transform: scaleY(1);
-    }
-  }
-  @keyframes sheet {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: none;
     }
   }
 }

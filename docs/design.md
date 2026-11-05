@@ -47,7 +47,7 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 
 - Cards rise in one after another. Chart bars grow from zero, and a tooltip names the value of the bar under the pointer.
 - The verdict numbers count up once when they appear.
-- The winning model's card has a faint glow in its colour. The station dropdown eases open under its button.
+- The winning model's card has a faint glow in its colour.
 - Skeletons shimmer. Changing the quantity or the period shows them, because the figures would be read in the wrong unit.
   Changing the station keeps the old figures on screen, dimmed, until the new ones arrive: they name their station, so they
   cannot be mistaken for the new one. The header stays on top on larger screens, blurred.
