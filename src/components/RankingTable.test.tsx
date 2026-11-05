@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { RankingTable } from "@/components/RankingTable";
@@ -49,6 +49,20 @@ describe("RankingTable", () => {
     expect(within(guide).getByText(/Aim for 0/)).toBeInTheDocument();
     expect(guide).toHaveTextContent(/Examples are from the model ranked first:\s*ECMWF/);
     await userEvent.click(within(guide).getByRole("button", { name: "Close" }));
+    expect(guide).not.toHaveAttribute("open");
+  });
+
+  it("closes the guide when the backdrop is pressed, but not when a press began inside it", async () => {
+    render(<RankingTable variable={TEMPERATURE} verdict={verdict()} rain={rainVerdict()} />);
+    const open = () => userEvent.click(screen.getByRole("button", { name: "What do these columns mean?" }));
+    await open();
+    const guide = screen.getByRole("dialog", { name: "How to read the ranking" });
+    // Selecting text inside and letting go over the backdrop lands the click on the dialog element, but began in its content.
+    fireEvent.pointerDown(within(guide).getByRole("heading", { level: 3, name: "Brier" }));
+    fireEvent.click(guide);
+    expect(guide).toHaveAttribute("open");
+    fireEvent.pointerDown(guide);
+    fireEvent.click(guide);
     expect(guide).not.toHaveAttribute("open");
   });
 

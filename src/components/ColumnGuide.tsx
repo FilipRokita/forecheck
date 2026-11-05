@@ -23,12 +23,21 @@ export function ColumnGuide({ columns, variable, best, bestRain }: Props) {
   useEffect(() => {
     const element = dialog.current;
     if (!element) return;
-    // A press on the backdrop lands on the dialog element itself, not on its content.
-    const closeOnBackdrop = (event: MouseEvent) => {
-      if (event.target === element) element.close();
+    // A press on the backdrop lands on the dialog element itself, not on its content. It counts only if it also began there,
+    // so selecting text and letting go over the backdrop does not close the window.
+    let startedOnBackdrop = false;
+    const remember = (event: PointerEvent) => {
+      startedOnBackdrop = event.target === element;
     };
+    const closeOnBackdrop = (event: MouseEvent) => {
+      if (startedOnBackdrop && event.target === element) element.close();
+    };
+    element.addEventListener("pointerdown", remember);
     element.addEventListener("click", closeOnBackdrop);
-    return () => element.removeEventListener("click", closeOnBackdrop);
+    return () => {
+      element.removeEventListener("pointerdown", remember);
+      element.removeEventListener("click", closeOnBackdrop);
+    };
   }, []);
 
   return (
