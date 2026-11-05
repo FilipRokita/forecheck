@@ -43,6 +43,25 @@ def test_a_published_month_is_available_with_its_publication_time_as_version() -
 
 
 @respx.mock
+def test_a_second_read_sees_months_published_since_the_first() -> None:
+    def listing(*months: str) -> httpx.Response:
+        entries = "".join(
+            f'<tr><td><a href="2026_{m}_s.zip">x</a></td><td>2026-{m}-16 10:06</td></tr>'
+            for m in months
+        )
+        return httpx.Response(200, text=f"<table>{entries}</table>")
+
+    respx.get(f"{BASE_URL}/2026/").mock(side_effect=[listing("09"), listing("09", "10")])
+    source = archive()
+    assert date(2026, 10, 1) not in source.available_months(
+        [KRAKOW], date(2026, 9, 1), date(2026, 10, 31)
+    )
+    assert date(2026, 10, 1) in source.available_months(
+        [KRAKOW], date(2026, 9, 1), date(2026, 10, 31)
+    )
+
+
+@respx.mock
 def test_a_year_without_a_directory_has_no_months() -> None:
     respx.get(f"{BASE_URL}/2027/").respond(404)
     assert archive().available_months([KRAKOW], date(2027, 1, 1), date(2027, 3, 1)) == {}

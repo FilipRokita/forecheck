@@ -68,6 +68,10 @@ class ImgwSynopArchive:
     def available_months(
         self, stations: Sequence[Station], start: date, end: date
     ) -> dict[date, str]:
+        # A read starts here. The archive object lives as long as a warm serverless instance, so
+        # what it fetched for an earlier read must not stand in for the directory as it is now.
+        self._listings.clear()
+        self._zips.clear()
         available: dict[date, str] = {}
         for month in _months(start, end):
             versions = [version for _, version in self._files_for(month, stations)]
