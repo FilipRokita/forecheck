@@ -14,7 +14,7 @@ type Props = {
   bestRain: RankedModel | undefined;
 };
 
-const BETTER = { lower: "↓ Lower is better", higher: "↑ Higher is better", zero: "◎ Closer to 0 is better" } as const;
+const BETTER = { lower: "↓ Lower is better", higher: "↑ Higher is better", zero: "◎ Aim for 0" } as const;
 
 /** A button under the ranking that opens a window explaining each column, with the first model's real numbers as examples. */
 export function ColumnGuide({ columns, variable, best, bestRain }: Props) {
@@ -82,9 +82,9 @@ export function ColumnGuide({ columns, variable, best, bestRain }: Props) {
                   className="rounded-xl border border-border bg-surface-raised/50 p-4 shadow-[inset_0_1px_0_color-mix(in_srgb,var(--color-fg)_6%,transparent)]"
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div>
+                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
                       <h3 className="font-semibold">{column.header}</h3>
-                      <span className="mt-1.5 inline-block rounded-full border border-border-strong px-2 py-0.5 text-[11px] text-fg-muted">{BETTER[column.better]}</span>
+                      <span className="rounded-full border border-border-strong px-2 py-0.5 text-[11px] text-fg-muted">{BETTER[column.better]}</span>
                     </div>
                     <div className="text-right font-mono text-2xl font-semibold leading-none" style={{ color: modelColor(best.model) }}>
                       {value === null ? "–" : column.format(value)}

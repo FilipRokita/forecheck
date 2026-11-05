@@ -46,7 +46,7 @@ describe("RankingTable", () => {
     expect(guide).toHaveAttribute("open");
     expect(within(guide).getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(["Error (°C)", "Bias (°C)", "Rain accuracy", "Brier"]);
     expect(within(guide).getByText(/Score for rain chances, from 0 \(perfect\) to 1/)).toBeInTheDocument();
-    expect(within(guide).getByText(/Closer to 0 is better/)).toBeInTheDocument();
+    expect(within(guide).getByText(/Aim for 0/)).toBeInTheDocument();
     expect(guide).toHaveTextContent(/Examples are from the model ranked first:\s*ECMWF/);
     await userEvent.click(within(guide).getByRole("button", { name: "Close" }));
     expect(guide).not.toHaveAttribute("open");
