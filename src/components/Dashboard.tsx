@@ -66,19 +66,19 @@ function Loaded({ meta }: { meta: Meta }) {
             </svg>
           </div>
           <h1 className="text-[17px] font-semibold tracking-tight">Forecheck</h1>
-          <p className="text-fg-muted">How far can you trust a weather forecast?</p>
+          <p className="text-fg-muted max-sm:hidden">How far can you trust a weather forecast?</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           {status.sample_data ? <Badge>Sample data</Badge> : null}
           <a
             href={api.exportUrl(stationId, variableId, periodId)}
             download
-            className="flex min-h-11 items-center gap-2 rounded-[10px] border border-border-strong px-3.5 text-sm hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
+            className="flex min-h-11 items-center gap-2 rounded-[10px] border border-border-strong px-3.5 text-sm max-sm:w-11 max-sm:justify-center max-sm:px-0 hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M8 2.5v8M4.5 7.5L8 11l3.5-3.5M3 13.5h10" />
             </svg>
-            Export CSV
+            <span className="max-sm:sr-only">Export CSV</span>
           </a>
         </div>
       </header>
