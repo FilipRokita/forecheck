@@ -47,8 +47,9 @@ backend/forecheck/
   entrypoints/     FastAPI app, schemas, routes, cron route, composition root
 src/
   app/             the page, layout, tokens (globals.css)
-  components/      the dashboard and its parts
-  lib/             formatting, chart scale, selection, attribution
+  components/      the dashboard and its parts: header and logo, station picker, verdict, chart, ranking and its column guide,
+                   station map and comparison, footer
+  lib/             formatting, chart scale, selection, attribution, model colours, links, the outline of Poland
   lib/api/         the API client, its hook, and the generated types
 ```
 
