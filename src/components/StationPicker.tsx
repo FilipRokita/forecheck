@@ -145,7 +145,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
                 setActive(0);
               }}
               onKeyDown={onKeyDown}
-              className="h-10 w-full rounded-lg border border-transparent bg-surface-raised px-3 text-base placeholder:text-fg-muted focus-visible:border-model-ecmwf focus-visible:outline-none sm:text-sm"
+              className="h-10 w-full rounded-lg border border-transparent bg-surface-raised px-3 text-base placeholder:text-fg-muted focus-visible:border-fg-muted focus-visible:outline-none sm:text-sm"
             />
           </div>
           {/* Keeps the focus in the search box while an option is pressed. */}
@@ -171,7 +171,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
                   >
                     <span>{station.name}</span>
                     {selected ? (
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--color-model-ecmwf)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <path d="M3 8.5l3.2 3L13 4.5" />
                       </svg>
                     ) : null}

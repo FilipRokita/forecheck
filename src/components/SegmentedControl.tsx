@@ -48,7 +48,7 @@ export function SegmentedControl({ label, options, value, onChange, scroll = fal
         {box ? (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute left-0 top-0 rounded-lg border border-border-strong bg-surface-raised shadow-[0_1px_8px_color-mix(in_srgb,var(--color-model-ecmwf)_14%,transparent)] transition-[transform,width,height] duration-300 ease-out-soft"
+            className="pointer-events-none absolute left-0 top-0 rounded-lg border border-border-strong bg-surface-raised shadow-md shadow-black/40 transition-[transform,width,height] duration-300 ease-out-soft"
             style={{ width: box.width, height: box.height, transform: `translate(${box.x}px, ${box.y}px)` }}
           />
         ) : null}

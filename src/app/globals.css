@@ -30,7 +30,7 @@ html {
 
 body {
   background:
-    radial-gradient(900px 420px at 50% -120px, rgb(110 231 200 / 0.07), transparent 70%),
+    radial-gradient(900px 420px at 50% -120px, color-mix(in srgb, var(--color-fg) 5%, transparent), transparent 70%),
     var(--color-bg);
   background-attachment: fixed;
   color: var(--color-fg);
