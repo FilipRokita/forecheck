@@ -52,7 +52,6 @@ def explore_imgw_live(http: HttpClient) -> None:
         say(
             f"- catalog station {station.id} {station.name}: {'present' if station.id in ids else 'MISSING'}"
         )
-    say(f"- Debica has a synoptic station: {any('bica' in row['stacja'].lower() for row in rows)}")
 
 
 def explore_imgw_archive(http: HttpClient, write: bool) -> None:

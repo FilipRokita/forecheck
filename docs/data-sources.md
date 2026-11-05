@@ -16,7 +16,6 @@ own documentation, checked on **2026-10-20**. Re-run the script to see whether a
 | IMGW daily aggregate files | Not published after June 2024, so days are built from the hourly files | Verified (IMGW notice) |
 | IMGW publication lag | A month's file appears about two weeks after the month ends | Verified (3 months observed) |
 | IMGW rate limits | None stated in the regulation or on the site | Not documented |
-| Dębica has a station | No. Tarnów, about 35 km west, stands in for it | Verified |
 | Open-Meteo throttling from shared IPs | Hit during exploration ("Daily API request limit exceeded") | Verified, see below |
 
 ## Open-Meteo
@@ -123,6 +122,6 @@ and the footer renders them.
 
 ## Stations
 
-15 stations: ten large cities and five smaller places (Rzeszów, Tarnów, Suwałki, Zakopane, Hel). There is no
-synoptic station in Dębica, so Tarnów stands in for it. Coordinates in `application/catalog.py` are the town
-or airport of each station to about a kilometre, far finer than the 9 to 28 km model grids.
+15 stations: ten large cities and five smaller places (Rzeszów, Tarnów, Suwałki, Zakopane, Hel). Coordinates in
+`application/catalog.py` are the town or airport of each station to about a kilometre, far finer than the 9 to 28 km
+model grids.

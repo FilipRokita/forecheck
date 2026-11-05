@@ -55,7 +55,6 @@ DEFAULT_CATALOG = Catalog(
         Station(StationId("12560"), "Katowice", 50.241, 19.034),
         Station(StationId("12295"), "Białystok", 53.107, 23.162),
         Station(StationId("12580"), "Rzeszów", 50.110, 22.019),
-        # IMGW has no synoptic station in Dębica. Tarnów is the nearest one, about 35 km west.
         Station(StationId("12575"), "Tarnów", 50.030, 20.990),
         Station(StationId("12195"), "Suwałki", 54.133, 22.950),
         Station(StationId("12625"), "Zakopane", 49.294, 19.962),
