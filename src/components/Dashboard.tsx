@@ -58,7 +58,7 @@ function Loaded({ meta }: { meta: Meta }) {
 
   return (
     <>
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-4 py-4 sm:px-10 sm:py-5">
+      <header className="z-20 flex flex-wrap items-center justify-between gap-4 border-b border-border bg-bg/80 px-4 py-4 backdrop-blur-md sm:sticky sm:top-0 sm:px-10 sm:py-5">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <div aria-hidden="true" className="flex size-7 items-center justify-center rounded-lg border border-border-strong bg-surface">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-model-ecmwf)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
