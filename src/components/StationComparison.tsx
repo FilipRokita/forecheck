@@ -26,7 +26,7 @@ export function StationComparison({ comparison, variable, period, selectedStatio
       </CardSubtitle>
 
       <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:items-center">
-        <StationMap rows={comparison.rows} selectedStation={selectedStation} onSelect={onSelect} />
+        <StationMap rows={comparison.rows} selectedStation={selectedStation} />
         <div className="overflow-x-auto">
           <table className="w-full border-collapse tabular-nums">
             <caption className="sr-only">Best model and its {valueHeader.toLowerCase()} at every station</caption>

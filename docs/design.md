@@ -62,12 +62,12 @@ so the verdict starts higher.
 
 ## The station map
 
-Each station is a dot in the colour of its best model, and the open station pulses. Pressing a dot opens that station, and
-the pointer shows a station's name. The outline of Poland is [Natural Earth](https://www.naturalearthdata.com/) (public
-domain), simplified, and lives in `src/lib/poland.ts` with the function that places a station on it.
+Each station is a dot in the colour of its best model, and the open station pulses. The pointer shows a station's name. The
+map is only to look at: the station is chosen with the picker or from the table. The outline of Poland is
+[Natural Earth](https://www.naturalearthdata.com/) (public domain), simplified, and lives in `src/lib/poland.ts` with the
+function that places a station on it.
 
-The map is a second way in to what the table already says, so it is hidden from assistive technology and the table is the
-accessible version.
+The map repeats what the table says, so it is hidden from assistive technology and the table is the accessible version.
 
 ## Accessibility
 

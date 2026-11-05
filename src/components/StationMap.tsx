@@ -9,14 +9,14 @@ import { MAP_HEIGHT, MAP_WIDTH, POLAND_OUTLINE, project } from "@/lib/poland";
 type Props = {
   rows: Comparison["rows"];
   selectedStation: string;
-  onSelect: (stationId: string) => void;
 };
 
 /**
- * The stations on a map of Poland, each dot in the colour of its best model. It is a second way in to what the table
- * beside it already says, so it is hidden from assistive technology and the table stays the accessible version.
+ * The stations on a map of Poland, each dot in the colour of its best model, with the name of the station under the pointer.
+ * It is only to look at. It says what the table beside it already says, so it is hidden from assistive technology and the
+ * table stays the accessible version.
  */
-export function StationMap({ rows, selectedStation, onSelect }: Props) {
+export function StationMap({ rows, selectedStation }: Props) {
   const [hovered, setHovered] = useState<string | null>(null);
   const labelled = rows.find((row) => row.station.id === (hovered ?? selectedStation));
   const models = new Map(rows.flatMap((row) => (row.best_model && row.best_model_label ? [[row.best_model, row.best_model_label] as const] : [])));
@@ -34,11 +34,10 @@ export function StationMap({ rows, selectedStation, onSelect }: Props) {
               key={row.station.id}
               data-station={row.station.id}
               transform={`translate(${x} ${y})`}
-              className="animate-fade cursor-pointer"
+              className="animate-fade"
               style={{ animationDelay: `${300 + index * 40}ms` }}
               onMouseEnter={() => setHovered(row.station.id)}
               onMouseLeave={() => setHovered(null)}
-              onClick={() => onSelect(row.station.id)}
             >
               <circle r="16" fill="transparent" />
               {selected ? <circle r="9" fill="none" strokeWidth="1.5" className="animate-ping-soft [transform-box:fill-box] origin-center" style={{ stroke: color }} /> : null}
