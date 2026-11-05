@@ -26,6 +26,13 @@
 
 ---
 
+<div align="center">
+  <img src="docs/images/showcase.png" alt="Forecheck on a desktop and on a phone: verdict cards, error by forecast horizon and model ranking" width="900">
+  <p><em>The screenshot uses made-up demo data, which is why the page shows a "Sample data" badge.</em></p>
+</div>
+
+---
+
 **Forecheck** answers one question: *at my station, which weather model has been right lately, and for how many
 days ahead can I rely on it?*
 
@@ -33,15 +40,6 @@ Every day it saves what three open models (DWD ICON, ECMWF IFS, NOAA GFS) predic
 stations. Once the day has passed and the station's measurements are published, it scores each forecast and keeps
 running totals. The page then shows a verdict, for example "ECMWF is the most accurate here, and its temperature
 error stays under 2 °C for 3 days".
-
-<div align="center">
-  <img src="docs/images/showcase.png" alt="Forecheck on a desktop and on a phone: verdict cards, error by forecast horizon and model ranking" width="900">
-  <p><em>The screenshot uses made-up demo data, which is why the page shows a "Sample data" badge.</em></p>
-</div>
-
-There is a close relative in the United States, [ForecastAdvisor](https://www.forecastadvisor.com/) by ForecastWatch,
-which grades forecast providers by ZIP code. Forecheck differs in scope: Poland and Europe, open models rather than
-commercial providers, a breakdown by days ahead, and all of it open source.
 
 ## 📖 Table of contents
 
