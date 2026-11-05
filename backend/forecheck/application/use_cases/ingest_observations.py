@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from forecheck.application.catalog import Catalog
+from forecheck.application.errors import SourceError
 from forecheck.application.ports import Clock, ObservationSource, UnitOfWorkFactory
 
 log = logging.getLogger(__name__)
@@ -14,6 +15,8 @@ log = logging.getLogger(__name__)
 class IngestReport:
     months_read: int
     observations: int
+    # Months that could not be read. They are tried again on the next run.
+    failed: tuple[date, ...] = ()
 
 
 def _next_month(month: date) -> date:
@@ -72,6 +75,7 @@ class IngestObservations:
 
         months_read = 0
         total = 0
+        failed: list[date] = []
         for month, version in sorted(versions.items()):
             if month > end:
                 continue  # only here for the day-after report of the previous month
@@ -81,7 +85,13 @@ class IngestObservations:
             with self._uow_factory() as uow:
                 if _covers(uow.state.get(key), versioned, first, last):
                     continue
-            observations = self._source.fetch_observations(stations, first, last)
+            try:
+                observations = self._source.fetch_observations(stations, first, last)
+            except SourceError as error:
+                # One unreadable month must not hold back the newer ones that are published.
+                log.warning("Could not read %s: %s", month, error)
+                failed.append(month)
+                continue
             with self._uow_factory() as uow:
                 uow.observations.upsert(observations)
                 uow.state.set(key, f"{versioned}|{first.isoformat()}|{last.isoformat()}")
@@ -89,4 +99,4 @@ class IngestObservations:
             log.info("Read %s: %d observations", month, len(observations))
             months_read += 1
             total += len(observations)
-        return IngestReport(months_read, total)
+        return IngestReport(months_read, total, tuple(failed))

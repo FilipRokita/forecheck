@@ -1,8 +1,10 @@
+from collections.abc import Sequence
 from datetime import UTC, date, datetime, timedelta
 
 import pytest
 
 from forecheck.application.catalog import Catalog
+from forecheck.application.errors import SourceUnavailableError
 from forecheck.application.ports import UnitOfWorkFactory
 from forecheck.application.use_cases.collect_forecasts import CollectForecasts
 from forecheck.application.use_cases.evaluate_forecasts import EvaluateForecasts
@@ -176,6 +178,30 @@ def test_a_month_read_only_in_part_is_read_again_for_the_days_it_missed(
     ]
     # Days already covered are not fetched again.
     assert use_case.read_range(date(2026, 7, 10), date(2026, 7, 20)).months_read == 0
+
+
+def test_a_month_that_cannot_be_read_does_not_hold_back_the_newer_ones(
+    database: MemoryDatabase,
+) -> None:
+    class BrokenAugust(FakeObservationSource):
+        def fetch_observations(
+            self, stations: Sequence[Station], start: date, end: date
+        ) -> list[Observation]:
+            if start.month == 8:
+                raise SourceUnavailableError("corrupt archive")
+            return super().fetch_observations(stations, start, end)
+
+    seed_forecast(database, date(2026, 8, 20))
+    source = BrokenAugust({date(2026, 8, 1): "a", date(2026, 9, 1): "b"})
+    use_case = ingest(database, source, clock_at(2026, 10, 5))
+
+    report = use_case.run()
+    assert (report.months_read, report.failed) == (1, (date(2026, 8, 1),))
+    with database.unit_of_work() as uow:
+        assert uow.observations.latest_day() == date(2026, 9, 30)
+
+    # Nothing was recorded for August, so it is tried again.
+    assert use_case.run().failed == (date(2026, 8, 1),)
 
 
 def test_a_republished_month_is_read_again(database: MemoryDatabase) -> None:

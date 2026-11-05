@@ -160,6 +160,28 @@ def test_a_failure_to_log_a_step_does_not_stop_the_next_steps(
     assert calls == ["collect", "ingest", "evaluate"]
 
 
+def test_a_month_that_could_not_be_read_makes_the_ingest_step_fail_and_names_it() -> None:
+    class BrokenAugust(FakeObservationSource):
+        def fetch_observations(self, stations: object, start: date, end: date) -> list[Observation]:
+            if start.month == 8:
+                raise SourceUnavailableError("corrupt archive")
+            return super().fetch_observations(stations, start, end)  # type: ignore[arg-type]
+
+    database = MemoryDatabase()
+    with database.unit_of_work() as uow:
+        uow.forecasts.upsert([
+            Forecast(KRAKOW.id, ModelId("icon"), Variable.TEMPERATURE, date(2026, 8, 20),
+                     datetime(2026, 8, 19, tzinfo=UTC), 10.0)
+        ])  # fmt: skip
+        uow.commit()
+    source = BrokenAugust({date(2026, 8, 1): "a", date(2026, 9, 1): "b"})
+    report = cycle(database, clock_at(2026, 10, 5), FakeForecastSource(), source).run()
+
+    ingest_step = next(step for step in report.steps if step.name == "ingest")
+    assert not ingest_step.ok
+    assert "2026-08" in ingest_step.message
+
+
 def test_a_rate_limited_collection_makes_the_cycle_not_ok_but_says_why() -> None:
     database = MemoryDatabase()
     source = FakeForecastSource(rate_limited_at=KRAKOW.id)

@@ -75,7 +75,8 @@ they cannot drift.
 2. **Ingest.** Find the oldest waiting forecast. Ask IMGW which months it has published (a directory listing, cheap).
    Read only months whose version changed since the last read. A month is fingerprinted with the next month's version too,
    because the last day of a month needs the first report of the next one. The fingerprint also records which days of the
-   month were read, so a later read of earlier days of the same month is not skipped.
+   month were read, so a later read of earlier days of the same month is not skipped. A month that cannot be read is
+   skipped and named in the step's message (the step fails), and the newer months are still read. It is tried again tomorrow.
 3. **Evaluate.** For every waiting forecast whose day has a measurement, compute its `ErrorStats`, upsert the score, and
    delete the forecast. Forecasts that stay unmatched 90 days after their day are dropped.
 

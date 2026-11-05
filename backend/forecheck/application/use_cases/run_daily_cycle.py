@@ -89,7 +89,11 @@ class RunDailyCycle:
 
     def _ingest_step(self) -> tuple[bool, str]:
         report = self._ingest.run()
-        return True, f"read {report.months_read} months, {report.observations} observations"
+        message = f"read {report.months_read} months, {report.observations} observations"
+        if report.failed:
+            months = ", ".join(f"{month:%Y-%m}" for month in report.failed)
+            message += f"; could not read: {months}"
+        return not report.failed, message
 
     def _evaluate_step(self) -> tuple[bool, str]:
         report = self._evaluate.run()
