@@ -61,16 +61,17 @@ function Loaded({ meta }: { meta: Meta }) {
 
   return (
     <>
-      <header className="z-20 flex flex-wrap items-center justify-between gap-4 border-b border-border bg-bg/80 px-4 py-4 backdrop-blur-md sm:sticky sm:top-0 sm:px-10 sm:py-5">
+      <header className="z-20 border-b border-border bg-bg/80 backdrop-blur-md sm:sticky sm:top-0">
+        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-10 sm:py-2.5">
         <div className="flex items-center gap-x-2.5">
-          <div aria-hidden="true" className="flex size-6 flex-none items-center justify-center rounded-md border border-border-strong bg-surface">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--color-model-ecmwf)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div aria-hidden="true" className="flex size-7 flex-none items-center justify-center rounded-lg border border-border-strong bg-surface">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-model-ecmwf)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 8.5l3.2 3L13 4.5" />
             </svg>
           </div>
           <div className="flex items-baseline gap-x-3">
-            <h1 className="text-[15px] font-semibold leading-none tracking-tight">Forecheck</h1>
-            <p className="text-[13px] leading-none text-fg-muted max-sm:hidden">How far can you trust a weather forecast?</p>
+            <h1 className="text-[17px] font-semibold leading-none tracking-tight">Forecheck</h1>
+            <p className="text-sm leading-none text-fg-muted max-sm:hidden">How far can you trust a weather forecast?</p>
           </div>
         </div>
         <div className="ml-auto flex items-center gap-3">
@@ -78,7 +79,7 @@ function Loaded({ meta }: { meta: Meta }) {
           <a
             href={api.exportUrl(stationId, variableId, periodId)}
             download
-            className="flex min-h-11 items-center gap-2 rounded-[10px] border border-border-strong px-3.5 text-sm max-sm:w-11 max-sm:justify-center max-sm:px-0 hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
+            className="flex min-h-11 items-center gap-2 rounded-[10px] border border-border-strong px-3.5 text-sm sm:min-h-9 max-sm:w-11 max-sm:justify-center max-sm:px-0 hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M8 2.5v8M4.5 7.5L8 11l3.5-3.5M3 13.5h10" />
@@ -86,9 +87,10 @@ function Loaded({ meta }: { meta: Meta }) {
             <span className="max-sm:sr-only">Export CSV</span>
           </a>
         </div>
+        </div>
       </header>
 
-      <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3 sm:px-10 sm:py-5">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6 sm:gap-y-3 sm:px-10 sm:py-5">
         <StationPicker stations={meta.stations} value={stationId} onChange={(id) => choose({ station: id })} />
         <SegmentedControl label="Quantity" options={meta.variables} value={variableId} onChange={(id) => choose({ variable: id })} scroll />
         <SegmentedControl label="Period" options={meta.periods} value={periodId} onChange={(id) => choose({ period: id })} />

@@ -11,8 +11,8 @@ type Props = {
 
 export function SegmentedControl({ label, options, value, onChange, scroll = false }: Props) {
   return (
-    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2.5">
-      <span className="text-fg-muted max-sm:sr-only" id={`${label}-label`}>
+    <div className="flex flex-col gap-1.5">
+      <span className="text-xs text-fg-muted max-sm:sr-only" id={`${label}-label`}>
         {label}
       </span>
       <div

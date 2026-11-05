@@ -27,17 +27,20 @@ export function StationPicker({ stations, value, onChange }: Props) {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col gap-1.5">
+      <span id="station-label" className="text-xs text-fg-muted max-sm:sr-only">
+        IMGW station
+      </span>
       <button
         ref={opener}
+        aria-labelledby="station-label station-value"
         type="button"
         aria-haspopup="dialog"
         onClick={() => dialog.current?.showModal()}
-        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 text-left text-base hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-11 sm:w-auto sm:min-w-72 sm:rounded-[10px] sm:text-sm"
+        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 text-left text-base hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-[46px] sm:w-auto sm:min-w-64 sm:rounded-[10px] sm:text-sm"
       >
-        <span className="flex flex-col leading-tight sm:flex-row sm:items-center sm:gap-3">
-          <span className="text-xs text-fg-muted sm:text-sm">IMGW station</span>
-          <span className="font-medium">{current?.name ?? "Choose a station"}</span>
+        <span id="station-value" className="font-medium">
+          {current?.name ?? "Choose a station"}
         </span>
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="text-fg-muted">
           <path d="M3.5 5.5L7 9l3.5-3.5" />
@@ -82,6 +85,6 @@ export function StationPicker({ stations, value, onChange }: Props) {
           })}
         </ul>
       </dialog>
-    </>
+    </div>
   );
 }
