@@ -51,9 +51,9 @@ export function StationComparison({ comparison, variable, period, selectedStatio
                   <tr
                     key={row.station.id}
                     onClick={() => onSelect(row.station.id)}
-                    className={`cursor-pointer border-b border-grid last:border-0 ${selected ? "bg-highlight" : "hover:bg-surface-raised"} transition-colors`}
+                    className={`cursor-pointer border-b border-grid last:border-0 ${selected ? "bg-selected" : "hover:bg-surface-raised"} transition-colors`}
                   >
-                    <th scope="row" className="p-0 text-left font-normal">
+                    <th scope="row" className={`p-0 text-left font-normal ${selected ? "shadow-[inset_3px_0_0_var(--color-fg-soft)]" : ""}`}>
                       <button
                         type="button"
                         aria-current={selected ? "true" : undefined}

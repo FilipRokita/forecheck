@@ -18,7 +18,8 @@ component holds a raw colour.
 | `fg` | `#e8eaed` | Text |
 | `fg-soft` | `#c4c9d1` | Body copy in cards |
 | `fg-muted` | `#98a0ab` | Secondary text, axes |
-| `highlight` | `#15221f` | The winning row |
+| `highlight` | `#15221f` | The winning model's row in the ranking (greenish) |
+| `selected` | `#272c35` | The open station's row in the comparison (neutral grey, with a light bar on its left) |
 | `model-icon` | `#8aa4ff` | ICON |
 | `model-ecmwf` | `#6ee7c8` | ECMWF, and the focus ring |
 | `model-gfs` | `#f2b36a` | GFS |
@@ -77,7 +78,7 @@ accessible version.
 - Selection is exposed (`aria-pressed`, `aria-selected`, `aria-current`), not only coloured.
 - The three models are told apart by name, by position (always ICON, ECMWF, GFS in the same order) and by colour, never by
   colour alone. The legend names them, and the chart has a table with the same numbers.
-- Text contrast is at least 4.5:1. The weakest pairing, `fg-muted` on `highlight`, is 6.2:1, and `fg-muted` on `surface` is 7.0:1. A test computes every text pairing from the real tokens (`tests/unit/test_design_tokens.py`).
+- Text contrast is at least 4.5:1. The weakest pairing, `fg-muted` on `selected`, is 5.3:1, and `fg-muted` on `highlight` is 6.2:1. A test computes every text pairing from the real tokens (`tests/unit/test_design_tokens.py`).
 - Structural accessibility is checked with axe-core in the dashboard test. Colour contrast is covered by the token test above, because
   axe-core needs a real browser engine for it.
 - The Polish legal notices carry `lang="pl"`.
