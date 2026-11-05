@@ -191,8 +191,15 @@ The only difference between development and production is the environment variab
    | `CONTACT_EMAIL` | your address, sent to the data providers in the User-Agent |
 
 4. Deploy. A production build applies the migrations, and a daily cron job then collects, reads and scores.
+5. **Optional: start with a history.** A fresh install has nothing scored for about two weeks. To fill in the last 60 days
+   at once, run the backfill once from your own machine, with `DATABASE_URL` in your local `.env` set to the Neon **direct**
+   connection string:
 
-Details, limits and what to do when a step fails: [`docs/operations.md`](docs/operations.md).
+   ```bash
+   uv run python scripts/backfill.py --days 60
+   ```
+
+Details, limits, the backfill and what to do when a step fails: [`docs/operations.md`](docs/operations.md).
 
 ## 📜 Data and licences
 
