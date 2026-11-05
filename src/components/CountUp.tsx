@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const DURATION_MS = 700;
 
@@ -9,9 +9,13 @@ function motionAllowed(): boolean {
   return typeof window !== "undefined" && typeof window.matchMedia === "function" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+const noSubscription = () => () => undefined;
+
 /** Counts from the number on screen to `target` with an ease-out curve. Without motion it is simply `target`. */
 function useCountUp(target: number | null): number | null {
-  const animate = motionAllowed();
+  // Read through useSyncExternalStore, so markup rendered on a server (no window, so no motion) and the first client render
+  // agree during hydration. A render that only ever happens in the browser reads the real preference at once.
+  const animate = useSyncExternalStore(noSubscription, motionAllowed, () => false);
   const [value, setValue] = useState(animate ? 0 : (target ?? 0));
   const shown = useRef(value);
 
