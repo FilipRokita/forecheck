@@ -70,11 +70,15 @@ export function HorizonChart({ horizon, variable, periodLabel }: Props) {
                       return value === null ? (
                         <div key={model.model} className="w-2 sm:w-3.5" />
                       ) : (
-                        <div
-                          key={model.model}
-                          className="w-2 rounded-t-[3px] sm:w-3.5"
-                          style={{ height: `${Math.max((value / top) * 100, 1)}%`, background: modelColor(model.model) }}
-                        />
+                        <div key={model.model} className="group relative flex h-full items-end">
+                          <div
+                            className="w-2 origin-bottom animate-grow rounded-t-[3px] transition-[filter] group-hover:brightness-125 sm:w-3.5"
+                            style={{ height: `${Math.max((value / top) * 100, 1)}%`, background: modelColor(model.model), animationDelay: `${lead * 60}ms` }}
+                          />
+                          <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-border-strong bg-surface-raised px-2 py-1 font-mono text-[11px] text-fg opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                            {model.label} {isShare ? formatPercent(value / 100) : `${formatNumber(value, 1)} ${variable.unit}`}
+                          </span>
+                        </div>
                       );
                     })}
                   </div>

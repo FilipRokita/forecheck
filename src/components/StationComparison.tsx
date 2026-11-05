@@ -40,7 +40,7 @@ export function StationComparison({ comparison, variable, period, selectedStatio
             {comparison.rows.map((row) => {
               const selected = row.station.id === selectedStation;
               return (
-                <tr key={row.station.id} className={`border-b border-grid last:border-0 ${selected ? "bg-highlight" : ""}`}>
+                <tr key={row.station.id} className={`border-b border-grid last:border-0 ${selected ? "bg-highlight" : "hover:bg-surface-raised"} transition-colors`}>
                   <th scope="row" className="p-0 text-left font-normal">
                     <button
                       type="button"

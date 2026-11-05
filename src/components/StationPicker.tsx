@@ -33,7 +33,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
         type="button"
         aria-haspopup="dialog"
         onClick={() => dialog.current?.showModal()}
-        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 text-left text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-11 sm:w-auto sm:min-w-72 sm:rounded-[10px] sm:text-sm"
+        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 text-left text-base hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf sm:min-h-11 sm:w-auto sm:min-w-72 sm:rounded-[10px] sm:text-sm"
       >
         <span className="flex flex-col leading-tight sm:flex-row sm:items-center sm:gap-3">
           <span className="text-xs text-fg-muted sm:text-sm">IMGW station</span>
@@ -47,7 +47,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
       <dialog
         ref={dialog}
         aria-labelledby="station-dialog-title"
-        className="m-0 mt-auto max-h-[85dvh] w-full max-w-none overflow-hidden rounded-t-2xl border border-border bg-surface p-0 text-fg backdrop:bg-black/70 sm:m-auto sm:max-h-[70dvh] sm:max-w-md sm:rounded-2xl"
+        className="m-0 mt-auto max-h-[85dvh] w-full max-w-none overflow-hidden rounded-t-2xl border border-border bg-surface p-0 text-fg backdrop:bg-black/70 backdrop:backdrop-blur-sm open:animate-sheet sm:m-auto sm:max-h-[70dvh] sm:max-w-md sm:rounded-2xl"
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
           <h2 id="station-dialog-title" className="text-base font-semibold">
@@ -71,7 +71,7 @@ export function StationPicker({ stations, value, onChange }: Props) {
                     opener.current?.focus();
                   }}
                   className={`flex min-h-12 w-full items-center justify-between rounded-lg px-4 text-left text-base focus-visible:outline-2 focus-visible:outline-model-ecmwf sm:text-sm ${
-                    selected ? "bg-surface-raised font-medium text-white" : "text-fg hover:bg-surface-raised"
+                    selected ? "bg-surface-raised font-medium text-white" : "text-fg hover:bg-surface-raised hover:pl-5"
                   }`}
                 >
                   <span>{station.name}</span>

@@ -67,7 +67,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
               </thead>
               <tbody>
                 {verdict.ranking.map((model) => (
-                  <tr key={model.model} className={model.rank === 1 ? "bg-highlight" : undefined}>
+                  <tr key={model.model} className={`transition-colors hover:bg-surface-raised ${model.rank === 1 ? "bg-highlight" : ""}`}>
                     <th scope="row" className="whitespace-nowrap px-3 py-3 text-left font-medium">
                       <span className="mr-2 font-mono text-fg-muted">{model.rank ?? "–"}</span>
                       <ModelName id={model.model} label={model.label} />

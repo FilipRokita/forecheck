@@ -1,5 +1,5 @@
 export function Card({ children, className = "", as: Tag = "div" }: { children: React.ReactNode; className?: string; as?: "div" | "section" }) {
-  return <Tag className={`min-w-0 rounded-[14px] border border-border bg-surface p-5 sm:p-6 ${className}`}>{children}</Tag>;
+  return <Tag className={`min-w-0 animate-rise rounded-[14px] border border-border bg-surface p-5 transition-colors duration-200 hover:border-border-strong sm:p-6 ${className}`}>{children}</Tag>;
 }
 
 export function CardTitle({ children, id }: { children: React.ReactNode; id?: string }) {
