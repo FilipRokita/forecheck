@@ -11,3 +11,7 @@ class SourceUnavailableError(SourceError):
 
 class RateLimitedError(SourceError):
     """The provider refuses more requests for now. Retrying today will not help."""
+
+
+class NotFoundError(SourceUnavailableError):
+    """The provider answered, and the thing asked for does not exist (HTTP 404)."""

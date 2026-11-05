@@ -24,7 +24,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-from forecheck.application.errors import SourceUnavailableError
+from forecheck.application.errors import NotFoundError, SourceUnavailableError
 from forecheck.domain.daily import daily_mean, daily_precipitation
 from forecheck.domain.entities import Observation, Station
 from forecheck.domain.types import StationId, Variable
@@ -108,8 +108,10 @@ class ImgwSynopArchive:
         """The zip files holding ``month`` for ``stations``, as (path, version)."""
         try:
             listing = self._listing(month.year)
-        except SourceUnavailableError:
-            return []  # a year with no directory yet (the future) simply has no data
+        except NotFoundError:
+            # A year with no directory yet (the future) simply has no data. Any other failure
+            # propagates: an outage must not look like "nothing published".
+            return []
         monthly = f"{month.year}_{month.month:02d}_s.zip"
         if monthly in listing:
             return [(f"{month.year}/{monthly}", listing[monthly])]

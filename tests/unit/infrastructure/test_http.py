@@ -2,7 +2,7 @@ import httpx
 import pytest
 import respx
 
-from forecheck.application.errors import RateLimitedError, SourceUnavailableError
+from forecheck.application.errors import NotFoundError, RateLimitedError, SourceUnavailableError
 from forecheck.infrastructure.http import HttpClient, RetryPolicy
 
 URL = "https://provider.test/data"
@@ -123,6 +123,13 @@ def test_a_client_error_is_reported_with_the_providers_reason_and_not_retried() 
     with pytest.raises(SourceUnavailableError, match="HTTP 400: Invalid value: nope"):
         client([]).get_json(URL)
     assert route.call_count == 1
+
+
+@respx.mock
+def test_a_missing_page_is_reported_as_not_found() -> None:
+    respx.get(URL).respond(404)
+    with pytest.raises(NotFoundError):
+        client([]).get_text(URL)
 
 
 @respx.mock

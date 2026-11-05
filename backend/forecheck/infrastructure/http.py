@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-from forecheck.application.errors import RateLimitedError, SourceUnavailableError
+from forecheck.application.errors import NotFoundError, RateLimitedError, SourceUnavailableError
 
 _RETRIABLE_STATUS = frozenset({500, 502, 503, 504})
 
@@ -86,9 +86,8 @@ class HttpClient:
                 last_problem = f"HTTP {response.status_code}"
                 self._wait(attempt, None)
                 continue
-            raise SourceUnavailableError(
-                f"{url} answered HTTP {response.status_code}: {_reason(response)}"
-            )
+            error_type = NotFoundError if response.status_code == 404 else SourceUnavailableError
+            raise error_type(f"{url} answered HTTP {response.status_code}: {_reason(response)}")
         raise SourceUnavailableError(
             f"{url} failed after {self._retry.max_attempts} attempts ({last_problem})"
         )

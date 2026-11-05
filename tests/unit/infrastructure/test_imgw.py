@@ -68,6 +68,13 @@ def test_a_year_without_a_directory_has_no_months() -> None:
 
 
 @respx.mock
+def test_an_outage_is_an_error_not_an_empty_archive() -> None:
+    respx.get(f"{BASE_URL}/2026/").respond(503)
+    with pytest.raises(SourceUnavailableError):
+        archive().available_months([KRAKOW], date(2026, 9, 1), date(2026, 9, 30))
+
+
+@respx.mock
 def test_real_station_days_become_one_figure_per_variable() -> None:
     serve_sample()
     found = archive().fetch_observations([KRAKOW, RZESZOW], date(2026, 9, 1), date(2026, 9, 3))
