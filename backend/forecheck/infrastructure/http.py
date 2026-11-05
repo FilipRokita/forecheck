@@ -19,6 +19,8 @@ class RetryPolicy:
     max_attempts: int = 4
     base_delay: float = 2.0
     max_delay: float = 30.0
+    # A per-minute quota clears with the minute, which is longer than ``max_delay``.
+    minute_limit_wait: float = 60.0
 
     def delay(self, attempt: int) -> float:
         return float(min(self.max_delay, self.base_delay * 2 ** (attempt - 1)))
@@ -69,8 +71,13 @@ class HttpClient:
                 return response
             if response.status_code == 429:
                 reason = _reason(response)
+                if "minutely" in reason.lower():
+                    # Open-Meteo's per-minute quota: waiting out the minute is enough.
+                    last_problem = f"HTTP 429: {reason}"
+                    self._wait(attempt, None, minimum=self._retry.minute_limit_wait)
+                    continue
                 if "limit exceeded" in reason.lower():
-                    # A quota (such as Open-Meteo's daily one) does not clear within seconds.
+                    # A quota (such as Open-Meteo's daily or hourly one) does not clear in this run.
                     raise RateLimitedError(reason)
                 last_problem = f"HTTP 429: {reason}"
                 self._wait(attempt, response.headers.get("Retry-After"))
@@ -86,13 +93,13 @@ class HttpClient:
             f"{url} failed after {self._retry.max_attempts} attempts ({last_problem})"
         )
 
-    def _wait(self, attempt: int, retry_after: str | None) -> None:
+    def _wait(self, attempt: int, retry_after: str | None, *, minimum: float = 0.0) -> None:
         if attempt >= self._retry.max_attempts:
             return
         delay = self._retry.delay(attempt)
         if retry_after is not None and retry_after.isdigit():
             delay = min(self._retry.max_delay, max(delay, float(retry_after)))
-        self._sleep(delay)
+        self._sleep(max(delay, minimum))
 
     def close(self) -> None:
         self._client.close()

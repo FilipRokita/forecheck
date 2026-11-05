@@ -77,6 +77,39 @@ def test_an_exhausted_quota_is_not_retried() -> None:
 
 
 @respx.mock
+def test_a_per_minute_quota_is_waited_out_and_retried() -> None:
+    respx.get(URL).mock(
+        side_effect=[
+            httpx.Response(
+                429,
+                json={
+                    "error": True,
+                    "reason": "Minutely API request limit exceeded. Try again in one minute.",
+                },
+            ),
+            httpx.Response(200, json={"ok": 1}),
+        ]
+    )
+    sleeps: list[float] = []
+    assert client(sleeps).get_json(URL) == {"ok": 1}
+    assert sleeps == [60.0]
+
+
+@respx.mock
+def test_an_hourly_quota_is_not_retried() -> None:
+    route = respx.get(URL).respond(
+        429,
+        json={
+            "error": True,
+            "reason": "Hourly API request limit exceeded. Please try again in the next hour.",
+        },
+    )
+    with pytest.raises(RateLimitedError, match="Hourly"):
+        client([]).get_json(URL)
+    assert route.call_count == 1
+
+
+@respx.mock
 def test_giving_up_names_the_last_problem() -> None:
     route = respx.get(URL).respond(503)
     with pytest.raises(SourceUnavailableError, match=r"4 attempts.*HTTP 503"):

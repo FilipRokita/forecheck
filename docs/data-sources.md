@@ -58,7 +58,8 @@ From the exploration environment (a shared IP) the forecast API answered
 and the connection dropped now and then. This is the risk the terms describe. What Forecheck does about it:
 
 - One request per station per day, spread out, with retries on dropped connections and 5xx answers.
-- A "limit exceeded" answer is not retried: the run stops, reports it, and the next day's run continues.
+- A "daily" or "hourly" "limit exceeded" answer is not retried: the run stops, reports it, and the next day's run
+  continues. A "minutely" one is waited out (60 s) and retried, because it clears with the minute.
 - Forecasts missed on a day are not backfilled later: a missing day is a gap, never an invented value.
 - `CONTACT_EMAIL` goes into the User-Agent so that Open-Meteo can reach the operator.
 

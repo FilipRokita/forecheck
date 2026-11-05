@@ -71,7 +71,7 @@ they cannot drift.
 `RunDailyCycle` runs three steps in order. A failing step does not stop the others.
 
 1. **Collect.** For each station, one Open-Meteo call (a pause of a second between stations) returns 3 models × 4 quantities × 7
-   leads. They are stored with `issued_at` = now. A "limit exceeded" answer stops the step; the rest is left for tomorrow.
+   leads. They are stored with `issued_at` = now. A daily or hourly "limit exceeded" answer stops the step and the rest is left for tomorrow. A per-minute one is waited out and retried.
 2. **Ingest.** Find the oldest waiting forecast. Ask IMGW which months it has published (a directory listing, cheap).
    Read only months whose version changed since the last read. A month is fingerprinted with the next month's version too,
    because the last day of a month needs the first report of the next one.
