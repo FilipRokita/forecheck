@@ -14,7 +14,11 @@ export type Loadable<T> =
 export function useApi<T>(key: string, load: (signal: AbortSignal) => Promise<T>): Loadable<T> {
   const [state, setState] = useState<{ key: string; result: Loadable<T> }>({ key, result: { status: "loading" } });
   const [attempt, setAttempt] = useState(0);
-  const retry = useCallback(() => setAttempt((n) => n + 1), []);
+  const retry = useCallback(() => {
+    // Show that something is happening: otherwise the error stays on screen until the answer arrives.
+    setState((current) => ({ key: current.key, result: { status: "loading" } }));
+    setAttempt((n) => n + 1);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();

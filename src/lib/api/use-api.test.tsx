@@ -28,6 +28,20 @@ describe("useApi", () => {
     expect(load).toHaveBeenCalledTimes(2);
   });
 
+  it("goes back to loading as soon as the user retries", async () => {
+    let release: (value: string) => void = () => undefined;
+    const load = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("boom"))
+      .mockReturnValueOnce(new Promise<string>((resolve) => (release = resolve)));
+    const { result } = renderHook(() => useApi("a", load));
+    await waitFor(() => expect(result.current.status).toBe("error"));
+    act(() => (result.current.status === "error" ? result.current.retry() : undefined));
+    expect(result.current.status).toBe("loading");
+    await act(async () => release("ok"));
+    await waitFor(() => expect(result.current).toEqual({ status: "ready", data: "ok" }));
+  });
+
   it("cancels the request it leaves behind and never shows its late answer", async () => {
     let first: AbortSignal | undefined;
     const slow = new Promise<string>((resolve) => setTimeout(() => resolve("slow"), 30));
