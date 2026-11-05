@@ -72,6 +72,8 @@ never runs from the scheduled job.
 
 The archive covers January 2024 onwards for most models, and has no chance of rain, so history has no Brier score.
 
+Only two years are kept: the daily job drops scores and measurements older than `DATA_RETENTION_DAYS` (730 by default), counted back from the latest scored day. A backfill that reaches further back is dropped again by the next run, so there is no point in asking for it.
+
 ## Freshness and health
 
 - `GET /api/meta` includes `status`: the latest scored day, how many forecasts are waiting, and the last result of each step
