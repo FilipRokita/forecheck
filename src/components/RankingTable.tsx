@@ -1,4 +1,5 @@
 import { Card, CardSubtitle, CardTitle } from "@/components/Card";
+import { ColumnGuide } from "@/components/ColumnGuide";
 import { CountUpNumber } from "@/components/CountUp";
 import { Fade } from "@/components/Fade";
 import { ModelName } from "@/components/ModelName";
@@ -8,10 +9,12 @@ import { formatNumber, formatPercent } from "@/lib/format";
 /** `rain` is the precipitation verdict, or undefined while it is loading or failed: its columns then show a dash. */
 type Props = { variable: Variable; verdict: Verdict; rain: Verdict | undefined };
 
-type Column = {
+export type Column = {
   key: string;
   header: string;
   hint: string;
+  /** Which way is better: a lower number, a higher one, or one close to zero. */
+  better: "lower" | "higher" | "zero";
   value: (model: RankedModel, rain: RankedModel | undefined) => number | null | undefined;
   format: (value: number) => string;
 };
@@ -20,17 +23,17 @@ type Column = {
 function columns(variable: Variable): Column[] {
   if (variable.metric === "accuracy") {
     return [
-      { key: "accuracy", header: "Accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", value: (m) => m.accuracy, format: formatPercent },
-      { key: "hit", header: "Rain caught", hint: "Share of rainy days the forecast called. Higher is better.", value: (m) => m.hit_rate, format: formatPercent },
-      { key: "false", header: "False alarms", hint: "Share of rain calls made on days that stayed dry. Lower is better.", value: (m) => m.false_alarm_ratio, format: formatPercent },
-      { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", value: (m) => m.brier, format: (n) => formatNumber(n, 2) },
+      { key: "accuracy", header: "Accuracy", better: "higher", hint: "Share of wet or dry calls that were right.", value: (m) => m.accuracy, format: formatPercent },
+      { key: "hit", header: "Rain caught", better: "higher", hint: "Share of rainy days the forecast called.", value: (m) => m.hit_rate, format: formatPercent },
+      { key: "false", header: "False alarms", better: "lower", hint: "Share of rain calls made on days that stayed dry.", value: (m) => m.false_alarm_ratio, format: formatPercent },
+      { key: "brier", header: "Brier", better: "lower", hint: "Score for rain chances, from 0 (perfect) to 1.", value: (m) => m.brier, format: (n) => formatNumber(n, 2) },
     ];
   }
   return [
-    { key: "error", header: `Error (${variable.unit})`, hint: "Average gap between forecast and measurement. Lower is better.", value: (m) => m.mae, format: (n) => formatNumber(n) },
-    { key: "bias", header: `Bias (${variable.unit})`, hint: "Whether the forecast runs high (+) or low (−) on average. Closer to 0 is better.", value: (m) => m.bias, format: formatSigned },
-    { key: "rain", header: "Rain accuracy", hint: "Share of wet or dry calls that were right. Higher is better.", value: (_m, rain) => rain?.accuracy, format: formatPercent },
-    { key: "brier", header: "Brier", hint: "Score for rain chances, from 0 (perfect) to 1. Lower is better.", value: (_m, rain) => rain?.brier, format: (n) => formatNumber(n, 2) },
+    { key: "error", header: `Error (${variable.unit})`, better: "lower", hint: "Average gap between forecast and measurement.", value: (m) => m.mae, format: (n) => formatNumber(n) },
+    { key: "bias", header: `Bias (${variable.unit})`, better: "zero", hint: "Whether the forecast runs high (+) or low (−) on average.", value: (m) => m.bias, format: formatSigned },
+    { key: "rain", header: "Rain accuracy", better: "higher", hint: "Share of wet or dry calls that were right.", value: (_m, rain) => rain?.accuracy, format: formatPercent },
+    { key: "brier", header: "Brier", better: "lower", hint: "Score for rain chances, from 0 (perfect) to 1.", value: (_m, rain) => rain?.brier, format: (n) => formatNumber(n, 2) },
   ];
 }
 
@@ -41,6 +44,7 @@ function formatSigned(value: number): string {
 
 export function RankingTable({ variable, verdict, rain }: Props) {
   const cols = columns(variable);
+  const best = verdict.ranking.find((model) => model.rank === 1) ?? verdict.ranking[0];
   const rainBy = new Map((rain?.ranking ?? []).map((model) => [model.model, model]));
   const first = verdict.lead_from;
   const last = verdict.lead_to;
@@ -112,17 +116,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
             ))}
           </ul>
 
-          <details className="mt-4 text-fg-soft">
-            <summary className="flex min-h-11 items-center text-fg-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-model-ecmwf">What do these columns mean?</summary>
-            <dl className="mt-1 flex flex-col gap-2 text-sm">
-              {cols.map((col) => (
-                <div key={col.key}>
-                  <dt className="font-medium text-fg">{col.header}</dt>
-                  <dd className="text-fg-muted">{col.hint}</dd>
-                </div>
-              ))}
-            </dl>
-          </details>
+          {best ? <ColumnGuide columns={cols} variable={variable} best={best} bestRain={rainBy.get(best.model)} /> : null}
         </>
       )}
     </Card>

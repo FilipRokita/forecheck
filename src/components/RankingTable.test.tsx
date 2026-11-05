@@ -1,4 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { RankingTable } from "@/components/RankingTable";
 import { PRECIPITATION, TEMPERATURE, rainVerdict, ranked, verdict } from "@/test/fixtures";
@@ -38,11 +39,17 @@ describe("RankingTable", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
-  it("explains every column in plain words", () => {
+  it("explains every column in a window, with the first model's own numbers", async () => {
     render(<RankingTable variable={TEMPERATURE} verdict={verdict()} rain={rainVerdict()} />);
-    expect(screen.getByText("What do these columns mean?")).toBeInTheDocument();
-    expect(screen.getByText(/Score for rain chances, from 0 \(perfect\) to 1/)).toBeInTheDocument();
-    expect(screen.getByText(/runs high \(\+\) or low/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "What do these columns mean?" }));
+    const guide = screen.getByRole("dialog", { name: "How to read the ranking" });
+    expect(guide).toHaveAttribute("open");
+    expect(within(guide).getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(["Error (°C)", "Bias (°C)", "Rain accuracy", "Brier"]);
+    expect(within(guide).getByText(/Score for rain chances, from 0 \(perfect\) to 1/)).toBeInTheDocument();
+    expect(within(guide).getByText(/Closer to 0 is better/)).toBeInTheDocument();
+    expect(guide).toHaveTextContent(/Examples are from the model ranked first:\s*ECMWF/);
+    await userEvent.click(within(guide).getByRole("button", { name: "Close" }));
+    expect(guide).not.toHaveAttribute("open");
   });
 
   it("says so when there is nothing to rank", () => {

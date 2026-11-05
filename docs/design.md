@@ -69,6 +69,12 @@ function that places a station on it.
 
 The map repeats what the table says, so it is hidden from assistive technology and the table is the accessible version.
 
+## The column guide
+
+Under the ranking, "What do these columns mean?" opens a window with one raised card per column: the name, which way is
+better, the first model's own number in large type, one plain sentence, and a small picture of where that number sits (a bar,
+or a scale with a middle mark for bias). It closes with the X, Escape, or a press on the backdrop.
+
 ## Accessibility
 
 - Real `<button>`, `<a>`, `<table>`. The station picker is a combobox: the search box takes the focus, the arrow keys move through
