@@ -36,3 +36,80 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* Motion and interaction. Everything that can be clicked shows it. */
+@theme {
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-rise: rise 0.5s var(--ease-out-soft) both;
+  --animate-fade: fade 0.4s ease-out both;
+  --animate-grow: grow 0.7s var(--ease-out-soft) both;
+  --animate-sheet: sheet 0.28s var(--ease-out-soft) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes grow {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes sheet {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  button:not(:disabled),
+  summary,
+  a[href],
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button,
+  a,
+  summary {
+    transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
