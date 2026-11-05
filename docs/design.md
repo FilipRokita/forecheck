@@ -33,10 +33,10 @@ the page's content security policy allows only its own origin). Numbers use a de
 | :--- | :--- | :--- |
 | Station | A button that opens a centred list | The same button, full width. The list is a bottom sheet |
 | Quantity, period | Two segmented controls in a row | Stacked. Quantity scrolls sideways if it must |
-| Verdict | Three cards in a row | Three cards stacked |
+| Verdict | A one-sentence summary, then three cards in a row | The same, cards stacked |
 | Horizon chart | Wide bars | The same, narrower bars |
 | Ranking | A table | A card per model |
-| Comparison | A table | The same table, rows 48 px tall |
+| Comparison | A map of Poland (it stays in view) beside a table | The map above the same table, rows 48 px tall |
 
 Both have the same features. Nothing is hidden on a phone.
 
@@ -55,6 +55,15 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
 
 On a phone the header is one row (the export button is an icon) and the quantity and period controls lose their captions,
 so the verdict starts higher.
+
+## The station map
+
+Each station is a dot in the colour of its best model, and the open station pulses. Pressing a dot opens that station, and
+the pointer shows a station's name. The outline of Poland is [Natural Earth](https://www.naturalearthdata.com/) (public
+domain), simplified, and lives in `src/lib/poland.ts` with the function that places a station on it.
+
+The map is a second way in to what the table already says, so it is hidden from assistive technology and the table is the
+accessible version.
 
 ## Accessibility
 

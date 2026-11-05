@@ -136,3 +136,18 @@ body {
     background-position: -100% 0;
   }
 }
+
+@theme {
+  --animate-ping-soft: ping-soft 2s ease-out infinite;
+
+  @keyframes ping-soft {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(2.4);
+    }
+  }
+}
