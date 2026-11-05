@@ -18,8 +18,9 @@ type Props = {
  */
 export function StationMap({ rows, selectedStation }: Props) {
   const [hovered, setHovered] = useState<string | null>(null);
-  // The open station always keeps its name. The one under the pointer is named as well, drawn last so it is on top.
-  const labelled = [selectedStation, hovered].filter((id, index, ids): id is string => id !== null && ids.indexOf(id) === index).flatMap((id) => rows.filter((row) => row.station.id === id));
+  // The open station always keeps its name, and the one under the pointer is named as well. Every name stays in the picture and fades in or out, the hovered one drawn last so it is on top.
+  const shown = (id: string) => id === selectedStation || id === hovered;
+  const named = [...rows].sort((a, b) => Number(a.station.id === hovered) - Number(b.station.id === hovered));
   const models = new Map(rows.flatMap((row) => (row.best_model && row.best_model_label ? [[row.best_model, row.best_model_label] as const] : [])));
 
   return (
@@ -51,7 +52,7 @@ export function StationMap({ rows, selectedStation }: Props) {
             </g>
           );
         })}
-        {labelled.map((row) => {
+        {named.map((row) => {
           const { x, y } = project(row.station.latitude, row.station.longitude);
           return (
             <text
@@ -59,7 +60,8 @@ export function StationMap({ rows, selectedStation }: Props) {
               x={x}
               y={y - 14}
               textAnchor="middle"
-              className="pointer-events-none fill-fg text-[13px] font-medium"
+              className="pointer-events-none fill-fg text-[13px] font-medium transition-opacity duration-300"
+              style={{ opacity: shown(row.station.id) ? 1 : 0 }}
               stroke="var(--color-bg)"
               strokeWidth="4"
               paintOrder="stroke"

@@ -8,6 +8,11 @@ const rows = [
   { station: RZESZOW, best_model: null, best_model_label: null, figures: null },
 ];
 
+/** The names that are not faded out. Every name is in the picture, so only the opaque ones are shown. */
+function visibleNames(container: HTMLElement) {
+  return [...container.querySelectorAll("text")].filter((label) => label.style.opacity === "1").map((label) => label.textContent).sort();
+}
+
 describe("StationMap", () => {
   it("draws a dot for every station", () => {
     const { container } = render(<StationMap rows={rows} selectedStation="12566" />);
@@ -16,16 +21,16 @@ describe("StationMap", () => {
 
   it("names the open station and the models it shows", () => {
     const { container, getByText } = render(<StationMap rows={rows} selectedStation="12566" />);
-    expect(container.querySelector("text")).toHaveTextContent("Kraków");
+    expect(visibleNames(container)).toEqual(["Kraków"]);
     expect(getByText("ECMWF")).toBeInTheDocument();
   });
 
   it("names a station the pointer is over and keeps naming the open one", () => {
     const { container } = render(<StationMap rows={rows} selectedStation="12566" />);
     fireEvent.mouseEnter(container.querySelector('[data-station="12580"]') as Element);
-    expect([...container.querySelectorAll("text")].map((label) => label.textContent)).toEqual(["Kraków", "Rzeszów"]);
+    expect(visibleNames(container)).toEqual(["Kraków", "Rzeszów"]);
     fireEvent.mouseLeave(container.querySelector('[data-station="12580"]') as Element);
-    expect([...container.querySelectorAll("text")].map((label) => label.textContent)).toEqual(["Kraków"]);
+    expect(visibleNames(container)).toEqual(["Kraków"]);
   });
 
   it("is hidden from assistive technology, because the table says the same", () => {
