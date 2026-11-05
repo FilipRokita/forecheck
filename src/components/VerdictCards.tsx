@@ -115,8 +115,7 @@ function RainTomorrow({ rain: state, wetThresholdMm }: { rain: Loadable<Verdict>
       <p className="text-fg-soft">
         {best && share !== null ? (
           <>
-            of day-ahead rain calls are right ({best.label}). A call is right when forecast and station agree on wet (at
-            least <Mono>{formatNumber(wetThresholdMm, 1)} mm</Mono>) or dry.
+            of day-ahead rain calls are right ({best.label}). Wet means at least <Mono>{formatNumber(wetThresholdMm, 1)} mm</Mono>.
           </>
         ) : (
           "No scored rain forecasts yet."
