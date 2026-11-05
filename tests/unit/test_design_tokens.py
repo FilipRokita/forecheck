@@ -35,7 +35,7 @@ def blend(top: str, bottom: str, share: float) -> str:
     return "#" + "".join(f"{c:02x}" for c in channels)
 
 
-# The row of the best model is washed in that model's colour at this strength (`modelTint` in src/lib/models.ts).
+# The best model's row gets a wash of its colour at this strength (`modelTint`, src/lib/models.ts).
 TINT_SHARE = 0.10
 
 
