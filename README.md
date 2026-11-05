@@ -54,6 +54,7 @@ under 2 °C for 3 days." **No accounts, no ads**, and all of it is open source.
 7. [📜 Data and licences](#-data-and-licences)
 8. [⚠️ Known limits](#️-known-limits)
 9. [📚 Documentation](#-documentation)
+10. [📄 License](#-license)
 
 ## ✨ What it does
 
