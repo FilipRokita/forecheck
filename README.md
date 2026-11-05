@@ -35,10 +35,8 @@ running totals. The page then shows a verdict, for example "ECMWF is the most ac
 error stays under 2 °C for 3 days".
 
 <div align="center">
-  <img src="docs/images/dashboard-desktop.png" alt="Forecheck on a desktop: verdict cards, error by forecast horizon, model ranking and station comparison" width="760">
-  <br>
-  <img src="docs/images/dashboard-mobile.png" alt="Forecheck on a phone: the same content stacked, with cards instead of tables" width="260">
-  <p><em>Screenshots use made-up demo data, which is why the page shows a "Sample data" badge.</em></p>
+  <img src="docs/images/showcase.png" alt="Forecheck on a desktop and on a phone: verdict cards, error by forecast horizon and model ranking" width="900">
+  <p><em>The screenshot uses made-up demo data, which is why the page shows a "Sample data" badge.</em></p>
 </div>
 
 There is a close relative in the United States, [ForecastAdvisor](https://www.forecastadvisor.com/) by ForecastWatch,
