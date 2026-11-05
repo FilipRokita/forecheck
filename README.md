@@ -50,15 +50,15 @@ accounts and no ads**, and all of it is open source.
 
 ## 📖 Table of contents
 
-- [✨ What it does](#-what-it-does)
-- [🧪 How a forecast is judged](#-how-a-forecast-is-judged)
-- [🧱 Stack](#-stack)
-- [🔧 How it's built](#-how-its-built)
-- [🚀 Run it locally](#-run-it-locally)
-- [☁️ Run it on a host](#️-run-it-on-a-host)
-- [📜 Data and licences](#-data-and-licences)
-- [⚠️ Known limits](#️-known-limits)
-- [📚 Documentation](#-documentation)
+1. [✨ What it does](#-what-it-does)
+2. [🧪 How a forecast is judged](#-how-a-forecast-is-judged)
+3. [🧱 Stack](#-stack)
+4. [🔧 How it's built](#-how-its-built)
+5. [🚀 Run it locally](#-run-it-locally)
+6. [☁️ Run it on a host](#️-run-it-on-a-host)
+7. [📜 Data and licences](#-data-and-licences)
+8. [⚠️ Known limits](#️-known-limits)
+9. [📚 Documentation](#-documentation)
 
 ## ✨ What it does
 
