@@ -63,7 +63,7 @@ export function RankingTable({ variable, verdict, rain }: Props) {
         <p className="mt-4 text-fg-muted">No scored forecasts in this window yet.</p>
       ) : (
         <>
-          <div className="mt-4 hidden overflow-x-auto md:block lg:block">
+          <div className="mt-4 hidden overflow-x-auto md:block">
             <table className="w-full border-collapse tabular-nums">
               <caption className="sr-only">Models ranked by {variable.metric === "accuracy" ? "accuracy" : "error"}</caption>
               <thead>
@@ -82,18 +82,18 @@ export function RankingTable({ variable, verdict, rain }: Props) {
                 {verdict.ranking.map((model) => {
                   const tint = model.rank === 1 ? modelTint(model.model) : undefined;
                   return (
-                  <tr key={model.model} className="transition-colors hover:bg-surface-raised" style={tint ? { background: tint.background } : undefined}>
-                    <th scope="row" className="whitespace-nowrap px-3 py-3 text-left font-medium" style={tint ? { boxShadow: tint.edge } : undefined}>
-                      <span className="mr-2 font-mono text-fg-muted">{model.rank ?? "–"}</span>
-                      <ModelName id={model.model} label={model.label} />
-                      {model.rank === null ? <span className="ml-2 text-xs font-normal text-fg-muted">too few days</span> : null}
-                    </th>
-                    {cols.map((col) => (
-                      <td key={col.key} className="px-3 py-3 text-right font-mono">
-                        <CountUpNumber value={col.value(model, rainBy.get(model.model)) ?? null} format={col.format} />
-                      </td>
-                    ))}
-                  </tr>
+                    <tr key={model.model} className="transition-colors hover:bg-surface-raised" style={tint ? { background: tint.background } : undefined}>
+                      <th scope="row" className="whitespace-nowrap px-3 py-3 text-left font-medium" style={tint ? { boxShadow: tint.edge } : undefined}>
+                        <span className="mr-2 font-mono text-fg-muted">{model.rank ?? "–"}</span>
+                        <ModelName id={model.model} label={model.label} />
+                        {model.rank === null ? <span className="ml-2 text-xs font-normal text-fg-muted">too few days</span> : null}
+                      </th>
+                      {cols.map((col) => (
+                        <td key={col.key} className="px-3 py-3 text-right font-mono">
+                          <CountUpNumber value={col.value(model, rainBy.get(model.model)) ?? null} format={col.format} />
+                        </td>
+                      ))}
+                    </tr>
                   );
                 })}
               </tbody>
