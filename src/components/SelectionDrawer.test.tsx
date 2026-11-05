@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { SelectionDrawer } from "@/components/SelectionDrawer";
@@ -48,14 +48,26 @@ describe("SelectionDrawer", () => {
     expect(screen.getByRole("dialog", { name: "Configure" })).toHaveAttribute("open");
   });
 
-  it("closes with Done and with the X", async () => {
+  it("closes with Done, with the X and with Escape, each time after its exit animation", async () => {
     const { opener } = setup();
+    const drawer = () => screen.getByRole("dialog", { name: "Configure" });
+    const leave = () => fireEvent.animationEnd(drawer());
     await userEvent.click(opener);
     await userEvent.click(screen.getByRole("button", { name: "Done" }));
+    expect(drawer()).toHaveAttribute("open");
+    leave();
     expect(screen.queryByRole("group", { name: "Station" })).not.toBeInTheDocument();
     await userEvent.click(opener);
-    expect(screen.getByRole("dialog", { name: "Configure" })).toHaveAttribute("open");
     await userEvent.click(screen.getByRole("button", { name: "Close" }));
+    leave();
+    expect(screen.queryByRole("group", { name: "Station" })).not.toBeInTheDocument();
+    await userEvent.click(opener);
+    // Escape asks the dialog to cancel. It must not close at once.
+    const cancel = new Event("cancel", { cancelable: true });
+    act(() => void drawer().dispatchEvent(cancel));
+    expect(cancel.defaultPrevented).toBe(true);
+    expect(drawer()).toHaveAttribute("open");
+    await act(async () => leave());
     expect(screen.queryByRole("group", { name: "Station" })).not.toBeInTheDocument();
   });
 });

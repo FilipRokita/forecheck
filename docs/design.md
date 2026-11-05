@@ -61,6 +61,8 @@ Everything that can be clicked shows it: a pointer cursor, a hover state and a s
   their new height and colour, and changed words fade in. The highlight in the quantity and period controls slides to the
   button you pressed. Each part is written in the unit and for the period of its
   own answer, so figures that are still on screen are never read in the wrong unit.
+- A drawer slides up from the bottom of a phone, and a window on a larger screen fades in. However it is closed (the X, Done,
+  a press outside it, Escape), it leaves in the same way: a short slide down, or a fade.
 - The header stays on top, blurred.
 - Every animation stops when the system asks for reduced motion.
 

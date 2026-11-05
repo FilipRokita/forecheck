@@ -60,7 +60,7 @@ export function SelectionDrawer({ stations, variables, periods, selection, onCha
         </div>
         <button
           type="button"
-          onClick={() => setOpen(false)}
+          data-sheet-close
           className="mt-6 min-h-12 w-full rounded-xl border border-border-strong bg-surface-raised font-medium hover:bg-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-model-ecmwf"
         >
           Done

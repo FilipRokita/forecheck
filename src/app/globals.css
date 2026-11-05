@@ -47,6 +47,8 @@ body {
   --animate-grow: grow 0.7s var(--ease-out-soft) both;
   --animate-slide: slide 1.1s ease-in-out infinite;
   --animate-drawer: drawer 0.32s var(--ease-out-soft) both;
+  --animate-drawer-out: drawer-out 0.22s ease-in both;
+  --animate-fade-out: fade-out 0.2s ease-in both;
 
   @keyframes rise {
     from {
@@ -72,6 +74,22 @@ body {
     }
     to {
       transform: none;
+    }
+  }
+  @keyframes drawer-out {
+    from {
+      transform: none;
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
     }
   }
   @keyframes slide {

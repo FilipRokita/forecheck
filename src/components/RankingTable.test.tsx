@@ -49,6 +49,7 @@ describe("RankingTable", () => {
     expect(within(guide).getByText(/Aim for 0/)).toBeInTheDocument();
     expect(guide).toHaveTextContent(/Examples are from the model ranked first:\s*ECMWF/);
     await userEvent.click(within(guide).getByRole("button", { name: "Close" }));
+    fireEvent.animationEnd(guide);
     expect(guide).not.toHaveAttribute("open");
   });
 
@@ -63,6 +64,9 @@ describe("RankingTable", () => {
     expect(guide).toHaveAttribute("open");
     fireEvent.pointerDown(guide);
     fireEvent.click(guide);
+    // It leaves smoothly, so it is still there until its exit animation ends.
+    expect(guide).toHaveAttribute("open");
+    fireEvent.animationEnd(guide);
     expect(guide).not.toHaveAttribute("open");
   });
 
