@@ -10,13 +10,13 @@ export function Headline({ variable, verdict }: { variable: Variable; verdict: V
   if (!best) return null;
   const days = verdict.trust_days;
   return (
-    <p className="max-w-3xl text-xl font-medium leading-snug tracking-tight sm:text-2xl">
+    <p className="max-w-3xl text-xl font-medium leading-normal tracking-tight sm:text-2xl">
       At <Fade id={verdict.station.name}>{verdict.station.name}</Fade>,{" "}
       <span key={best.model} className="animate-fade" style={{ color: modelColor(best.model) }}>
         {best.label}
       </span>{" "}
       is the most accurate model for <Fade id={variable.id}>{variable.label.toLowerCase()}</Fade>.{" "}
-      <span className="block text-fg-muted">
+      <span className="mt-1 block text-fg-muted">
         {days === null ? null : days === 0 ? (
           "Even tomorrow's forecast misses the bar."
         ) : (
